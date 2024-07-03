@@ -1,13 +1,13 @@
 import ProjectDescription
 
 let project = Project(
-    name: "cuddle",
+    name: "Cuddle",
     targets: [
         .target(
-            name: "cuddle",
+            name: "Cuddle",
             destinations: .iOS,
             product: .app,
-            bundleId: "io.tuist.cuddle",
+            bundleId: "com.ssmy.cuddle",
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchScreen": [
@@ -16,19 +16,20 @@ let project = Project(
                     ],
                 ]
             ),
-            sources: ["cuddle/Sources/**"],
-            resources: ["cuddle/Resources/**"],
+            sources: ["Sources/**"],
+            resources: ["Resources/**"],
             dependencies: []
         ),
         .target(
-            name: "cuddleTests",
+            name: "CuddleTests",
             destinations: .iOS,
             product: .unitTests,
-            bundleId: "io.tuist.cuddleTests",
+            bundleId: "com.ssmy.cuddleTests",
             infoPlist: .default,
-            sources: ["cuddle/Tests/**"],
+            sources: ["Tests/**"],
             resources: [],
-            dependencies: [.target(name: "cuddle")]
+            dependencies: [.target(name: "Cuddle")]
         )
     ]
 )
+
