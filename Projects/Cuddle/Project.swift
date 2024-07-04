@@ -18,7 +18,9 @@ let project = Project(
             ),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            dependencies: []
+            dependencies: [
+                .project(target: "DesignSystem", path: "../Core/DesignSystem")
+            ]
         ),
         .target(
             name: "CuddleTests",
