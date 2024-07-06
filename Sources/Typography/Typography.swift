@@ -15,6 +15,8 @@ public extension Font {
         return .custom(fontName, size: size)
     }
     
+    static let appFonts: [FontRepresentable] = NPS.allCases + Pretendard.allCases
+    
     // MARK: NPS - Header
     
     static let npsHeader20: Font = .typography(font: NPS.header, size: 20)
@@ -54,4 +56,8 @@ public extension Font {
     static let pretendardBody10: Font = .typography(font: Pretendard.body, size: 10)
     static let pretendardBody8: Font = .typography(font: Pretendard.body, size: 8)
     static let pretendardBody6: Font = .typography(font: Pretendard.body, size: 6)
+}
+
+public extension Bundle {
+    static var designSystem: Bundle { .module }
 }

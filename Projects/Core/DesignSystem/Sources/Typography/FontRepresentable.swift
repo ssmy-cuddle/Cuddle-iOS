@@ -8,54 +8,24 @@
 import Foundation
 import SwiftUI
 
+import AppResource
+
 public protocol FontRepresentable {
-    var fontName: String { get }
+    var familyName: String { get }
+    var name: String { get }
     var weight: Font.Weight { get }
     var weightName: String { get }
 }
 
-public enum NPS: FontRepresentable {
-    case header
-    case title
-    case body
-
-    public var fontName: String {
-        "NPSfont"
-    }
-    public var weight: Font.Weight {
-        switch self {
-        case .header: .heavy
-        case .title: .bold
-        case .body: .regular
+public extension FontRepresentable {    
+    func register(scope: CTFontManagerScope? = .process) {
+        guard let fontURL = Bundle.appResource.url(forResource: name, withExtension: ".ttf") else {
+            return
         }
-    }
-    public var weightName: String {
-        switch self {
-        case .header: "exterabold"
-        case .title: "bold"
-        case .body: "regular"
-        }
-    }
-}
-
-public enum Pretendard: FontRepresentable {
-    case header
-    case title
-    case body
-    
-    public var fontName: String { "Pretendard" }
-    public var weight: Font.Weight {
-        switch self {
-        case .header: .semibold
-        case .title: .bold
-        case .body: .medium
-        }
-    }
-    public var weightName: String {
-        switch self {
-        case .header: "semibold"
-        case .title: "bold"
-        case .body: "medium"
-        }
+        CTFontManagerRegisterFontsForURL(
+            fontURL as CFURL,
+            .process,
+            nil
+        )
     }
 }

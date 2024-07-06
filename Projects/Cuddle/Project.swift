@@ -19,6 +19,7 @@ let project = Project(
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             dependencies: [
+                .project(target: "AppResource", path: "../Core/AppResource"),
                 .project(target: "DesignSystem", path: "../Core/DesignSystem")
             ]
         ),
