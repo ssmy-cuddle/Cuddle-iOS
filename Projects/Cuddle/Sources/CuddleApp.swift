@@ -8,16 +8,15 @@ import ComposableArchitecture
 @main
 struct CuddleApp: App {
     
+    let contentView: ContentView?
+    
     init() {
+        self.contentView = AppContainer.shared.resolve(ContentView.self)
         registerCustomFonts()
     }
     
     var body: some Scene {
-        WindowGroup {
-            ContentView(store: StoreOf<Content>(initialState: Content.State()) {
-                Content()
-            })
-        }
+        WindowGroup { contentView }
     }
     
     private func registerCustomFonts() {

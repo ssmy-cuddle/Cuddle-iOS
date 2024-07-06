@@ -9,7 +9,9 @@ import PackageDescription
         // Default is .staticFramework
         // productTypes: ["Alamofire": .framework,] 
         productTypes: [
-            "ComposableArchitecture": .framework
+            "ComposableArchitecture": .framework,
+            "Swinject": .framework,
+            "SwinjectAutoregistration": .framework
         ]
     )
 #endif
@@ -17,6 +19,8 @@ import PackageDescription
 let package = Package(
     name: "Cuddle",
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.11.2")
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.11.2"),
+        .package(url: "https://github.com/Swinject/Swinject", from: "2.8.0"),
+        .package(url: "https://github.com/Swinject/SwinjectAutoregistration", from: "2.8.0")
     ]
 )

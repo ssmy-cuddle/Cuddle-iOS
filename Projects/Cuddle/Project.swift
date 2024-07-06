@@ -21,7 +21,9 @@ let project = Project(
             dependencies: [
                 .project(target: "AppResource", path: "../Core/AppResource"),
                 .project(target: "DesignSystem", path: "../Core/DesignSystem"),
-                .external(name: "ComposableArchitecture")
+                .external(name: "ComposableArchitecture"),
+                .external(name: "Swinject"),
+                .external(name: "SwinjectAutoregistration")
             ]
         ),
         .target(
