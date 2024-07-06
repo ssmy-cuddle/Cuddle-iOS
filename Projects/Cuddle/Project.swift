@@ -20,7 +20,8 @@ let project = Project(
             resources: ["Resources/**"],
             dependencies: [
                 .project(target: "AppResource", path: "../Core/AppResource"),
-                .project(target: "DesignSystem", path: "../Core/DesignSystem")
+                .project(target: "DesignSystem", path: "../Core/DesignSystem"),
+                .external(name: "ComposableArchitecture")
             ]
         ),
         .target(

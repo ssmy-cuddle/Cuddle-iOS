@@ -3,6 +3,8 @@ import SwiftUI
 import AppResource
 import DesignSystem
 
+import ComposableArchitecture
+
 @main
 struct CuddleApp: App {
     
@@ -12,7 +14,9 @@ struct CuddleApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(store: StoreOf<Content>(initialState: Content.State()) {
+                Content()
+            })
         }
     }
     

@@ -17,7 +17,9 @@ let project = Project(
             bundleId: "com.ssmy.cuddle",
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            dependencies: []
+            dependencies: [
+                .project(target: "AppResource", path: "../AppResource")
+            ]
         )
     ]
 )
