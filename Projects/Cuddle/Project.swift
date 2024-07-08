@@ -1,4 +1,5 @@
 import ProjectDescription
+import DependencyPlugin
 
 let project = Project(
     name: "Cuddle",
@@ -18,13 +19,8 @@ let project = Project(
             ),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            dependencies: [
-                .project(target: "AppResource", path: "../Core/AppResource"),
-                .project(target: "DesignSystem", path: "../Core/DesignSystem"),
-                .external(name: "ComposableArchitecture"),
-                .external(name: "Swinject"),
-                .external(name: "SwinjectAutoregistration")
-            ]
+            dependencies: Core.allCases.map(\.targetDependency) +
+            External.allCases.map(\.targetDependency)
         ),
         .target(
             name: "CuddleTests",

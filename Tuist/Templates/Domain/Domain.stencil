@@ -1,0 +1,8 @@
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project.domain(
+    name: "{{ name }}Domain",
+    bundleID: "{{ name }}Domain",
+    targets: [.staticFramework, .tests]
+)

@@ -1,0 +1,8 @@
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project.feature(
+    name: "{{ name }}Feature",
+    bundleID: "{{ name }}Feature",
+    targets: [.interface, .staticFramework, .testing, .example, .tests]
+)
