@@ -3,6 +3,8 @@ import SwiftUI
 import AppResource
 import DesignSystem
 
+import AuthenticationFeature
+
 import ComposableArchitecture
 
 public struct ContentView: View {
@@ -39,8 +41,11 @@ public struct ContentView: View {
             Text("Main Screen")
                 .font(.npsHeader20)
         case .login:
-            Text("Login Screen")
-                .font(.pretendardHeader20)
+            AuthenticationNavigationView(
+                store: StoreOf<AuthenticationCoordinator>(initialState: AuthenticationCoordinator.State()) {
+                    AuthenticationCoordinator()
+                }
+            )
         }
     }
     

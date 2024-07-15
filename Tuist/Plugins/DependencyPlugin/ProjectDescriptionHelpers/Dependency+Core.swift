@@ -17,8 +17,8 @@ public enum Core: CaseIterable {
 extension Core: TargetDependencyCovertible {
     public var targetDependency: TargetDependency {
         switch self {
-        case .appResource: .project(target: "AppResource", path: .path("../Core/AppResource"))
-        case .designSystem: .project(target: "DesignSystem", path: .path("../Core/DesignSystem"))
+        case .appResource: .project(target: "AppResource", path: .relativeToRoot("Projects/Core/AppResource"))
+        case .designSystem: .project(target: "DesignSystem", path: .relativeToRoot("Projects/Core/DesignSystem"))
         }
     }
 }

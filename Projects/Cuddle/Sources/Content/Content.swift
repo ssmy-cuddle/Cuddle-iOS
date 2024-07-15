@@ -24,7 +24,7 @@ public struct Content {
     
     @ObservableState
     public struct State: Equatable {
-        var contentType: ContentType = .splash
+        var contentType: ContentType = .login
     }
     
     public enum Action: FeatureAction {

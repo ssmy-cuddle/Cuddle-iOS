@@ -12,15 +12,22 @@ let project = Project(
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchScreen": [
-                        "UIColorName": "",
-                        "UIImageName": "",
+                        "UIColorName": "white",
+                        "UIImageName": "cuddle-launch",
                     ],
                 ]
             ),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             dependencies: Core.allCases.map(\.targetDependency) +
-            External.allCases.map(\.targetDependency)
+            External.allCases.map(\.targetDependency) +
+            [Feature.authentification.targetDependency] +
+            [
+                TargetDependency.project(
+                    target: "AuthenticationCoordinator",
+                    path: .relativeToRoot("Projects/Coordinator/AuthenticationCoordinator")
+                )
+            ]
         ),
         .target(
             name: "CuddleTests",

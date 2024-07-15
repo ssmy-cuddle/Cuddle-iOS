@@ -1,0 +1,8 @@
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project.module(
+    name: "{{ name }}",
+    bundleID: "{{ name }}",
+    targets: [.staticFramework, .tests]
+)

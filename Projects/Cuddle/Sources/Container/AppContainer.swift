@@ -7,6 +7,9 @@
 
 import Foundation
 
+import AuthenticationFeatureInterface
+import AuthenticationFeature
+
 import ComposableArchitecture
 import Swinject
 import SwinjectAutoregistration
@@ -21,6 +24,8 @@ enum AppContainer {
                 Content()
             })
         }
+        
+        container.autoregister(AuthenticationBuilder.self, initializer: AuthenticationComponent.init)
         
         return container
     }()
