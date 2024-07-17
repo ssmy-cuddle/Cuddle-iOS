@@ -1,0 +1,14 @@
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+import DependencyPlugin
+
+let project = Project.feature(
+    name: "HomeFeature",
+    bundleID: "HomeFeature",
+    targets: [.interface, .staticFramework, .testing, .example, .tests],
+    dependencies: [
+        Core.appResource.targetDependency,
+        Core.designSystem.targetDependency
+    ]
+)
