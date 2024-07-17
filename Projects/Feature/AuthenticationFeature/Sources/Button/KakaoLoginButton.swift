@@ -46,7 +46,7 @@ public struct KakaoLoginButton: View {
                         .foregroundStyle(.white)
                     
                     Text(Message.kakaoLogin)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(.black)
                 }
             }

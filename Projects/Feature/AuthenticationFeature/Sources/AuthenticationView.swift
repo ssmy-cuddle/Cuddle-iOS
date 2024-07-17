@@ -35,25 +35,23 @@ public struct AuthenticationView: View {
     public var body: some View {
         VStack {
             VStack(alignment: .center) {
-//                GeometryReader { geometry in
-                    Image(asset: AppResourceAsset.Image.cuddleMainLogo)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: UIScreen.main.bounds.width * 0.4)
-                    
-                    Text(Message.cuddleTitle)
-                        .font(
-                            .custom(
-                                NPS.header.name,
-                                size: Metric.titleLabelFontSize
-                            )
+                Image(asset: AppResourceAsset.Image.cuddleMainLogo)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding(.horizontal, 118)
+                
+                Text(Message.cuddleTitle)
+                    .font(
+                        .custom(
+                            NPS.header.name,
+                            size: Metric.titleLabelFontSize
                         )
-                        .padding(.top, -8)
-                    
-                    Text(Message.cuddleDescription)
-                        .font(.pretendardBody12)
-                        .contentMargins(.top, 8)
-//                }
+                    )
+                    .padding(.top, -8)
+                
+                Text(Message.cuddleDescription)
+                    .font(.pretendardBody12)
+                    .contentMargins(.top, 8)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             

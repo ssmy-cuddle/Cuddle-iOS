@@ -41,7 +41,7 @@ public struct AppleLoginButton: View {
                         .position(.init(x: 20, y: 22))
                     
                     Text(Message.appleLogin)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(.black)
                 }
             }
@@ -53,7 +53,7 @@ public struct AppleLoginButton: View {
             RoundedRectangle(
                 cornerRadius: Metric.buttonCornerRadius
             )
-            .stroke(.black, lineWidth: 1)
+            .stroke(Color(red: 0.75, green: 0.75, blue: 0.75), lineWidth: 1)
         )
     }
 }
