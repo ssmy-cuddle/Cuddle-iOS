@@ -22,19 +22,18 @@ public struct OriginalView: View {
         VStack(alignment: .leading) {
             Text("Cuddle Originals")
                 .font(.npsHeader16)
-                .padding([.leading, .bottom], 12)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
             
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 12) {
-                    ForEach(contents) {
-                        OriginalContentView(content: $0)
-                    }
+                    ForEach(contents) { OriginalContentView(content: $0) }
                 }
                 .scrollTargetLayout()
             }
             .scrollTargetBehavior(.viewAligned)
             .scrollIndicators(.hidden)
-            .contentMargins(.horizontal, 12)
+            .contentMargins(.horizontal, 16)
         }
     }
 }
