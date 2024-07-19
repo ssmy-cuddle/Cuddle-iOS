@@ -38,6 +38,16 @@ public struct HomeView: View {
     
     public init() {}
     
+    private let previewView: some View = PreviewFilterView(
+        store: StoreOf<PreviewFilter>(
+            initialState: PreviewFilter.State()
+        ) {
+            PreviewFilter()
+        }
+    )
+    .padding(.horizontal, 16)
+    .padding(.vertical, 20)
+    
     public var body: some View {
         ScrollView {
             LazyVStack(pinnedViews: [.sectionHeaders]) {
@@ -65,15 +75,16 @@ public struct HomeView: View {
 //                            .padding(.horizontal, 16)
 //                            .padding(.top, 20)
                         
-                        PreviewFilterView(
-                            store: StoreOf<PreviewFilter>(
-                                initialState: PreviewFilter.State()
-                            ) {
-                                PreviewFilter()
-                            }
-                        )
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 20)
+                        previewView
+//
+//                        DailyContentView(
+//                            store: StoreOf<DailyContent>(
+//                                initialState: DailyContent.State()
+//                            ) {
+//                                DailyContent()
+//                            }
+//                        )
+//                        .padding(.bottom, 60)
                         
 //                        BannerView(banners: MockBanner.banners)
 //                            .aspectRatio(290 / 71, contentMode: .fit)
@@ -110,12 +121,11 @@ public struct HomeView: View {
                     .zIndex(3)
                     .clipShape(.rect(cornerRadius: 30))
                     .clipped()
-                    }
+                }
                 
             }
         }
-        .ignoresSafeArea(.all)
-        .coordinateSpace(name: "aaaa")
+        .ignoresSafeArea(.all, edges: .top)
         .onPreferenceChange(ScrollOffsetKey.self) {
             print("??????: \($0)")// 추가부분
             offset = $0

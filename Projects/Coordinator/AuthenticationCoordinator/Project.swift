@@ -19,8 +19,7 @@ let project = Project(
             infoPlist: .default,
             sources: ["Interface/Sources/**"],
             dependencies: [
-                External.composableArchitecture.targetDependency,
-                External.tcaCoordinators.targetDependency
+                External.composableArchitecture.targetDependency
             ]
         ),
         .target(
@@ -34,7 +33,6 @@ let project = Project(
             dependencies: [
                 .target(name: "AuthenticationCoordinatorInferface"),
                 External.composableArchitecture.targetDependency,
-                External.tcaCoordinators.targetDependency
             ]
         )
     ]

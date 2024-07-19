@@ -13,7 +13,7 @@ public enum External {
     case composableArchitecture
     case swinject
     case swinjectAutoregistration
-    case tcaCoordinators
+    case kingfisher
 }
 
 extension External: CaseIterable {}
@@ -24,7 +24,7 @@ extension External: TargetDependencyCovertible {
         case .composableArchitecture: .external(name: "ComposableArchitecture")
         case .swinject: .external(name: "Swinject")
         case .swinjectAutoregistration: .external(name: "SwinjectAutoregistration")
-        case .tcaCoordinators: .external(name: "TCACoordinators")
+        case .kingfisher: .external(name: "Kingfisher")
         }
     }
 }
