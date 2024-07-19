@@ -9,6 +9,7 @@ let project = Project.feature(
     targets: [.interface, .staticFramework, .testing, .example, .tests],
     dependencies: [
         Core.appResource.targetDependency,
-        Core.designSystem.targetDependency
+        Core.designSystem.targetDependency,
+        External.composableArchitecture.targetDependency
     ]
 )

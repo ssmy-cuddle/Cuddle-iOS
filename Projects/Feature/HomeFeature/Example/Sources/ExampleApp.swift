@@ -18,7 +18,10 @@ struct ExampleApp: App {
 
 struct ContentView: View {
     var body: some View {
-        Text("Home Feature Example App")
-            .padding()
+        HomeView()
     }
+}
+
+#Preview {
+    HomeView()
 }
