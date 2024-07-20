@@ -24,7 +24,7 @@ public struct OriginalContentView: View {
             VStack(alignment: .leading) {
                 content.image
                     .resizable()
-                    .aspectRatio(226 / 156, contentMode: .fill)
+                    .aspectRatio(226 / 156, contentMode: .fit)
                     .clipShape(.rect(cornerRadius: 8))
                 Text(content.title)
                     .font(.npsTitle14)

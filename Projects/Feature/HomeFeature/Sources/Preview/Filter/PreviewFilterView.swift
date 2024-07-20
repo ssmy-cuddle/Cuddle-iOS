@@ -27,7 +27,7 @@ public struct PreviewFilterView: View {
     }
     
     public var body: some View {
-        VStack {
+        VStack(spacing: 24) {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 8) {
                     ForEach(store.previewFilters, id: \.hashValue) { previewType in
@@ -51,7 +51,13 @@ public struct PreviewFilterView: View {
                     }
                 )
             case .travels:
-                Text("여행기")
+                TravelPreviewView(
+                    store: StoreOf<TravelPreview>(
+                        initialState: TravelPreview.State()
+                    ) {
+                        TravelPreview()
+                    }
+                )
             case .cuddlers:
                 Text("Cuddle 동물들")
             }
