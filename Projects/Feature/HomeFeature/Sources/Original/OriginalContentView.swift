@@ -28,8 +28,10 @@ public struct OriginalContentView: View {
                     .clipShape(.rect(cornerRadius: 8))
                 Text(content.title)
                     .font(.npsTitle14)
+                    .lineLimit(/*@START_MENU_TOKEN@*/2/*@END_MENU_TOKEN@*/)
                 Text(content.description)
                     .font(.npsBody10)
+                    .lineLimit(2)
             }
         }
     }

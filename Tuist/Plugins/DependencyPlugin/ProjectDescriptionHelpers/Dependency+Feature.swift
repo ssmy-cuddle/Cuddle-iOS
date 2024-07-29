@@ -11,6 +11,7 @@ import ProjectDescription
 
 public enum Feature: CaseIterable {
     case authentification
+    case home
 }
 
 extension Feature: TargetDependencyCovertible {
@@ -20,6 +21,11 @@ extension Feature: TargetDependencyCovertible {
                 .project(
                     target: "AuthenticationFeature",
                     path: .relativeToRoot("Projects/Feature/AuthenticationFeature")
+                )
+        case .home:
+                .project(
+                    target: "HomeFeature",
+                    path: .relativeToRoot("Projects/Feature/HomeFeature")
                 )
         }
     }

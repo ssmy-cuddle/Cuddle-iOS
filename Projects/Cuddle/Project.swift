@@ -21,7 +21,10 @@ let project = Project(
             resources: ["Resources/**"],
             dependencies: Core.allCases.map(\.targetDependency) +
             External.allCases.map(\.targetDependency) +
-            [Feature.authentification.targetDependency] +
+            [
+                Feature.authentification.targetDependency,
+                Feature.home.targetDependency
+            ] +
             [
                 TargetDependency.project(
                     target: "AuthenticationCoordinator",

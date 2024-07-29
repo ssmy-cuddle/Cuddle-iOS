@@ -6,25 +6,17 @@
 //
 
 import Foundation
+import SwiftUI
 
 import ComposableArchitecture
-
-public enum ContentType: Equatable {
-    case splash
-    case login
-    case main
-}
 
 @Reducer
 public struct Content {
     
-    private enum Policy {
-        static let splashScreenDurationNanoSeconds: UInt64 = 2 * 1_000_000_000
-    }
-    
     @ObservableState
     public struct State: Equatable {
-        var contentType: ContentType = .login
+        var navigationTabs: [NavigationTabType] = NavigationTabType.allCases
+        var contentType: NavigationTabType = .default
     }
     
     public enum Action: FeatureAction {
@@ -33,27 +25,17 @@ public struct Content {
     }
     
     public enum ViewAction: Equatable {
-        case splashStarted
+        case changeTab(NavigationTabType)
     }
     
-    public enum InnerAction {
-        case contentType(ContentType)
-    }
+    public enum InnerAction {}
     
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case let .view(action):
                 switch action {
-                case .splashStarted:
-                    return .run {
-                        try await Task.sleep(nanoseconds: Policy.splashScreenDurationNanoSeconds)
-                        return await $0(Action.inner(.contentType(.main)))
-                    }
-                }
-            case let .inner(action):
-                switch action {
-                case let .contentType(contentType):
+                case let .changeTab(contentType):
                     state.contentType = contentType
                     return .none
                 }
