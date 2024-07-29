@@ -59,7 +59,13 @@ public struct PreviewFilterView: View {
                     }
                 )
             case .cuddlers:
-                Text("Cuddle 동물들")
+                ProfilePreviewView(
+                    store: StoreOf<ProfilePreview>(
+                        initialState: ProfilePreview.State()
+                    ) {
+                        ProfilePreview()
+                    }
+                )
             }
         }
     }
