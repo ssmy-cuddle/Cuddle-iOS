@@ -23,7 +23,8 @@ let project = Project(
             External.allCases.map(\.targetDependency) +
             [
                 Feature.authentification.targetDependency,
-                Feature.home.targetDependency
+                Feature.home.targetDependency,
+                Feature.community.targetDependency
             ] +
             [
                 TargetDependency.project(

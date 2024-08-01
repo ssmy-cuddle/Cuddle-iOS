@@ -3,6 +3,7 @@ import SwiftUI
 import AppResource
 import DesignSystem
 
+import CommunityFeature
 import HomeFeature
 
 import AuthenticationFeature
@@ -45,7 +46,7 @@ public struct ContentView: View {
         switch navigationType {
         case .home: HomeView()
         case .diary: Text("여정")
-        case .comumnity: Text("커뮤니티")
+        case .comumnity: CommunityView()
         case .donation: Text("기부")
         case .profile: Text("프로필")
         }
