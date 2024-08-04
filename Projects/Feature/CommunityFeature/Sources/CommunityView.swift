@@ -26,18 +26,28 @@ public struct CommunityView: View {
         Community()
     }
     
+    let travelPreviewStore = StoreOf<TravelPreview>(initialState: TravelPreview.State()) {
+        TravelPreview()
+    }
+    
+    let dailyStore = StoreOf<Daily>(
+        initialState: Daily.State()
+    ) {
+        Daily()
+    }
+    
     @ViewBuilder
     public func buildContentView(category: CommunityCategory) -> some View {
         switch category {
-        case .daily: ForEach(1...70, id: \.self) { count in
-            /*@START_MENU_TOKEN@*/Text("Placeholder \(count)")/*@END_MENU_TOKEN@*/
-        }
-        .zIndex(1)
+        case .daily:
+            DailyView(
+                store: dailyStore
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 120)
         case .travel:
             TravelPreviewView(
-                store: StoreOf<TravelPreview>(initialState: TravelPreview.State()) {
-                    TravelPreview()
-                }
+                store: travelPreviewStore
             )
             .padding(.horizontal, 16)
             .padding(.top, 120)
