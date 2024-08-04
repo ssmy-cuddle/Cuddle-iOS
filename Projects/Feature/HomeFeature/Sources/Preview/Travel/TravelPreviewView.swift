@@ -12,6 +12,10 @@ import ComposableArchitecture
 
 public struct TravelPreviewView: View {
     
+    public init(store: StoreOf<TravelPreview>) {
+        self.store = store
+    }
+    
     let store: StoreOf<TravelPreview>
     
     public var body: some View {

@@ -12,8 +12,13 @@ import ComposableArchitecture
 @Reducer
 public struct TravelPreview {
     
+    public init() {}
+    
     @ObservableState
     public struct State: Equatable {
+        
+        public init() {}
+        
         var tarvels: [TravelPreviewModel] = MockTravelPreview.contents
     }
 }

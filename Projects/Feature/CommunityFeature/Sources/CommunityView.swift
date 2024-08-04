@@ -11,17 +11,54 @@ import SwiftUI
 import AppResource
 import DesignSystem
 
+// TODO: Feature 간 의존성 분리하기
+import HomeFeature
+
 import ComposableArchitecture
 
 public struct CommunityView: View {
     
     public init() {}
     
+    let categoryStore = StoreOf<Community>(
+        initialState: Community.State()
+    ) {
+        Community()
+    }
+    
+    @ViewBuilder
+    public func buildContentView(category: CommunityCategory) -> some View {
+        switch category {
+        case .daily: ForEach(1...70, id: \.self) { count in
+            /*@START_MENU_TOKEN@*/Text("Placeholder \(count)")/*@END_MENU_TOKEN@*/
+        }
+        .zIndex(1)
+        case .travel:
+            TravelPreviewView(
+                store: StoreOf<TravelPreview>(initialState: TravelPreview.State()) {
+                    TravelPreview()
+                }
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 120)
+        case .walkmate:
+            ForEach(1...70, id: \.self) { count in
+                /*@START_MENU_TOKEN@*/Text("Placeholder \(count)")/*@END_MENU_TOKEN@*/
+            }
+            .zIndex(1)
+        case .health:
+            ForEach(1...70, id: \.self) { count in
+                /*@START_MENU_TOKEN@*/Text("Placeholder \(count)")/*@END_MENU_TOKEN@*/
+            }
+            .zIndex(1)
+        }
+    }
+    
     public var body: some View {
         ScrollView {
             ZStack(alignment: .top) {
                 AppResourceAsset.Image.cuddleCommunityBackground.swiftUIImage
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: .zero) {
                     HStack {
                         VStack(alignment: .leading) {
                             Text("Cuddle")
@@ -34,23 +71,13 @@ public struct CommunityView: View {
                     .padding(.top, 38)
                     
                     LazyVStack(
+                        spacing: .zero,
                         pinnedViews: [.sectionHeaders]
                     ) {
                         Section(
-                            header:
-                                CommunityCategoryView(
-                                    store: StoreOf<Community>(
-                                        initialState: Community.State()
-                                    ) {
-                                        Community()
-                                    }
-                                )
-                                .zIndex(4)
+                            header: CommunityCategoryView(store: categoryStore)
                         ) {
-                            ForEach(1...70, id: \.self) { count in
-                                /*@START_MENU_TOKEN@*/Text("Placeholder \(count)")/*@END_MENU_TOKEN@*/
-                            }
-                            .zIndex(1)
+                            buildContentView(category: categoryStore.selectedCategory)
                         }
                     }
                 }
@@ -65,7 +92,7 @@ public struct CommunityCategoryView: View {
     
     let store: StoreOf<Community>
     
-    init(store: StoreOf<Community>) {
+    public init(store: StoreOf<Community>) {
         self.store = store
     }
     
@@ -96,6 +123,7 @@ public struct CommunityCategoryView: View {
             }
             .background(.white)
         }
+        .zIndex(10)
     }
 }
 
