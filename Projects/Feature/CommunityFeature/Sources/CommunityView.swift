@@ -26,21 +26,33 @@ public struct CommunityView: View {
         Community()
     }
     
+    let travelPreviewStore = StoreOf<TravelPreview>(initialState: TravelPreview.State()) {
+        TravelPreview()
+    }
+    
+    let dailyStore = StoreOf<Daily>(
+        initialState: Daily.State()
+    ) {
+        Daily()
+    }
+    
     @ViewBuilder
     public func buildContentView(category: CommunityCategory) -> some View {
         switch category {
-        case .daily: ForEach(1...70, id: \.self) { count in
-            /*@START_MENU_TOKEN@*/Text("Placeholder \(count)")/*@END_MENU_TOKEN@*/
-        }
-        .zIndex(1)
-        case .travel:
-            TravelPreviewView(
-                store: StoreOf<TravelPreview>(initialState: TravelPreview.State()) {
-                    TravelPreview()
-                }
+        case .daily:
+            DailyView(
+                store: dailyStore
             )
             .padding(.horizontal, 16)
             .padding(.top, 120)
+            .padding(.bottom, 16)
+        case .travel:
+            TravelPreviewView(
+                store: travelPreviewStore
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 120)
+            .padding(.bottom, 16)
         case .walkmate:
             ForEach(1...70, id: \.self) { count in
                 /*@START_MENU_TOKEN@*/Text("Placeholder \(count)")/*@END_MENU_TOKEN@*/
@@ -58,7 +70,7 @@ public struct CommunityView: View {
         ScrollView {
             ZStack(alignment: .top) {
                 AppResourceAsset.Image.cuddleCommunityBackground.swiftUIImage
-                VStack(alignment: .leading, spacing: .zero) {
+                VStack(alignment: .leading) {
                     HStack {
                         VStack(alignment: .leading) {
                             Text("Cuddle")
@@ -68,10 +80,9 @@ public struct CommunityView: View {
                         }
                     }
                     .padding(.horizontal, 28)
-                    .padding(.top, 38)
+                    .padding(.vertical, 38)
                     
                     LazyVStack(
-                        spacing: .zero,
                         pinnedViews: [.sectionHeaders]
                     ) {
                         Section(
@@ -80,6 +91,7 @@ public struct CommunityView: View {
                             buildContentView(category: categoryStore.selectedCategory)
                         }
                     }
+                    
                 }
             }
         }
