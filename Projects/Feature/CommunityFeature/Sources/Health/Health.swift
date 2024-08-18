@@ -31,7 +31,7 @@ fileprivate enum MockHealthContent {
             id: UUID(),
             thumbnailURL: URL(string: "https://fastly.picsum.photos/id/264/64/64.jpg?hmac=uP5TR-6pSSHq7RMAjIDID611ZJRRvWMOh5IMwra3ApM")!,
             title: "강아지가 갑자기 밥을 안 먹어요. 무슨 문제일까요?",
-            description: "강아지가 원래 식욕이 많은 편이였는데 갑자기 밥을 먹지 않습니다. 왜 이러는지 알 수 있을까요???"
+            description: "강아지가 원래 식욕이 많은 편이였는데 갑자기 밥을 먹지 않습니다."
         ),
         .init(
             id: UUID(),

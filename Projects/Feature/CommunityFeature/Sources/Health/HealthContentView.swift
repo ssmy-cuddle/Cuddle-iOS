@@ -37,13 +37,15 @@ public struct HealthContentView: View {
                 
                 Text(healthContent.description)
                     .font(.pretendardBody10)
-                    .frame(alignment: .leading)
+                    .multilineTextAlignment(.leading)
+                    .frame(height: 24, alignment: .leading)
+                    .lineLimit(2)
                 
                 Rectangle()
                     .frame(maxWidth: .infinity)
                     .frame(height: 0.83)
                     .foregroundStyle(Color(red: 0.91, green: 0.91, blue: 0.91))
-                    .contentMargins(.top, 12)
+                    .padding(.top, 12)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

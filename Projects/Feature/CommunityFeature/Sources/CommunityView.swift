@@ -42,6 +42,12 @@ public struct CommunityView: View {
         Health()
     }
     
+    let waltmateStore = StoreOf<Waltmate>(
+        initialState: Waltmate.State()
+    ) {
+        Waltmate()
+    }
+    
     @ViewBuilder
     public func buildContentView(category: CommunityCategory) -> some View {
         switch category {
@@ -60,10 +66,13 @@ public struct CommunityView: View {
             .padding(.top, 12)
             .padding(.bottom, 16)
         case .walkmate:
-            ForEach(1...70, id: \.self) { count in
-                /*@START_MENU_TOKEN@*/Text("Placeholder \(count)")/*@END_MENU_TOKEN@*/
-            }
-            .zIndex(1)
+            WaltmateView(
+                store: waltmateStore
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 16)
+            
         case .health:
             HealthView(
                 store: healthStore
