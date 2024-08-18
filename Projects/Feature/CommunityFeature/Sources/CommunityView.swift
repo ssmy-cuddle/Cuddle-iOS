@@ -36,6 +36,12 @@ public struct CommunityView: View {
         Daily()
     }
     
+    let healthStore = StoreOf<Health>(
+        initialState: Health.State()
+    ) {
+        Health()
+    }
+    
     @ViewBuilder
     public func buildContentView(category: CommunityCategory) -> some View {
         switch category {
@@ -44,14 +50,14 @@ public struct CommunityView: View {
                 store: dailyStore
             )
             .padding(.horizontal, 16)
-            .padding(.top, 120)
+            .padding(.top, 12)
             .padding(.bottom, 16)
         case .travel:
             TravelPreviewView(
                 store: travelPreviewStore
             )
             .padding(.horizontal, 16)
-            .padding(.top, 120)
+            .padding(.top, 12)
             .padding(.bottom, 16)
         case .walkmate:
             ForEach(1...70, id: \.self) { count in
@@ -59,10 +65,12 @@ public struct CommunityView: View {
             }
             .zIndex(1)
         case .health:
-            ForEach(1...70, id: \.self) { count in
-                /*@START_MENU_TOKEN@*/Text("Placeholder \(count)")/*@END_MENU_TOKEN@*/
-            }
-            .zIndex(1)
+            HealthView(
+                store: healthStore
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 16)
         }
     }
     
@@ -88,6 +96,17 @@ public struct CommunityView: View {
                         Section(
                             header: CommunityCategoryView(store: categoryStore)
                         ) {
+                            BannerView(
+                                store: StoreOf<Banner>(
+                                    initialState: Banner.State()
+                                ) {
+                                    Banner()
+                                }
+                            )
+                            .aspectRatio(290 / 71, contentMode: .fit)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 90)
+                            
                             buildContentView(category: categoryStore.selectedCategory)
                         }
                     }

@@ -10,25 +10,44 @@ import SwiftUI
 
 import DesignSystem
 
+import Kingfisher
+
+import ComposableArchitecture
+
+@Reducer
+public struct Banner {
+    
+    public init() {}
+    
+    @ObservableState
+    public struct State: Equatable {
+        public var banners: [BannerModel] = MockBanner.banners
+        
+        public init() {}
+    }
+}
+
 public struct BannerView: View {
     
-    private let banners: [BannerModel]
+    let store: StoreOf<Banner>
     
-    public init(banners: [BannerModel]) {
-        self.banners = banners
+    public init(store: StoreOf<Banner>) {
+        self.store = store
     }
     
     public var body: some View {
-        ScrollView(.horizontal) {
-            LazyHStack {
-                ForEach(Array(banners.enumerated()), id: \.offset) {
-                    BannerContentView(banner: $0.element)
+        WithViewStore(store, observe: { $0 }) { store in
+            ScrollView(.horizontal) {
+                LazyHStack {
+                    ForEach(Array(store.banners.enumerated()), id: \.offset) {
+                        BannerContentView(banner: $0.element)
+                    }
                 }
+                .scrollTargetLayout()
             }
-            .scrollTargetLayout()
+            .scrollTargetBehavior(.viewAligned)
+            .scrollIndicators(.hidden)
         }
-        .scrollTargetBehavior(.viewAligned)
-        .scrollIndicators(.hidden)
     }
 }
 
@@ -41,7 +60,7 @@ public struct BannerContentView: View {
     }
     
     public var body: some View {
-        banner.image
+        KFImage(banner.imageURL)
             .resizable()
             .aspectRatio(290 / 71, contentMode: .fit)
             .clipShape(.rect(cornerRadius: 8))

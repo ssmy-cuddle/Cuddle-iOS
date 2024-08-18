@@ -60,20 +60,16 @@ public struct HomeView: View {
                         OriginalView(contents: MockOriginalContent.contents)
                             .padding(.top, 28)
                         
-                        BannerView(banners: MockBanner.banners)
-                            .aspectRatio(290 / 71, contentMode: .fit)
-                            .padding(.horizontal, 16)
-                            .padding(.top, 20)
-                        
-//                        BannerView(banners: MockBanner.banners)
-//                            .aspectRatio(290 / 71, contentMode: .fit)
-//                            .padding(.horizontal, 16)
-//                            .padding(.top, 20)
-//                        
-//                        BannerView(banners: MockBanner.banners)
-//                            .aspectRatio(290 / 71, contentMode: .fit)
-//                            .padding(.horizontal, 16)
-//                            .padding(.top, 20)
+                        BannerView(
+                            store: StoreOf<Banner>(
+                                initialState: Banner.State()
+                            ) {
+                                Banner()
+                            }
+                        )
+                        .aspectRatio(290 / 71, contentMode: .fit)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 20)
                         
                         previewView
 //
