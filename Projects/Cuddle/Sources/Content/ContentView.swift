@@ -5,6 +5,7 @@ import DesignSystem
 
 import CommunityFeature
 import HomeFeature
+import ProfileFeature
 
 import AuthenticationFeature
 
@@ -48,7 +49,13 @@ public struct ContentView: View {
         case .diary: Text("여정")
         case .comumnity: CommunityView()
         case .donation: Text("기부")
-        case .profile: Text("프로필")
+        case .profile: ProfileView(
+            store: StoreOf<Profile>(
+                initialState: Profile.State()
+            ) {
+                Profile()
+            }
+        )
         }
     }
 //    

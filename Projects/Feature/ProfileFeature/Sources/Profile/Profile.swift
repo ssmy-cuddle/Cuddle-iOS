@@ -9,6 +9,20 @@ import Foundation
 
 import ComposableArchitecture
 
+public enum CuddlerViewType {
+    case profile(CuddlerModel)
+    case add
+    
+    public var value: String {
+        switch self {
+        case let .profile(profile): profile.name
+        case .add: "add"
+        }
+    }
+}
+
+extension CuddlerViewType: Equatable {}
+
 @Reducer
 public struct Profile {
     
@@ -17,6 +31,9 @@ public struct Profile {
     @ObservableState
     public struct State: Equatable {
         public var profile: ProfileModel? = MockProfile.profile
+        public var cuddlerItems: [CuddlerViewType] {
+            (profile?.cuddlers ?? []).map { .profile($0) } + [.add]
+        }
         
         public init() {}
     }

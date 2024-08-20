@@ -13,6 +13,7 @@ public enum Feature: CaseIterable {
     case authentification
     case home
     case community
+    case profile
 }
 
 extension Feature: TargetDependencyCovertible {
@@ -32,6 +33,11 @@ extension Feature: TargetDependencyCovertible {
                 .project(
                     target: "CommunityFeature",
                     path: .relativeToRoot("Projects/Feature/CommunityFeature")
+                )
+        case .profile:
+                .project(
+                    target: "ProfileFeature",
+                    path: .relativeToRoot("Projects/Feature/ProfileFeature")
                 )
         }
     }

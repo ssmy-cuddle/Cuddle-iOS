@@ -33,7 +33,7 @@ public struct ProfileView: View {
                     .frame(width: 33, height: 33, alignment: .trailing)
                     .position(x: UIScreen.main.bounds.width - 33, y: 0)
                     
-                    VStack {
+                    VStack(spacing: .zero) {
                         if let profileImageURL = store.profile?.imageURL {
                             KFImage(profileImageURL)
                                 .resizable()
@@ -112,6 +112,25 @@ public struct ProfileView: View {
                         )
                         .padding(.horizontal, 28)
                         .padding(.top, 16)
+                        
+                        
+                        let columns: [GridItem] = [
+                            GridItem(.flexible(), spacing: 12), // 첫 번째 열
+                            GridItem(.flexible())  // 두 번째 열
+                        ]
+                        
+                        LazyVGrid(columns: columns, spacing: 12) {
+                            ForEach(store.cuddlerItems, id: \.value) { type in
+                                switch type {
+                                case let .profile(profile):
+                                    CuddlerProfileView(cuddler: profile)
+                                case .add:
+                                    CuddlerAddProfileView()
+                                }
+                            }
+                        }
+                        .padding(.top, 16)
+                        .padding(.horizontal, 18)
                     }
                     
                     
@@ -122,7 +141,6 @@ public struct ProfileView: View {
     }
 
 }
-
 
 public struct ProfileDescriptionView: View {
     
