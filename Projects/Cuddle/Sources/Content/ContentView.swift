@@ -47,7 +47,13 @@ public struct ContentView: View {
         switch navigationType {
         case .home: HomeView()
         case .diary: Text("여정")
-        case .comumnity: CommunityView()
+        case .comumnity: CommunityNavigationView(
+            store: StoreOf<CommunityNavigation>(
+                initialState: CommunityNavigation.State()
+            ) {
+                CommunityNavigation()
+            }
+        )
         case .donation: Text("기부")
         case .profile: ProfileView(
             store: StoreOf<Profile>(
@@ -112,6 +118,7 @@ public struct ContentView: View {
                     }
                     .ignoresSafeArea()
                     .tabViewStyle(.page(indexDisplayMode: .never))
+
                     Rectangle()
                         .frame(height: 0.3)
                         .foregroundStyle(Color(red: 0.52, green: 0.52, blue: 0.52))

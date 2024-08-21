@@ -1,5 +1,5 @@
 //
-//  CommunityCategory.swift
+//  Community.swift
 //  CommunityFeature
 //
 //  Created by mvldev7 on 8/1/24.
@@ -8,45 +8,28 @@
 import Foundation
 import SwiftUI
 
-import AppResource
+import ComposableArchitecture
 
-public enum CommunityCategory {
-    case daily
-    case travel
-    case walkmate
-    case health
-}
-
-extension CommunityCategory: CaseIterable {}
-
-public extension CommunityCategory {
+@Reducer
+public struct CommunityCategory {
     
-    var icon: Image {
-        switch self {
-        case .daily: AppResourceAsset.Image.icCommunityDaily.swiftUIImage
-        case .travel: AppResourceAsset.Image.icCommunityTravel.swiftUIImage
-        case .walkmate: AppResourceAsset.Image.icCommunityWalkmate.swiftUIImage
-        case .health: AppResourceAsset.Image.icCommunityHealth.swiftUIImage
-        }
+    @ObservableState
+    public struct State: Equatable {
+        var categories: [CommunityCategoryType] = CommunityCategoryType.allCases
+        var selectedCategory: CommunityCategoryType = .daily
     }
     
-    var title: String {
-        switch self {
-        case .daily: "일상"
-        case .travel: "여행기"
-        case .walkmate: "산책메이트"
-        case .health: "건강관리"
-        }
+    public enum Action: Equatable {
+        case changeCategory(CommunityCategoryType)
     }
     
-    var tintColor: Color {
-        switch self {
-        case .daily: Color(red: 1, green: 0.45, blue: 0.45)
-        case .travel: Color(red: 0.82, green: 0.43, blue: 1)
-        case .walkmate: AppResourceAsset.Color.lubbyBlue.swiftUIColor
-        case .health: AppResourceAsset.Color.cuddleGreen.swiftUIColor
-            
-            
+    public var body: some Reducer<State, Action> {
+        Reduce { state, action in
+            switch action {
+            case let .changeCategory(category):
+                state.selectedCategory = category
+                return .none
+            }
         }
     }
 }

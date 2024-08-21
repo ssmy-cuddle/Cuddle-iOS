@@ -72,46 +72,6 @@ public struct HomeView: View {
                         .padding(.top, 20)
                         
                         previewView
-//
-//                        DailyContentView(
-//                            store: StoreOf<DailyContent>(
-//                                initialState: DailyContent.State()
-//                            ) {
-//                                DailyContent()
-//                            }
-//                        )
-//                        .padding(.bottom, 60)
-                        
-//                        BannerView(banners: MockBanner.banners)
-//                            .aspectRatio(290 / 71, contentMode: .fit)
-//                            .padding(.horizontal, 16)
-//                            .padding(.top, 20)
-//                        
-//                        PreviewFilterView(
-//                            store: StoreOf<PreviewFilter>(
-//                                initialState: PreviewFilter.State()
-//                            ) {
-//                                PreviewFilter()
-//                            }
-//                        )
-//                        .padding(.horizontal, 16)
-//                        .padding(.vertical, 20)
-//                        
-//                        
-//                        BannerView(banners: MockBanner.banners)
-//                            .aspectRatio(290 / 71, contentMode: .fit)
-//                            .padding(.horizontal, 16)
-//                            .padding(.top, 20)
-//                        
-//                        PreviewFilterView(
-//                            store: StoreOf<PreviewFilter>(
-//                                initialState: PreviewFilter.State()
-//                            ) {
-//                                    PreviewFilter()
-//                            }
-//                        )
-//                        .padding(.horizontal, 16)
-//                        .padding(.vertical, 20)
                     }
                     .background(.white)
                     .zIndex(3)

@@ -18,12 +18,16 @@ import ComposableArchitecture
 
 public struct CommunityView: View {
     
-    public init() {}
+    let store: StoreOf<Community>
     
-    let categoryStore = StoreOf<Community>(
-        initialState: Community.State()
+    public init(store: StoreOf<Community>) {
+        self.store = store
+    }
+    
+    let categoryStore = StoreOf<CommunityCategory>(
+        initialState: CommunityCategory.State()
     ) {
-        Community()
+        CommunityCategory()
     }
     
     let travelPreviewStore = StoreOf<TravelPreview>(initialState: TravelPreview.State()) {
@@ -49,7 +53,7 @@ public struct CommunityView: View {
     }
     
     @ViewBuilder
-    public func buildContentView(category: CommunityCategory) -> some View {
+    public func buildContentView(category: CommunityCategoryType) -> some View {
         switch category {
         case .daily:
             DailyView(
@@ -84,55 +88,85 @@ public struct CommunityView: View {
     }
     
     public var body: some View {
-        ScrollView {
-            ZStack(alignment: .top) {
-                AppResourceAsset.Image.cuddleCommunityBackground.swiftUIImage
-                VStack(alignment: .leading) {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("Cuddle")
-                                .font(.custom(NPS.header.name, size: 20))
-                            Text("커뮤니티")
-                                .font(.custom(NPS.header.name, size: 26))
+        ZStack {
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    ZStack {
+                        Circle()
+                            .frame(width: 50, height: 50)
+                            .shadow(color: .black.opacity(0.25), radius: 20, x: 10, y: 10)
+                        
+                        Button(action: { store.send(.register)} ) {
+                            AppResourceAsset.Image.icRegister.swiftUIImage
+                                .frame(width: 24, height: 24)
+                                .foregroundColor(.white)
                         }
+                        .frame(width: 50, height: 50)
+                        .background(AppResourceAsset.Color.lubbyBlue.swiftUIColor)
+                        .clipShape(.circle)
+                        .shadow(
+                            color: Color(red: 0.6, green: 0.68, blue: 0.85).opacity(0.25),
+                            radius: 4,
+                            x: .zero,
+                            y: 4
+                        )
                     }
-                    .padding(.horizontal, 28)
-                    .padding(.vertical, 38)
-                    
-                    LazyVStack(
-                        pinnedViews: [.sectionHeaders]
-                    ) {
-                        Section(
-                            header: CommunityCategoryView(store: categoryStore)
-                        ) {
-                            BannerView(
-                                store: StoreOf<Banner>(
-                                    initialState: Banner.State()
-                                ) {
-                                    Banner()
-                                }
-                            )
-                            .aspectRatio(290 / 71, contentMode: .fit)
-                            .padding(.horizontal, 16)
-                            .padding(.top, 90)
-                            
-                            buildContentView(category: categoryStore.selectedCategory)
-                        }
-                    }
-                    
                 }
             }
+            .zIndex(20)
+            .padding()
+            
+            ScrollView {
+                ZStack(alignment: .top) {
+                    AppResourceAsset.Image.cuddleCommunityBackground.swiftUIImage
+                    VStack(alignment: .leading) {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("Cuddle")
+                                    .font(.custom(NPS.header.name, size: 20))
+                                Text("커뮤니티")
+                                    .font(.custom(NPS.header.name, size: 26))
+                            }
+                        }
+                        .padding(.horizontal, 28)
+                        .padding(.vertical, 38)
+                        
+                        LazyVStack(
+                            pinnedViews: [.sectionHeaders]
+                        ) {
+                            Section(
+                                header: CommunityCategoryView(store: categoryStore)
+                            ) {
+                                BannerView(
+                                    store: StoreOf<Banner>(
+                                        initialState: Banner.State()
+                                    ) {
+                                        Banner()
+                                    }
+                                )
+                                .aspectRatio(290 / 71, contentMode: .fit)
+                                .padding(.horizontal, 16)
+                                .padding(.top, 90)
+                                
+                                buildContentView(category: categoryStore.selectedCategory)
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            .clipped()
         }
-        .ignoresSafeArea(.all, edges: .bottom)
-        .clipped()
     }
 }
 
 public struct CommunityCategoryView: View {
     
-    let store: StoreOf<Community>
+    let store: StoreOf<CommunityCategory>
     
-    public init(store: StoreOf<Community>) {
+    public init(store: StoreOf<CommunityCategory>) {
         self.store = store
     }
     
@@ -169,11 +203,11 @@ public struct CommunityCategoryView: View {
 
 public struct CommunityCategoryContentView: View {
     
-    let category: CommunityCategory
+    let category: CommunityCategoryType
     let isSelected: Bool
     
     public init(
-        category: CommunityCategory,
+        category: CommunityCategoryType,
         isSelected: Bool
     ) {
         self.category = category

@@ -68,7 +68,7 @@ public struct ProfileView: View {
                         
                         let descriptions: [ProfileDescriptionView.Model] = [
                             .init(title: "게시글", value: "\(store.profile?.postCount ?? .zero)"),
-                            .init(title: "Cuddle과 함께한지", value: "\(store.profile?.joinDay ?? .zero)"),
+                            .init(title: "Cuddle과 함께한지", value: "\(store.profile?.joinDay ?? .zero)일째"),
                             .init(title: "반려동물 수", value: "\(store.profile?.cuddlersCount ?? .zero)")
                         ]
                         

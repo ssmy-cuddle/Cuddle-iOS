@@ -2,7 +2,7 @@
 //  Community.swift
 //  CommunityFeature
 //
-//  Created by mvldev7 on 8/1/24.
+//  Created by mvldev7 on 8/21/24.
 //
 
 import Foundation
@@ -13,22 +13,19 @@ import ComposableArchitecture
 @Reducer
 public struct Community {
     
-    @ObservableState
-    public struct State: Equatable {
-        var categories: [CommunityCategory] = CommunityCategory.allCases
-        var selectedCategory: CommunityCategory = .daily
-    }
+    public init() {}
     
     public enum Action: Equatable {
-        case changeCategory(CommunityCategory)
+        case register
     }
+    
+    @ObservableState
+    public struct State: Equatable {}
     
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case let .changeCategory(category):
-                state.selectedCategory = category
-                return .none
+            case .register: .none
             }
         }
     }
