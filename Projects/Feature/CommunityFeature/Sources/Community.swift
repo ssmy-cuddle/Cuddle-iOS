@@ -20,7 +20,13 @@ public struct Community {
     }
     
     @ObservableState
-    public struct State: Equatable {}
+    public struct State: Equatable {
+        public var isUpdated: Bool = false
+        
+        public init(isUpdated: Bool = false) {
+            self.isUpdated = isUpdated
+        }
+    }
     
     public var body: some Reducer<State, Action> {
         Reduce { state, action in

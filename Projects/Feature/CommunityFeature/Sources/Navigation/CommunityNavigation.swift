@@ -25,6 +25,7 @@ public struct CommunityNavigation {
         
         public init() {
             path.append(.main(.init()))
+            print("init ????")
         }
     }
     
@@ -33,11 +34,15 @@ public struct CommunityNavigation {
             switch action {
             case let .path(action):
                 switch action {
-                case .element(_, .navigateToRegister):
-                    state.path.append(.register(Register.State()))
-                    return .none
                 case .element(_, .navigateToMainView(.register)):
                     state.path.append(.register(Register.State()))
+                    return .none
+                case .element(_, .navigateToRegister(.back)):
+                    state.path.removeLast()
+                    return .none
+                case .element(_, .navigateToRegister(.didEndRegister)):
+                    state.path.removeAll()
+                    state.path.append(.main(Community.State(isUpdated: true)))
                     return .none
                 default:
                     return .none
@@ -45,6 +50,9 @@ public struct CommunityNavigation {
             default:
                 return .none
             }
+        }
+        .forEach(\.path, action: /Action.path) {
+            Path()
         }
     }
 }

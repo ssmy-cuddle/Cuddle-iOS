@@ -56,12 +56,32 @@ public struct CommunityView: View {
     public func buildContentView(category: CommunityCategoryType) -> some View {
         switch category {
         case .daily:
-            DailyView(
-                store: dailyStore
-            )
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 16)
+            VStack {
+                if store.isUpdated {
+                    DailyContentView(
+                        dailyContent: .init(
+                            id: UUID(),
+                            imageURLs: [
+                                URL(string: "https://i.namu.wiki/i/6cHcn6OyBsdtqLwmgIRaTdy2cQKTtSm-zz9OYPuAq0AE4DLyB32P5yIUq1Zvssw070t7GTfdDEeM7QbhxLJ_ew.webp")!,
+                                URL(string: "https://static.wikia.nocookie.net/pokemon/images/f/f3/%EA%B3%A0%EB%9D%BC%ED%8C%8C%EB%8D%95_%EA%B3%B5%EC%8B%9D_%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B8.png/revision/latest?cb=20170405011541&path-prefix=ko")!
+                            ],
+                            likeCounts: 0,
+                            messageCounts: 0,
+                            nickname: "건우",
+                            profileIageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
+                            description: "우리 파덕이 귀엽죠?",
+                            createdAt: Date().addingTimeInterval(-50)
+                        )
+                    )
+                    .padding(.horizontal, 16)
+                }
+                DailyView(
+                    store: dailyStore
+                )
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 16)
+            }
         case .travel:
             TravelPreviewView(
                 store: travelPreviewStore
@@ -131,7 +151,7 @@ public struct CommunityView: View {
                             }
                         }
                         .padding(.horizontal, 28)
-                        .padding(.vertical, 38)
+                        .padding(.top, 38)
                         
                         LazyVStack(
                             pinnedViews: [.sectionHeaders]

@@ -21,7 +21,9 @@ public struct CommunityNavigationView: View {
     
     public var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            Rectangle()
+            NavigationLink(state: CommunityNavigation.Path.State.main(.init())) {
+                Rectangle()
+            }
         } destination: { store in
             switch store.state {
             case .main:
@@ -32,8 +34,22 @@ public struct CommunityNavigationView: View {
                 }
             case .register:
                 if let store = store.scope(state: \.register, action: \.navigateToRegister) {
-                    RegisterView()
+                    RegisterView(store: store)
+                        .padding(.top, safeAreaInsets.top)
                         .navigationBarBackButtonHidden()
+                        .onAppear {
+                            print("Register!!!!!!")
+                        }
+//                        .onAppear {
+//                            withAnimation(.easeIn(duration: 0.5)) {
+//                                self.isAnimating = true
+//                            }
+//                        }
+//                        .onDisappear {
+//                            withAnimation(.easeOut(duration: 0.5)) {
+//                                self.isAnimating = false
+//                            }
+//                        }
                 }
             }
         }

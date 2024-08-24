@@ -49,7 +49,13 @@ public struct DailyContentView: View {
                     .font(.pretendardBody12)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Text("2분전")
+                let components = Calendar.current.dateComponents(
+                    [.second],
+                    from: dailyContent.createdAt,
+                    to: Date()
+                )
+                
+                Text("\(Int(ceil(Double((components.second ?? .zero)) / 60.0)))분전")
                     .font(.pretendardBody12)
                     .foregroundStyle(Color(red: 0.74, green: 0.74, blue: 0.74))
             }
