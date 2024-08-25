@@ -28,6 +28,11 @@ public struct Profile {
     
     public init() {}
     
+    public enum Action {
+        case register
+        case edit(CuddlerModel)
+    }
+    
     @ObservableState
     public struct State: Equatable {
         public var profile: ProfileModel? = MockProfile.profile
@@ -51,8 +56,30 @@ enum MockProfile {
             joinDay: 3,
             cuddlersCount: 2,
             cuddlers: [
-                .init(name: "큰 파덕이", imageURL: URL(string: "https://static.wikia.nocookie.net/pokemon/images/f/f3/%EA%B3%A0%EB%9D%BC%ED%8C%8C%EB%8D%95_%EA%B3%B5%EC%8B%9D_%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B8.png/revision/latest?cb=20170405011541&path-prefix=ko")!, withDay: 40),
-                .init(name: "작은 파덕이", imageURL: URL(string: "https://i.namu.wiki/i/6cHcn6OyBsdtqLwmgIRaTdy2cQKTtSm-zz9OYPuAq0AE4DLyB32P5yIUq1Zvssw070t7GTfdDEeM7QbhxLJ_ew.webp")!, withDay: 24)
+                CuddlerModel(
+                    name: "큰 파덕이",
+                    imageURL: URL(string: "https://static.wikia.nocookie.net/pokemon/images/f/f3/%EA%B3%A0%EB%9D%BC%ED%8C%8C%EB%8D%95_%EA%B3%B5%EC%8B%9D_%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B8.png/revision/latest?cb=20170405011541&path-prefix=ko")!,
+                    withDay: 40,
+                    gender: .male,
+                    birth: Date().addingTimeInterval(60 * 60 * 24 * -240),
+                    kind: "고라파덕",
+                    weight: 12.7,
+                    description: "아주 귀여운 고라파덕",
+                    withDate: Date().addingTimeInterval(60 * 60 * 24 * -40),
+                    endDate: nil
+                ),
+                CuddlerModel(
+                    name: "작은 파덕이",
+                    imageURL: URL(string: "https://i.namu.wiki/i/6cHcn6OyBsdtqLwmgIRaTdy2cQKTtSm-zz9OYPuAq0AE4DLyB32P5yIUq1Zvssw070t7GTfdDEeM7QbhxLJ_ew.webp")!,
+                    withDay: 17,
+                    gender: .female,
+                    birth: Date().addingTimeInterval(60 * 60 * 24 * -120),
+                    kind: "고라파덕",
+                    weight: 6.7,
+                    description: "아주 매우 정말 귀여운 고라파덕",
+                    withDate: Date().addingTimeInterval(60 * 60 * 24 * -24),
+                    endDate: nil
+                )
             ]
         )
     }

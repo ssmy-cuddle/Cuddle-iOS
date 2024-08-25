@@ -12,6 +12,7 @@ import ProjectDescription
 public enum Core: CaseIterable {
     case appResource
     case designSystem
+    case uiComponent
 }
 
 extension Core: TargetDependencyCovertible {
@@ -19,6 +20,7 @@ extension Core: TargetDependencyCovertible {
         switch self {
         case .appResource: .project(target: "AppResource", path: .relativeToRoot("Projects/Core/AppResource"))
         case .designSystem: .project(target: "DesignSystem", path: .relativeToRoot("Projects/Core/DesignSystem"))
+        case .uiComponent: .project(target: "UIComponent", path: .relativeToRoot("Projects/Core/UIComponent"))
         }
     }
 }

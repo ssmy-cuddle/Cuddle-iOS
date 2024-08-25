@@ -123,7 +123,10 @@ public struct ProfileView: View {
                             ForEach(store.cuddlerItems, id: \.value) { type in
                                 switch type {
                                 case let .profile(profile):
-                                    CuddlerProfileView(cuddler: profile)
+                                    CuddlerProfileView(
+                                        cuddler: profile,
+                                        editAction: { store.send(.edit($0)) }
+                                    )
                                 case .add:
                                     CuddlerAddProfileView()
                                 }

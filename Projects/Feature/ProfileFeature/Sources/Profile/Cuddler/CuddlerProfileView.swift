@@ -16,6 +16,7 @@ import Kingfisher
 public struct CuddlerProfileView: View {
     
     let cuddler: CuddlerModel
+    let editAction: (CuddlerModel) -> Void
        
     public var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -23,7 +24,7 @@ public struct CuddlerProfileView: View {
                 .resizable()
                 .aspectRatio(135 / 187, contentMode: .fit)
             
-            Button(action: {}) {
+            Button(action: { editAction(cuddler) }) {
                 AppResourceAsset.Image.icProfileEdit.swiftUIImage
                     .foregroundStyle(.black)
             }

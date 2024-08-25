@@ -10,7 +10,8 @@ let project = Project.feature(
     dependencies: [
         Core.appResource.targetDependency,
         Core.designSystem.targetDependency,
+        Core.uiComponent.targetDependency,
         External.composableArchitecture.targetDependency,
-        Feature.home.targetDependency
+        Feature.home.targetDependency,
     ]
 )

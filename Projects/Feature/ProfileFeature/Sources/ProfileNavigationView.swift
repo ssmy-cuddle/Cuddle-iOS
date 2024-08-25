@@ -1,8 +1,8 @@
 //
-//  CommunityNavigationView.swift
-//  CommunityFeature
+//  ProfileNavigationView.swift
+//  ProfileFeature
 //
-//  Created by mvldev7 on 8/21/24.
+//  Created by mvldev7 on 8/25/24.
 //
 
 import Foundation
@@ -10,43 +10,31 @@ import SwiftUI
 
 import ComposableArchitecture
 
-public struct CommunityNavigationView: View {
+public struct ProfileNavigationView: View {
     
-    @State var store: StoreOf<CommunityNavigation>
+    @State var store: StoreOf<ProfileNavigation>
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     
-    public init(store: StoreOf<CommunityNavigation>) {
+    public init(store: StoreOf<ProfileNavigation>) {
         self.store = store
     }
     
     public var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            NavigationLink(state: CommunityNavigation.Path.State.main(.init())) {
-                Rectangle()
-            }
+            Rectangle()
         } destination: { store in
             switch store.state {
             case .main:
-                if let store = store.scope(state: \.main, action: \.navigateToMainView) {
-                    CommunityView(store: store)
+                if let store = store.scope(state: \.main, action: \.main) {
+                    ProfileView(store: store)
                         .padding(.top, safeAreaInsets.top)
                         .navigationBarBackButtonHidden()
                 }
-            case .register:
-                if let store = store.scope(state: \.register, action: \.navigateToRegister) {
-                    RegisterView(store: store)
+            case .input:
+                if let store = store.scope(state: \.input, action: \.input) {
+                    CuddlerProfileInputView(store: store)
                         .padding(.top, safeAreaInsets.top)
                         .navigationBarBackButtonHidden()
-//                        .onAppear {
-//                            withAnimation(.easeIn(duration: 0.5)) {
-//                                self.isAnimating = true
-//                            }
-//                        }
-//                        .onDisappear {
-//                            withAnimation(.easeOut(duration: 0.5)) {
-//                                self.isAnimating = false
-//                            }
-//                        }
                 }
             }
         }

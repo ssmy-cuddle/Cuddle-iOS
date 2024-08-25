@@ -45,6 +45,14 @@ public struct ContentView: View {
         }
     )
     
+    let profileNavigation = ProfileNavigationView(
+        store: StoreOf<ProfileNavigation>(
+            initialState: ProfileNavigation.State()
+        ) {
+            ProfileNavigation()
+        }
+    )
+    
     // MARK: View Property
     
     private let splashScreenTransition: AnyTransition = .opacity.animation(
@@ -60,13 +68,7 @@ public struct ContentView: View {
         case .diary: Text("여정")
         case .comumnity: communityNavigation
         case .donation: Text("기부")
-        case .profile: ProfileView(
-            store: StoreOf<Profile>(
-                initialState: Profile.State()
-            ) {
-                Profile()
-            }
-        )
+        case .profile: profileNavigation
         }
     }
 //    

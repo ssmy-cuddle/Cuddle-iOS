@@ -1,8 +1,8 @@
 //
-//  CommunityNavigation.swift
-//  CommunityFeature
+//  ProfileNavigation.swift
+//  ProfileFeature
 //
-//  Created by mvldev7 on 8/21/24.
+//  Created by mvldev7 on 8/25/24.
 //
 
 import Foundation
@@ -10,13 +10,11 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-public struct CommunityNavigation {
+public struct ProfileNavigation {
     
     public static var initialState: Path.State {
-        Path.State.main(Community.State())
+        Path.State.main(Profile.State())
     }
-    
-    public init() {}
     
     public enum Action {
         case path(StackAction<Path.State, Path.Action>)
@@ -24,28 +22,31 @@ public struct CommunityNavigation {
     }
     
     @ObservableState
-    public struct State: Equatable {
+    public struct State {
         public var path = StackState<Path.State>()
         
         public init() {
-            path.append(CommunityNavigation.initialState)
+            path.append(ProfileNavigation.initialState)
         }
     }
     
+    public init() {}
+
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case let .path(action):
                 switch action {
-                case .element(_, .navigateToMainView(.register)):
-                    state.path.append(.register(Register.State()))
+                case .element(_, .main(.register)):
+                    state.path.append(.input(CuddlerInput.State(inputType: .register)))
                     return .none
-                case .element(_, .navigateToRegister(.back)):
+                case let .element(_, .main(.edit(cuddler))):
+                    state.path.append(.input(CuddlerInput.State(inputType: .edit(cuddler))))
+                    return .none
+                case .element(_, .main):
+                    return .none
+                case .element(_, .input(.back)):
                     state.path.removeLast()
-                    return .none
-                case .element(_, .navigateToRegister(.didEndRegister)):
-                    state.path.removeAll()
-                    state.path.append(.main(Community.State(isUpdated: true)))
                     return .none
                 default:
                     return .none
@@ -60,28 +61,26 @@ public struct CommunityNavigation {
     }
 }
 
-// MARK: - Path
-extension CommunityNavigation {
-    
+extension ProfileNavigation {
     @Reducer
     public struct Path {
         @ObservableState
         public enum State: Equatable {
-            case main(Community.State)
-            case register(Register.State)
+            case main(Profile.State)
+            case input(CuddlerInput.State)
         }
     
         public enum Action {
-            case navigateToMainView(Community.Action)
-            case navigateToRegister(Register.Action)
+            case main(Profile.Action)
+            case input(CuddlerInput.Action)
         }
         
         public var body: some ReducerOf<Self> {
-            Scope(state: \.main, action: \.navigateToMainView) {
-                Community()
+            Scope(state: \.main, action: \.main) {
+                Profile()
             }
-            Scope(state: \.register, action: \.navigateToRegister) {
-                Register()
+            Scope(state: \.input, action: \.input) {
+                CuddlerInput()
             }
         }
     }
