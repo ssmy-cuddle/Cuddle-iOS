@@ -128,7 +128,9 @@ public struct ProfileView: View {
                                         editAction: { store.send(.edit($0)) }
                                     )
                                 case .add:
-                                    CuddlerAddProfileView()
+                                    CuddlerAddProfileView(
+                                        action: { store.send(.register) }
+                                    )
                                 }
                             }
                         }
@@ -138,7 +140,7 @@ public struct ProfileView: View {
                     
                     
                 }
-                .padding(.top, 32)
+                .padding(.vertical, 32)
             }
         }
     }
