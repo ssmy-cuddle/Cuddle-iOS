@@ -68,7 +68,13 @@ public struct ContentView: View {
         case .diary: Text("여정")
         case .comumnity: communityNavigation
         case .donation: Text("기부")
-        case .profile: profileNavigation
+        case .profile: ProfileNavigationView(
+            store: StoreOf<ProfileNavigation>(
+                initialState: ProfileNavigation.State()
+            ) {
+                ProfileNavigation()
+            }
+        )
         }
     }
 //    

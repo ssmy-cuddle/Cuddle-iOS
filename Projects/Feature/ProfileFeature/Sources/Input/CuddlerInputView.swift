@@ -31,170 +31,200 @@ public struct CuddlerProfileInputView: View {
                 .resizable()
                 .aspectRatio(1, contentMode: .fit)
                 .clipShape(.circle)
+                .overlay {
+                    Circle()
+                        .stroke(.white, lineWidth: 3)
+                }
+            
         case let .preRegistration(image):
             Image(uiImage: image)
                 .resizable()
                 .aspectRatio(1, contentMode: .fit)
                 .clipShape(.circle)
+                .overlay {
+                    Circle()
+                        .stroke(.white, lineWidth: 3)
+                }
         case .none:
-            Circle()
+            AppResourceAsset.Image.icCuddlerDefaultProfile.swiftUIImage
+                .resizable()
+                .padding(22)
+                .background(Color(red: 245/255, green: 245/255, blue: 245/255))
                 .aspectRatio(1, contentMode: .fit)
+                .clipShape(.circle)
+                .overlay {
+                    Circle()
+                        .stroke(.white, lineWidth: 5)
+                }
         }
     }
     
     public var body: some View {
         WithViewStore(store, observe: { $0 }) { store in
-            VStack {
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .foregroundColor(.white)
-                        .frame(height: 17 + 16 + 16)
-                        .frame(maxWidth: .infinity)
-                        .shadow(color: .black.opacity(0.1), radius: 3, x: .zero, y: 4)
-                    
-                    Button(
-                        action: { store.send(.back) }
-                    ) {
-                        AppResourceAsset.Image.icButtonBack.swiftUIImage
-                            .foregroundColor(.black)
-                            .frame(width: 36, height: 36, alignment: .leading)
-                    }
+            ZStack(alignment: .center) {
+                if store.isLoading {
+                    ProgressView()
+                        .zIndex(40)
                 }
-                
-                ScrollView {
-                    ZStack {
-                        Color.white // 전체 배경을 설정하여 제스처 감지
-                            .onTapGesture {
-                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                            }
-                        VStack(alignment: .leading) {
-                            Text(store.title)
-                                .font(.custom(Pretendard.title.name, size: 22))
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .padding(.horizontal, 20)
-                                .padding(.top, 22)
-                            
-                            CuddlePhotoPicker(
-                                selectedPhotos: [],
-                                selectedImages: store.binding(
-                                    get: \.image.images,
-                                    send: { .binding(.set(\.image, .preRegistration($0.first!))) }
-                                ),
-                                maxSelectedCount: 1
-                            ) {
-                                imageView
-                            }
-                            .padding(.horizontal, 100)
-                            
-                            CuddlerTextField(
-                                title: "이름",
-                                placeHolder: "반려동물의 이름을 입력해주세요.",
-                                isRequired: true,
-                                value: $store.name
-                            )
-                            .padding(.horizontal, 20)
-                            
-                            CuddleDatePickerView(
-                                title: "생일",
-                                isRequired: true,
-                                date: store.binding(
-                                    get: { $0.birth },
-                                    send: { .binding(.set(\.birth, $0 ?? Date())) }
-                                )
-                            )
-                            .padding(.horizontal, 20)
-                            .padding(.top, 36)
-                            
-                            CuddlerTextField(
-                                title: "품종",
-                                placeHolder: "반려동물의 품종을 입력해주세요.",
-                                isRequired: true,
-                                value: $store.kind
-                            )
-                            .padding(.horizontal, 20)
-                            .padding(.top, 36)
-                            
-                            CuddleDatePickerView(
-                                title: "입양 날짜",
-                                isRequired: true,
-                                date: store.binding(
-                                    get: { $0.withDate },
-                                    send: { .binding(.set(\.withDate, $0 ?? Date())) }
-                                )
-                            )
-                            .padding(.horizontal, 20)
-                            .padding(.top, 36)
-                            
-                            CuddleDatePickerView(
-                                title: "이별 날짜",
-                                isRequired: false,
-                                date: store.binding(
-                                    get: { $0.endDate },
-                                    send: { .binding(.set(\.endDate, $0 ?? Date())) }
-                                )
-                            )
-                            .padding(.horizontal, 20)
-                            .padding(.top, 36)
-                            
-                            
+                VStack {
+                    ZStack(alignment: .leading) {
+                        Rectangle()
+                            .foregroundColor(.white)
+                            .frame(height: 17 + 16 + 16)
+                            .frame(maxWidth: .infinity)
+                            .shadow(color: .black.opacity(0.1), radius: 3, x: .zero, y: 4)
+                        
+                        Button(
+                            action: { store.send(.back) }
+                        ) {
+                            AppResourceAsset.Image.icButtonBack.swiftUIImage
+                                .foregroundColor(.black)
+                                .frame(width: 36, height: 36, alignment: .leading)
+                        }
+                    }
+                    
+                    ScrollView {
+                        ZStack {
+                            Color.white // 전체 배경을 설정하여 제스처 감지
+                                .onTapGesture {
+                                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                                }
                             VStack(alignment: .leading) {
-                                Text("성별")
-                                    .font(.npsTitle12)
-                                HStack {
-                                    ForEach(GenderModel.allCases, id: \.hashValue) { gender in
-                                        CuddleRadioContentView(
-                                            value: gender.shortenTitle,
-                                            isSelected: store.gender == gender
-                                        ).onTapGesture {
-                                            store.send(.binding(.set(\.gender, gender)))
+                                Text(store.title)
+                                    .font(.custom(Pretendard.title.name, size: 22))
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                                    .padding(.horizontal, 20)
+                                    .padding(.top, 22)
+                                
+                                CuddlePhotoPicker(
+                                    selectedPhotos: [],
+                                    selectedImages: store.binding(
+                                        get: \.image.images,
+                                        send: { .binding(.set(\.image, .preRegistration($0.first!))) }
+                                    ),
+                                    maxSelectedCount: 1
+                                ) {
+                                    imageView
+                                }
+                                .padding(.horizontal, 100)
+                                .padding(.top, 22)
+                                .shadow(
+                                    color: Color(red: 0.4, green: 0.4, blue: 0.4).opacity(0.15),
+                                    radius: 15,
+                                    x: .zero,
+                                    y: 3
+                                )
+                                
+                                CuddlerTextField(
+                                    title: "이름",
+                                    placeHolder: "반려동물의 이름을 입력해주세요.",
+                                    isRequired: true,
+                                    value: $store.name
+                                )
+                                .padding(.horizontal, 20)
+                                .padding(.top, 12)
+                                
+                                CuddleDatePickerView(
+                                    title: "생일",
+                                    isRequired: true,
+                                    date: store.binding(
+                                        get: { $0.birth },
+                                        send: { .binding(.set(\.birth, $0 ?? Date())) }
+                                    )
+                                )
+                                .padding(.horizontal, 20)
+                                .padding(.top, 36)
+                                
+                                CuddlerTextField(
+                                    title: "품종",
+                                    placeHolder: "반려동물의 품종을 입력해주세요.",
+                                    isRequired: true,
+                                    value: $store.kind
+                                )
+                                .padding(.horizontal, 20)
+                                .padding(.top, 36)
+                                
+                                CuddleDatePickerView(
+                                    title: "입양 날짜",
+                                    isRequired: true,
+                                    date: store.binding(
+                                        get: { $0.withDate },
+                                        send: { .binding(.set(\.withDate, $0 ?? Date())) }
+                                    )
+                                )
+                                .padding(.horizontal, 20)
+                                .padding(.top, 36)
+                                
+                                CuddleDatePickerView(
+                                    title: "이별 날짜",
+                                    isRequired: false,
+                                    date: store.binding(
+                                        get: { $0.endDate },
+                                        send: { .binding(.set(\.endDate, $0 ?? Date())) }
+                                    )
+                                )
+                                .padding(.horizontal, 20)
+                                .padding(.top, 36)
+                                
+                                
+                                VStack(alignment: .leading, spacing: 16) {
+                                    Text("성별")
+                                        .font(.npsTitle12)
+                                    HStack {
+                                        ForEach(GenderModel.allCases, id: \.hashValue) { gender in
+                                            CuddleRadioContentView(
+                                                value: gender.shortenTitle,
+                                                selectedValue: store.gender?.shortenTitle,
+                                                action: { store.send(.binding(.set(\.gender, gender)))}
+                                            )
+                                            .frame(maxWidth: .infinity)
                                         }
+                                    }
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.top, 30)
+                                
+                                VStack(alignment: .leading) {
+                                    Text("몸무게")
+                                        .font(.npsTitle12)
+                                    
+                                    HStack {
+                                        VStack(alignment: .leading) {
+                                            TextField(
+                                                "",
+                                                text: store.binding(
+                                                    get: { String($0.weight) },
+                                                    send: { .binding(.set(\.weight, Double($0) ?? .zero )) }
+                                                )
+                                            )
+                                            .font(.npsTitle12)
+                                            .keyboardType(.decimalPad)
+                                            .frame(width: 60)
+                                            
+                                            Rectangle()
+                                                .frame(height: 1)
+                                        }
+                                        Text("kg")
+                                            .font(.npsTitle12)
+                                        
                                         Spacer()
                                     }
                                 }
-                            }
-                            .padding(.horizontal, 20)
-                            .padding(.top, 30)
-                            
-                            VStack(alignment: .leading) {
-                                Text("몸무게")
-                                    .font(.npsTitle12)
+                                .padding(.horizontal, 20)
+                                .padding(.top, 36)
+                                .frame(maxWidth: 120, alignment: .leading)
                                 
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        TextField(
-                                            "",
-                                            text: store.binding(
-                                                get: { String($0.weight) },
-                                                send: { .binding(.set(\.weight, Double($0) ?? .zero )) }
-                                            )
-                                        )
-                                        .font(.npsTitle12)
-                                        .keyboardType(.decimalPad)
-                                        .frame(width: 60)
-                                        
-                                        Rectangle()
-                                            .frame(height: 1)
-                                    }
-                                    Text("kg")
-                                        .font(.npsTitle12)
-                                    
-                                    Spacer()
-                                }
+                                CuddleTextButton(
+                                    action: { store.send(.confirm) },
+                                    theme: .primary(.yellow),
+                                    text: "\(store.buttonTitle)",
+                                    font: .pretendardTitle16
+                                )
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 28)
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.top, 36)
-                            .frame(maxWidth: 120, alignment: .leading)
-                            
-                            CuddleTextButton(
-                                action: { store.send(.confirm) },
-                                theme: .primary(.yellow),
-                                text: "수정완료",
-                                font: .pretendardTitle16
-                            )
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 28)
+                            .padding(.top, 10)
                         }
-                        .padding(.top, 10)
                     }
                 }
             }
@@ -254,6 +284,33 @@ public struct CuddleDatePickerView: View {
         self._date = date
     }
     
+    private var formattedYearString: String {
+        if let date = date {
+            date.formatted(.dateTime.year(.defaultDigits)) + "년"
+        } else {
+            "           년" // 4칸 공백 + 년
+        }
+    }
+    
+    private var formattedMonthString: String {
+        if let date = date {
+            date.formatted(.dateTime.month(.defaultDigits))
+                .padding(toLength: 2, withPad: " ", startingAt: .zero) + "월"
+        } else {
+            "    월" // 2칸 공백 + 월
+        }
+    }
+    
+    private var formattedDayString: String {
+        if let date = date {
+            date.formatted(.dateTime.day(.defaultDigits))
+                .padding(toLength: 2, withPad: " ", startingAt: .zero) + "일"
+        } else {
+            "    일" // 2칸 공백 + 월
+        }
+    }
+    
+    
     public var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -268,13 +325,15 @@ public struct CuddleDatePickerView: View {
             
             VStack(spacing: 8) {
                 HStack(spacing: .zero) {
-                    Text("\((date?.formatted(.dateTime.year(.defaultDigits))) ?? "")년")
+                    Text(formattedYearString)
                         .font(.npsTitle12)
                     Spacer()
-                    Text("\((date?.formatted(.dateTime.month(.defaultDigits))) ?? "")월")
+                    
+                    Text(formattedMonthString)
                         .font(.npsTitle12)
                     Spacer()
-                    Text("\((date?.formatted(.dateTime.day(.defaultDigits))) ?? "")일")
+                    
+                    Text(formattedDayString)
                         .font(.npsTitle12)
                     Spacer()
                 }
@@ -320,21 +379,31 @@ public struct CuddleDatePickerView: View {
 }
 
 public struct CuddleRadioContentView: View {
-    var value: String
-    var isSelected: Bool
+    @State var value: String
+    var selectedValue: String?
     
-    public init(value: String, isSelected: Bool) {
+    let action: () -> Void
+    
+    public init(value: String, selectedValue: String?, action: @escaping () -> Void) {
         self.value = value
-        self.isSelected = isSelected
+        self.selectedValue = selectedValue
+        self.action = action
     }
     
     public var body: some View {
-        HStack(spacing: 16) {
-            (isSelected ? AppResourceAsset.Image.icRadioSelected.swiftUIImage : AppResourceAsset.Image.icRadioNormal.swiftUIImage)
-                .frame(width: 16, height: 16)
-            Text(value)
-                .font(.npsTitle12)
+        Button(action: action) {
+            HStack(spacing: 16) {
+                (value == selectedValue ? AppResourceAsset.Image.icRadioSelected.swiftUIImage : AppResourceAsset.Image.icRadioNormal.swiftUIImage)
+                    .frame(width: 16, height: 16)
+                Text(value)
+                    .font(.npsTitle12)
+                Spacer()
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 4)
         }
+        .background(.white)
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

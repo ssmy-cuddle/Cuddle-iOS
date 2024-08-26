@@ -11,6 +11,16 @@ public enum CuddlerProfileInputType {
     case register
     case edit(CuddlerModel)
     
+    public var cuddler: CuddlerModel? {
+        switch self {
+        case .register: nil
+        case let .edit(cuddler): cuddler
+        }
+    }
+}
+
+extension CuddlerProfileInputType {
+    
     public var title: String {
         switch self {
         case .register: "프로필 등록"
@@ -18,10 +28,10 @@ public enum CuddlerProfileInputType {
         }
     }
     
-    public var cuddler: CuddlerModel? {
+    public var buttonTitle: String {
         switch self {
-        case .register: nil
-        case let .edit(cuddler): cuddler
+        case .register: "등록"
+        case .edit: "수정완료"
         }
     }
 }

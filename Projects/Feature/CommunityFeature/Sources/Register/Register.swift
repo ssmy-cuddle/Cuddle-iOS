@@ -55,7 +55,6 @@ public struct Register {
                 state.isLoading = false
                 return .none
             case .binding(\.title):
-                print("title \(state.title)")
                 return .none
             case .binding:
                 return .none

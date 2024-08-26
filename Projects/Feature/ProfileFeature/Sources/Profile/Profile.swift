@@ -36,11 +36,12 @@ public struct Profile {
     @ObservableState
     public struct State: Equatable {
         public var profile: ProfileModel? = MockProfile.profile
+        public var isRegistered: Bool = false
         public var cuddlerItems: [CuddlerViewType] {
-            (profile?.cuddlers ?? []).map { .profile($0) } + [.add]
+            let cuddlers = (profile?.cuddlers ?? []) +
+            (isRegistered ? [MockProfile.pikachu] : [])
+            return cuddlers.map { .profile($0) } + [.add]
         }
-        
-        public init() {}
     }
 }
 
@@ -81,6 +82,21 @@ enum MockProfile {
                     endDate: nil
                 )
             ]
+        )
+    }
+    
+    static var pikachu: CuddlerModel {
+        CuddlerModel(
+            name: "피카츄",
+            imageURL: URL(string: "https://i.namu.wiki/i/l0x04r27DjSQmS-WgYk6I5x6IkKMyvZjRMyK5dI3EMoMikzCd2Kfl2SMRdvL3-y4zpxI_qLP-fs3QToSR7AU3g.webp")!,
+            withDay: 1,
+            gender: .female,
+            birth: Date().addingTimeInterval(60 * 60 * 24 * -20),
+            kind: "쥐",
+            weight: 20.0,
+            description: "아주 매우 정말 귀여운 피카츄",
+            withDate: Date().addingTimeInterval(60 * 60 * 24 * -1),
+            endDate: nil
         )
     }
 }

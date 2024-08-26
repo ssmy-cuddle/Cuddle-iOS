@@ -30,11 +30,13 @@ public struct CuddlerInput {
         case binding(BindingAction<State>)
         case back
         case confirm
+        case didEndRegister
     }
     
     @ObservableState
     public struct State: Equatable {
         public var title: String
+        public var buttonTitle: String
         public var image: ImageStatus
         public var name: String
         public var birth: Date
@@ -45,8 +47,11 @@ public struct CuddlerInput {
         public var withDate: Date
         public var endDate: Date?
         
+        public var isLoading: Bool = false
+        
         public init(inputType: CuddlerProfileInputType) {
             self.title = inputType.title
+            self.buttonTitle = inputType.buttonTitle
             self.image = if let imageURL = inputType.cuddler?.imageURL {
                 .url(imageURL)
             } else {
@@ -68,7 +73,16 @@ public struct CuddlerInput {
     public var body: some Reducer<State, Action> {
         BindingReducer()
         Reduce { state, action in
-            return .none
+            switch action {
+            case .confirm:
+                state.isLoading = true
+                return .run { send in
+                    try await Task.sleep(for: .seconds(2))
+                    await send(.didEndRegister)
+                }
+            default:
+                return .none
+            }
         }
     }
 }

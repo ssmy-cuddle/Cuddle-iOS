@@ -28,4 +28,5 @@ extension GenderModel {
     }
 }
 
+extension GenderModel: Equatable {}
 extension GenderModel: CaseIterable {}

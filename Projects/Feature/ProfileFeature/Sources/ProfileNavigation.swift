@@ -13,7 +13,7 @@ import ComposableArchitecture
 public struct ProfileNavigation {
     
     public static var initialState: Path.State {
-        Path.State.main(Profile.State())
+        .main(Profile.State())
     }
     
     public enum Action {
@@ -47,6 +47,12 @@ public struct ProfileNavigation {
                     return .none
                 case .element(_, .input(.back)):
                     state.path.removeLast()
+                    return .none
+                case .element(_, .input(.didEndRegister)):
+                    state.path.removeAll()
+                    state.path.append(
+                        .main(Profile.State(isRegistered: true))
+                    )
                     return .none
                 default:
                     return .none
