@@ -1,0 +1,32 @@
+//
+//  Dependency+Domain.swift
+//  DependencyPlugin
+//
+//  Created by mvldev7 on 8/27/24.
+//
+
+import Foundation
+
+import ProjectDescription
+
+public enum Domain: CaseIterable {
+    case base
+    case profile
+}
+
+extension Domain: TargetDependencyCovertible {
+    public var targetDependency: TargetDependency {
+        switch self {
+        case .base:
+                .project(
+                    target: "BaseDomain",
+                    path: .relativeToRoot("Projects/Domain/BaseDomain")
+                )
+        case .profile:
+                .project(
+                    target: "ProfileDomain",
+                    path: .relativeToRoot("Projects/Domain/ProfileDomain")
+                )
+        }
+    }
+}

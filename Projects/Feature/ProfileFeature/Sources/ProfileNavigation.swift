@@ -37,10 +37,10 @@ public struct ProfileNavigation {
             switch action {
             case let .path(action):
                 switch action {
-                case .element(_, .main(.register)):
+                case .element(_, .main(.view(.registerButtonTapped))):
                     state.path.append(.input(CuddlerInput.State(inputType: .register)))
                     return .none
-                case let .element(_, .main(.edit(cuddler))):
+                case let .element(_, .main(.view(.editButtonTapped(cuddler)))):
                     state.path.append(.input(CuddlerInput.State(inputType: .edit(cuddler))))
                     return .none
                 case .element(_, .main):
@@ -51,7 +51,7 @@ public struct ProfileNavigation {
                 case .element(_, .input(.didEndRegister)):
                     state.path.removeAll()
                     state.path.append(
-                        .main(Profile.State(isRegistered: true))
+                        .main(Profile.State())
                     )
                     return .none
                 default:

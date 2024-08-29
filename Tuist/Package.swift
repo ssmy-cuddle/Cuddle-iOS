@@ -11,8 +11,7 @@ import PackageDescription
         productTypes: [
             "ComposableArchitecture": .framework,
             "Swinject": .framework,
-            "SwinjectAutoregistration": .framework,
-            "Kingfisher": .framework
+            "Lottie": .framework
         ]
     )
 #endif
@@ -21,8 +20,7 @@ let package = Package(
     name: "Cuddle",
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.11.2"),
-        .package(url: "https://github.com/Swinject/Swinject", from: "2.8.0"),
-        .package(url: "https://github.com/Swinject/SwinjectAutoregistration", from: "2.8.0"),
-        .package(url: "https://github.com/onevcat/Kingfisher", from: "7.12.0")
+        .package(url: "https://github.com/onevcat/Kingfisher", from: "7.12.0"),
+        .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.0")
     ]
 )

@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 import AppResource
+import BaseFeature
 import DesignSystem
 import UIComponent
 
@@ -63,7 +64,7 @@ public struct CuddlerProfileInputView: View {
         WithViewStore(store, observe: { $0 }) { store in
             ZStack(alignment: .center) {
                 if store.isLoading {
-                    ProgressView()
+                    LoadingView()
                         .zIndex(40)
                 }
                 VStack {

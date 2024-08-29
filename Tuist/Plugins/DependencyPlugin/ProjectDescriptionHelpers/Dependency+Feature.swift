@@ -10,6 +10,7 @@ import Foundation
 import ProjectDescription
 
 public enum Feature: CaseIterable {
+    case base
     case authentification
     case home
     case community
@@ -19,6 +20,11 @@ public enum Feature: CaseIterable {
 extension Feature: TargetDependencyCovertible {
     public var targetDependency: TargetDependency {
         switch self {
+        case .base:
+                .project(
+                    target: "BaseFeature",
+                    path: .relativeToRoot("Projects/Feature/BaseFeature")
+                )
         case .authentification:
                 .project(
                     target: "AuthenticationFeature",

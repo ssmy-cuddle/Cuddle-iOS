@@ -27,7 +27,6 @@ public struct ProfileNavigationView: View {
             case .main:
                 if let store = store.scope(state: \.main, action: \.main) {
                     ProfileView(store: store)
-                        .padding(.top, safeAreaInsets.top)
                         .navigationBarBackButtonHidden()
                 }
             case .input:

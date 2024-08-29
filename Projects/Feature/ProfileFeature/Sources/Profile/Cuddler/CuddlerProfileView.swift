@@ -10,13 +10,14 @@ import SwiftUI
 
 import AppResource
 import DesignSystem
+import ProfileFeatureInterface
 
 import Kingfisher
 
 public struct CuddlerProfileView: View {
     
-    let cuddler: CuddlerModel
-    let editAction: (CuddlerModel) -> Void
+    let cuddler: CuddlerProfileModel
+    let editAction: (CuddlerProfileModel) -> Void
        
     public var body: some View {
         ZStack(alignment: .topTrailing) {

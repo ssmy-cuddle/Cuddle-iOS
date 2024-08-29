@@ -1,18 +1,20 @@
 //
-//  CuddlerGenderModel.swift
-//  ProfileFeature
+//  GenderModel.swift
+//  BaseFeature
 //
-//  Created by mvldev7 on 8/25/24.
+//  Created by mvldev7 on 8/27/24.
 //
 
 import Foundation
+
+import BaseDomain
 
 public enum GenderModel {
     case male
     case female
 }
 
-extension GenderModel {
+public extension GenderModel {
     var title: String {
         switch self {
         case .male: "남자"
@@ -28,5 +30,14 @@ extension GenderModel {
     }
 }
 
-extension GenderModel: Equatable {}
+public extension GenderModel {
+    var asEntity: Gender {
+        switch self {
+        case .male: .male
+        case .female: .female
+        }
+    }
+}
+
 extension GenderModel: CaseIterable {}
+extension GenderModel: Equatable {}

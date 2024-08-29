@@ -8,7 +8,10 @@
 import Foundation
 import UIKit
 
+import BaseFeature
+
 import ComposableArchitecture
+import ProfileDomain
 
 public enum ImageStatus: Equatable {
     case url(URL)
@@ -25,6 +28,8 @@ public enum ImageStatus: Equatable {
 
 @Reducer
 public struct CuddlerInput {
+    
+    @Dependency(\.registerCuddlerProfileUseCase) var registerCuddlerProfileUseCase
     
     public enum Action: BindableAction, Equatable {
         case binding(BindingAction<State>)
@@ -74,15 +79,32 @@ public struct CuddlerInput {
         BindingReducer()
         Reduce { state, action in
             switch action {
-            case .confirm:
-                state.isLoading = true
-                return .run { send in
-                    try await Task.sleep(for: .seconds(2))
-                    await send(.didEndRegister)
-                }
-            default:
-                return .none
+            case .confirm: register(state: &state)
+            default: .none
             }
+        }
+    }
+}
+
+extension CuddlerInput {
+    
+    private func register(state: inout State) -> Effect<Action> {
+        let localState = state
+        state.isLoading = true
+        return .run { send in
+            let cuddler = try await registerCuddlerProfileUseCase.execute(
+                parameters: UpdateCuddlerProfileParameter(
+                    name: localState.name,
+                    image: localState.image.images.first?.pngData(),
+                    gender: localState.gender?.asEntity,
+                    kind: localState.kind,
+                    weight: localState.weight,
+                    description: localState.description,
+                    withDate: localState.withDate,
+                    endDate: localState.endDate
+                )
+            )
+            await send(.didEndRegister)
         }
     }
 }

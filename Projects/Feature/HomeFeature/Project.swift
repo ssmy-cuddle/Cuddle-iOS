@@ -11,6 +11,7 @@ let project = Project.feature(
         Core.appResource.targetDependency,
         Core.designSystem.targetDependency,
         Core.uiComponent.targetDependency,
+        Feature.base.targetDependency,
         External.composableArchitecture.targetDependency,
         External.kingfisher.targetDependency
     ]

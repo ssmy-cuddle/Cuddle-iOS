@@ -1,6 +1,11 @@
 import ProjectDescription
 import DependencyPlugin
 
+let coreDependencies: [TargetDependency] = Core.allCases.map(\.targetDependency)
+let featureDependencies: [TargetDependency] = Feature.allCases.map(\.targetDependency)
+let domainDependencies: [TargetDependency] = Domain.allCases.map(\.targetDependency)
+let externalDependencies: [TargetDependency] = External.allCases.map(\.targetDependency)
+
 let project = Project(
     name: "Cuddle",
     targets: [
@@ -19,15 +24,7 @@ let project = Project(
             ),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            dependencies: Core.allCases.map(\.targetDependency) +
-            External.allCases.map(\.targetDependency) +
-            Feature.allCases.map(\.targetDependency) +
-            [
-                TargetDependency.project(
-                    target: "AuthenticationCoordinator",
-                    path: .relativeToRoot("Projects/Coordinator/AuthenticationCoordinator")
-                )
-            ]
+            dependencies: coreDependencies + featureDependencies + domainDependencies + externalDependencies
         ),
         .target(
             name: "CuddleTests",

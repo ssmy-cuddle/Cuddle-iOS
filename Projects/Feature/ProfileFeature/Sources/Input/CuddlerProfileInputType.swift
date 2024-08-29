@@ -7,11 +7,13 @@
 
 import Foundation
 
+import ProfileFeatureInterface
+
 public enum CuddlerProfileInputType {
     case register
-    case edit(CuddlerModel)
+    case edit(CuddlerProfileModel)
     
-    public var cuddler: CuddlerModel? {
+    public var cuddler: CuddlerProfileModel? {
         switch self {
         case .register: nil
         case let .edit(cuddler): cuddler

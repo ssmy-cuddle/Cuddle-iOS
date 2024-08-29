@@ -15,16 +15,10 @@ import UIComponent
 
 import ComposableArchitecture
 
-
 public struct RegisterView: View {
     
-    @Bindable var store: StoreOf<Register>
-    
+    let store: StoreOf<Register>
     @State private var selectedImageData: [Data] = []
-    
-    //    @State private var selectedPhotos: [PhotosPickerItem] = []
-    //    @State var selectedImages: [UIImage] = []
-    //    @Binding var selectedImages: [UIImage]
     
     public init(store: StoreOf<Register>) {
         self.store = store
@@ -96,7 +90,10 @@ public struct RegisterView: View {
                                             if store.selectedImages.count <= 4 {
                                                 CuddlePhotoPicker(
                                                     selectedPhotos: [],
-                                                    selectedImages: $store.selectedImages
+                                                    selectedImages: store.binding(
+                                                        get: \.selectedImages,
+                                                        send: { .binding(.set(\.selectedImages, $0))}
+                                                    )
                                                 ) {
                                                     Rectangle()
                                                         .frame(width: 65, height: 65, alignment: .leading)
@@ -155,7 +152,7 @@ public struct RegisterView: View {
                                         TextEditor(
                                             text: store.binding(
                                                 get: \.descriotion,
-                                                send: { Register.Action.binding(.set(\.descriotion, $0))}
+                                                send: { .binding(.set(\.descriotion, $0))}
                                             )
                                         )
                                         .frame(height: 160)
