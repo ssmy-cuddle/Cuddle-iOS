@@ -27,7 +27,7 @@ public struct LoadingView: View {
                 }
                 .playing()
             }
-            .frame(width: 48, height: 48)
+            .frame(width: 36, height: 36)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .zIndex(250)

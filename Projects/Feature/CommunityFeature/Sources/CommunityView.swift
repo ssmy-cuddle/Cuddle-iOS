@@ -10,6 +10,7 @@ import SwiftUI
 
 import AppResource
 import DesignSystem
+import UIComponent
 
 // TODO: Feature 간 의존성 분리하기
 import HomeFeature
@@ -57,26 +58,8 @@ public struct CommunityView: View {
         switch category {
         case .daily:
             VStack {
-                if store.isUpdated {
-                    DailyContentView(
-                        dailyContent: .init(
-                            id: UUID(),
-                            imageURLs: [
-                                URL(string: "https://i.namu.wiki/i/6cHcn6OyBsdtqLwmgIRaTdy2cQKTtSm-zz9OYPuAq0AE4DLyB32P5yIUq1Zvssw070t7GTfdDEeM7QbhxLJ_ew.webp")!,
-                                URL(string: "https://static.wikia.nocookie.net/pokemon/images/f/f3/%EA%B3%A0%EB%9D%BC%ED%8C%8C%EB%8D%95_%EA%B3%B5%EC%8B%9D_%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B8.png/revision/latest?cb=20170405011541&path-prefix=ko")!
-                            ],
-                            likeCounts: 0,
-                            messageCounts: 0,
-                            nickname: "건우",
-                            profileIageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
-                            description: "우리 파덕이 귀엽죠?",
-                            createdAt: Date().addingTimeInterval(-50)
-                        )
-                    )
-                    .padding(.horizontal, 16)
-                }
                 DailyView(
-                    store: dailyStore
+                    store: store.scope(state: \.daily, action: \.daily)
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
@@ -108,76 +91,85 @@ public struct CommunityView: View {
     }
     
     public var body: some View {
-        ZStack {
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    ZStack {
-                        Circle()
-                            .frame(width: 50, height: 50)
-                            .shadow(color: .black.opacity(0.25), radius: 20, x: 10, y: 10)
-                        
-                        Button(action: { store.send(.register)} ) {
-                            AppResourceAsset.Image.icRegister.swiftUIImage
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(.white)
-                        }
-                        .frame(width: 50, height: 50)
-                        .background(AppResourceAsset.Color.lubbyBlue.swiftUIColor)
-                        .clipShape(.circle)
-                        .shadow(
-                            color: Color(red: 0.6, green: 0.68, blue: 0.85).opacity(0.25),
-                            radius: 4,
-                            x: .zero,
-                            y: 4
-                        )
-                    }
-                }
-            }
-            .zIndex(20)
-            .padding()
-            
-            ScrollView {
-                ZStack(alignment: .top) {
-                    AppResourceAsset.Image.cuddleCommunityBackground.swiftUIImage
-                    VStack(alignment: .leading) {
+        WithViewStore(store, observe: { $0 }) { store in
+            ZStack {
+                if store.isLoading {
+                    LoadingView()
+                } else {
+                    VStack {
+                        Spacer()
                         HStack {
-                            VStack(alignment: .leading) {
-                                Text("Cuddle")
-                                    .font(.custom(NPS.header.name, size: 20))
-                                Text("커뮤니티")
-                                    .font(.custom(NPS.header.name, size: 26))
-                            }
-                        }
-                        .padding(.horizontal, 28)
-                        .padding(.top, 38)
-                        
-                        LazyVStack(
-                            pinnedViews: [.sectionHeaders]
-                        ) {
-                            Section(
-                                header: CommunityCategoryView(store: categoryStore)
-                            ) {
-                                BannerView(
-                                    store: StoreOf<Banner>(
-                                        initialState: Banner.State()
-                                    ) {
-                                        Banner()
-                                    }
-                                )
-                                .aspectRatio(290 / 71, contentMode: .fit)
-                                .padding(.horizontal, 16)
-                                .padding(.top, 90)
+                            Spacer()
+                            ZStack {
+                                Circle()
+                                    .frame(width: 50, height: 50)
+                                    .shadow(color: .black.opacity(0.25), radius: 20, x: 10, y: 10)
                                 
-                                buildContentView(category: categoryStore.selectedCategory)
+                                Button(action: { store.send(.register)} ) {
+                                    AppResourceAsset.Image.icRegister.swiftUIImage
+                                        .frame(width: 24, height: 24)
+                                        .foregroundColor(.white)
+                                }
+                                .frame(width: 50, height: 50)
+                                .background(AppResourceAsset.Color.lubbyBlue.swiftUIColor)
+                                .clipShape(.circle)
+                                .shadow(
+                                    color: Color(red: 0.6, green: 0.68, blue: 0.85).opacity(0.25),
+                                    radius: 4,
+                                    x: .zero,
+                                    y: 4
+                                )
                             }
                         }
-                        
                     }
+                    .zIndex(20)
+                    .padding()
+                    
+                    ScrollView {
+                        ZStack(alignment: .top) {
+                            AppResourceAsset.Image.cuddleCommunityBackground.swiftUIImage
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text("Cuddle")
+                                            .font(.custom(NPS.header.name, size: 20))
+                                        Text("커뮤니티")
+                                            .font(.custom(NPS.header.name, size: 26))
+                                    }
+                                }
+                                .padding(.horizontal, 28)
+                                .padding(.top, 38)
+                                
+                                LazyVStack(
+                                    pinnedViews: [.sectionHeaders]
+                                ) {
+                                    Section(
+                                        header: CommunityCategoryView(store: categoryStore)
+                                    ) {
+                                        BannerView(
+                                            store: StoreOf<Banner>(
+                                                initialState: Banner.State()
+                                            ) {
+                                                Banner()
+                                            }
+                                        )
+                                        .aspectRatio(290 / 71, contentMode: .fit)
+                                        .padding(.horizontal, 16)
+                                        .padding(.top, 90)
+                                        
+                                        buildContentView(category: categoryStore.selectedCategory)
+                                    }
+                                }
+                                
+                            }
+                        }
+                    }
+                    .clipped()
                 }
             }
-            .clipped()
+            .onAppear {
+                store.send(.daily(.view(.onAppear)))
+            }
         }
     }
 }

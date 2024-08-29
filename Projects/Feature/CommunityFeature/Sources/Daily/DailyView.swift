@@ -14,15 +14,20 @@ public struct DailyView: View {
     
     let store: StoreOf<Daily>
     
-    public init(store: StoreOf<Daily>) {
+    public init(
+        store: StoreOf<Daily>
+    ) {
         self.store = store
     }
     
     public var body: some View {
-        LazyVStack(spacing: 12) {
-            ForEach(store.dailys, id: \.id) {
-                DailyContentView(dailyContent: $0)
+        WithViewStore(store, observe: { $0 }) { store in
+            LazyVStack(spacing: 12) {
+                ForEach(store.contents, id: \.id) {
+                    DailyContentView(dailyContent: $0)
+                }
             }
         }
+//        .onAppear { store.send(.view(.onAppear)) }
     }
 }

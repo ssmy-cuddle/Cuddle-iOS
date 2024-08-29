@@ -1,21 +1,19 @@
 //
-//  DailyContentModel.swift
-//  CommunityFeature
+//  DailyContent.swift
+//  CommunityDomain
 //
-//  Created by mvldev7 on 8/4/24.
+//  Created by mvldev7 on 8/29/24.
 //
 
 import Foundation
 
-import CommunityDomain
-
-public struct DailyContentModel {
+public struct DailyContent {
     public let id: UUID
     public let imageURLs: [URL]
     public let likeCounts: Int
     public let messageCounts: Int
     public let nickname: String
-    public let profileIageURL: URL
+    public let profileImageURL: URL
     public let description: String
     public let createdAt: Date
     
@@ -25,7 +23,7 @@ public struct DailyContentModel {
         likeCounts: Int,
         messageCounts: Int,
         nickname: String,
-        profileIageURL: URL,
+        profileImageURL: URL,
         description: String,
         createdAt: Date
     ) {
@@ -34,27 +32,8 @@ public struct DailyContentModel {
         self.likeCounts = likeCounts
         self.messageCounts = messageCounts
         self.nickname = nickname
-        self.profileIageURL = profileIageURL
+        self.profileImageURL = profileImageURL
         self.description = description
         self.createdAt = createdAt
     }
 }
-
-extension DailyContent {
-    var asModel: DailyContentModel {
-        DailyContentModel(
-            id: id,
-            imageURLs: imageURLs,
-            likeCounts: likeCounts,
-            messageCounts: messageCounts,
-            nickname: nickname,
-            profileIageURL: profileImageURL,
-            description: description,
-            createdAt: createdAt
-        )
-    }
-}
-
-
-extension DailyContentModel: Equatable {}
-

@@ -65,9 +65,11 @@ public struct ContentView: View {
     public func buildView(for navigationType: NavigationTabType) -> some View {
         switch navigationType {
         case .home: HomeView()
-        case .diary: Text("여정")
+        case .diary: Text("서비스 준비 중입니다.")
+                .font(.pretendardTitle14)
         case .comumnity: communityNavigation
-        case .donation: Text("기부")
+        case .donation: Text("서비스 준비 중입니다.")
+                .font(.pretendardTitle14)
         case .profile: ProfileNavigationView(
             store: StoreOf<ProfileNavigation>(
                 initialState: ProfileNavigation.State()

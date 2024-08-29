@@ -8,14 +8,14 @@
 import Foundation
 import UIKit
 
+import CommunityDomain
+
 import ComposableArchitecture
 
 @Reducer
 public struct Register {
     
-    public init() {
-        print("Register init")
-    }
+    @Dependency(\.registerDailyContentUseCase) private var registerDailyContentUseCase
     
     public enum Action: BindableAction, Equatable {
         case binding(BindingAction<State>)
@@ -46,19 +46,41 @@ public struct Register {
             case .back:
                 return .none
             case .confirm:
-                state.isLoading = true
-                return .run { send in
-                    try await Task.sleep(for: .seconds(2))
-                    await send(.didEndRegister)
-                }
-            case .didEndRegister:
-                state.isLoading = false
-                return .none
+                return register(state: &state)
+            case .didEndRegister: return registered(
+                for: nil,
+                state: &state
+            )
             case .binding(\.title):
                 return .none
             case .binding:
                 return .none
             }
         }
+    }
+}
+
+extension Register {
+    
+    private func register(state: inout State) -> Effect<Action> {
+        state.isLoading = true
+        let localState = state
+        return .run { send in
+            let _ = try await registerDailyContentUseCase.execute(
+                parameters: RegisterDailyContentParameter(
+                    images: localState.selectedImages.compactMap { $0.pngData() },
+                    description: localState.descriotion
+                )
+            )
+            await send(.didEndRegister)
+        }
+    }
+    
+    private func registered(
+        for content: DailyContentModel? = nil,
+        state: inout State
+    ) -> Effect<Action> {
+        state.isLoading = false
+        return .none
     }
 }

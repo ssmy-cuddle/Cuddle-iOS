@@ -28,8 +28,7 @@ public struct RegisterView: View {
         WithViewStore(store, observe: { $0 }) { store in
             ZStack(alignment: .center) {
                 if store.isLoading {
-                    ProgressView()
-                        .zIndex(40)
+                    LoadingView()
                 }
                 
                 VStack {

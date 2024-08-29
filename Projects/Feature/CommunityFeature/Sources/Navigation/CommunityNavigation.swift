@@ -45,7 +45,7 @@ public struct CommunityNavigation {
                     return .none
                 case .element(_, .navigateToRegister(.didEndRegister)):
                     state.path.removeAll()
-                    state.path.append(.main(Community.State(isUpdated: true)))
+                    state.path.append(.main(Community.State()))
                     return .none
                 default:
                     return .none
