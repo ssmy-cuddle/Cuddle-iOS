@@ -18,9 +18,10 @@ public struct Daily {
     
     @Dependency(\.getDailyContentsUseCase) private var getDailyContentsUseCase
     
-    public enum Action: ReducerAction, Equatable {
+    public enum Action: FeatureAction, Equatable {
         case view(ViewAction)
         case inner(InnerAction)
+        case delegate(DelegateAction)
         
         public enum ViewAction: Equatable {
             case onAppear
@@ -29,6 +30,10 @@ public struct Daily {
         public enum InnerAction: Equatable {
             case contents([DailyContentModel])
             case loading(Bool)
+        }
+        
+        public enum DelegateAction: Equatable {
+            case refresh
         }
     }
     
@@ -46,7 +51,10 @@ public struct Daily {
             case let .inner(.loading(isLoading)):
                 state.isLoading = isLoading
                 return .none
-            default: return .none
+            case .delegate(.refresh):
+                return refresh(state: &state)
+            default:
+                return .none
             }
         }
     }
@@ -72,6 +80,15 @@ extension Daily {
         state.isLoading = false
         return .run { send in
             await send(.inner(.loading(false)))
+        }
+    }
+    
+    private func refresh(state: inout State) -> Effect<Action> {
+//        state.isLoading = true
+        return .run { send in
+            let contents = try await getDailyContentsUseCase.execute().map { $0.asModel }
+            //            return await send(.inner(.contents(contents)))
+            return await send(.inner(.contents(contents)))
         }
     }
 }

@@ -66,10 +66,11 @@ public struct ContentView: View {
         switch navigationType {
         case .home: HomeView()
         case .diary: Text("서비스 준비 중입니다.")
-                .font(.pretendardTitle14)
+                .font(.pretendardBody14)
         case .comumnity: communityNavigation
-        case .donation: Text("서비스 준비 중입니다.")
-                .font(.pretendardTitle14)
+        case .donation:
+            DonnationView()
+//                .font(.pretendardBody14)
         case .profile: ProfileNavigationView(
             store: StoreOf<ProfileNavigation>(
                 initialState: ProfileNavigation.State()

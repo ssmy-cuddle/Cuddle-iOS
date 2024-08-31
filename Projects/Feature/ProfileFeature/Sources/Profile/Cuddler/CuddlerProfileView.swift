@@ -24,6 +24,12 @@ public struct CuddlerProfileView: View {
             AppResourceAsset.Image.icProfileCuddlerBackground.swiftUIImage
                 .resizable()
                 .aspectRatio(135 / 187, contentMode: .fit)
+                .shadow(
+                    color: .black.opacity(0.15),
+                    radius: 5,
+                    x: .zero,
+                    y: 7
+                )
             
             Button(action: { editAction(cuddler) }) {
                 AppResourceAsset.Image.icProfileEdit.swiftUIImage
@@ -44,7 +50,7 @@ public struct CuddlerProfileView: View {
                     .aspectRatio(1, contentMode: .fit)
                     .padding(.horizontal, 30)
                     .clipShape(.circle)
-
+                
                 (Text("함께한지 ") +
                 Text("\(cuddler.withDay)")
                     .foregroundStyle(AppResourceAsset.Color.lubbyBlue.swiftUIColor) +
@@ -54,11 +60,5 @@ public struct CuddlerProfileView: View {
                 .padding(.bottom, 22)
             }
         }
-        .shadow(
-            color: .black.opacity(0.15),
-            radius: 5,
-            x: .zero,
-            y: 7
-        )
     }
 }

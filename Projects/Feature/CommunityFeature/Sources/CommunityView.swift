@@ -165,6 +165,10 @@ public struct CommunityView: View {
                         }
                     }
                     .clipped()
+                    .refreshable {
+                        await store.send(.daily(.delegate(.refresh)))
+                            .finish()
+                    }
                 }
             }
             .onAppear {

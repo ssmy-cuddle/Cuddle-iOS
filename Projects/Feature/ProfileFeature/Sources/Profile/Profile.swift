@@ -34,9 +34,10 @@ public struct Profile {
     
     public init() {}
     
-    public enum Action: Equatable, ReducerAction {
+    public enum Action: Equatable, FeatureAction {
         case view(ViewAction)
         case inner(InnerAction)
+        case delegate(DelegateAction)
         
         public enum ViewAction: Equatable {
             case onAppear
@@ -47,6 +48,8 @@ public struct Profile {
         public enum InnerAction: Equatable {
             case profile(UserProfileModel)
         }
+        
+        public enum DelegateAction: Equatable {}
     }
     
     @ObservableState
