@@ -10,6 +10,7 @@ import Foundation
 public struct MockDailyRepository: DailyRepository {
     
     public static var isRegisterd: Bool = false
+    public static var isCommented: Bool = false
     
     public init() {}
     
@@ -31,5 +32,19 @@ public struct MockDailyRepository: DailyRepository {
         MockDailyRepository.isRegisterd = true
         try await Task.sleep(for: .milliseconds(1000))
         return MockDailyContent.paduck
+    }
+    
+    public func commentList(id: UUID) async throws -> [Comment] {
+        MockDailyContent.comments + [
+            Self.isRegisterd ? MockDailyContent.commentByGeonwoo : nil
+        ].compactMap { $0 }
+    }
+    
+    public func registerComment(
+        id: UUID,
+        commentText: String
+    ) async throws -> [Comment] {
+        Self.isRegisterd = true
+        return MockDailyContent.comments + [MockDailyContent.commentByGeonwoo]
     }
 }

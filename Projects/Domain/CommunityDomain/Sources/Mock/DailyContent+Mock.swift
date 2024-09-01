@@ -102,4 +102,73 @@ public enum MockDailyContent {
         description: "집에 가고싶다 집에 가고싶다 집에 가고싶다 집에 가고싶다 집에 가고싶다",
         createdAt: Date().addingTimeInterval(-120)
     )
+    
+    public static let comments: [Comment] = [
+        .init(
+            id: UUID(),
+            text: "같이 산책하고 싶네요~^^",
+            name: "영은",
+            profileImageURL: URL(
+                string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8"
+            )!,
+            createdAt: Date().addingTimeInterval(
+                -120
+            ),
+            subComments: [
+                SubComment(
+                    id: UUID(),
+                    text: "어디 사세요?",
+                    name: "건우",
+                    profileImageURL: URL(
+                        string: "https://fastly.picsum.photos/id/549/20/20.jpg?hmac=J2XsP-Qx3mvC2zswUYG18zPdKBVPG-hl7glg8huGZWc"
+                    )!,
+                    createdAt: Date().addingTimeInterval(-40)
+                ),
+                SubComment(
+                    id: UUID(),
+                    text: "봉천동이요!",
+                    name: "영은",
+                    profileImageURL: URL(
+                        string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8"
+                    )!,
+                    createdAt: Date().addingTimeInterval(-40)
+                )
+            ]
+        ),
+        .init(
+            id: UUID(),
+            text: "같이 산책하고 싶네요~^^",
+            name: "영은",
+            profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
+            createdAt: Date().addingTimeInterval(-120),
+            subComments: []
+        ),
+        .init(
+            id: UUID(),
+            text: "아이가 몇살 인가요?",
+            name: "영은",
+            profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
+            createdAt: Date().addingTimeInterval(-30),
+            subComments: []
+        ),
+        .init(
+            id: UUID(),
+            text: "같이 산책하고 싶네요~^^",
+            name: "영은",
+            profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
+            createdAt: Date().addingTimeInterval(-120),
+            subComments: []
+        )
+    ]
+    
+    public static var commentByGeonwoo: Comment {
+        .init(
+            id: UUID(),
+            text: "너무 귀여워요",
+            name: "건우",
+            profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
+            createdAt: Date().addingTimeInterval(-120),
+            subComments: []
+        )
+    }
 }

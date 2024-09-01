@@ -24,7 +24,10 @@ public struct DailyView: View {
         WithViewStore(store, observe: { $0 }) { store in
             LazyVStack(spacing: 12) {
                 ForEach(store.contents, id: \.id) {
-                    DailyContentView(dailyContent: $0)
+                    DailyContentView(
+                        dailyContent: $0,
+                        commentAction: { store.send(.view(.writeComment)) }
+                    )
                 }
             }
         }

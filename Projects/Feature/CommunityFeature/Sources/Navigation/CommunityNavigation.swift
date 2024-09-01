@@ -21,11 +21,13 @@ public struct CommunityNavigation {
     public enum Action {
         case path(StackAction<Path.State, Path.Action>)
         case popToRoot
+        case commentDismissed
     }
     
     @ObservableState
     public struct State: Equatable {
         public var path = StackState<Path.State>()
+        public var isCommentPresent: Bool = false
         
         public init() {
             path.append(CommunityNavigation.initialState)
@@ -47,9 +49,15 @@ public struct CommunityNavigation {
                     state.path.removeAll()
                     state.path.append(.main(Community.State()))
                     return .none
+                case .element(_, .navigateToMainView(.daily(.view(.writeComment)))):
+                    state.isCommentPresent = true
+                    return .none
                 default:
                     return .none
                 }
+            case .commentDismissed:
+                state.isCommentPresent = false
+                return .none
             default:
                 return .none
             }

@@ -13,6 +13,7 @@ import ComposableArchitecture
 public struct CommunityNavigationView: View {
     
     @State var store: StoreOf<CommunityNavigation>
+    @State private var sheetHeight: CGFloat = .zero
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     
     public init(store: StoreOf<CommunityNavigation>) {
@@ -31,22 +32,28 @@ public struct CommunityNavigationView: View {
                     CommunityView(store: store)
                         .padding(.top, safeAreaInsets.top)
                         .navigationBarBackButtonHidden()
+                        .sheet(
+                            isPresented: .constant(self.store.isCommentPresent)
+                        ) {
+                            CommentView(
+                                store: StoreOf<Comment>(
+                                    initialState: Comment.State()
+                                ) {
+                                    Comment()
+                                }
+                            )
+                            .onDisappear {
+                                self.store.send(.commentDismissed)
+                            }
+                            .presentationDetents([.medium, .large])
+                        }
                 }
+                
             case .register:
                 if let store = store.scope(state: \.register, action: \.navigateToRegister) {
                     RegisterView(store: store)
                         .padding(.top, safeAreaInsets.top)
                         .navigationBarBackButtonHidden()
-//                        .onAppear {
-//                            withAnimation(.easeIn(duration: 0.5)) {
-//                                self.isAnimating = true
-//                            }
-//                        }
-//                        .onDisappear {
-//                            withAnimation(.easeOut(duration: 0.5)) {
-//                                self.isAnimating = false
-//                            }
-//                        }
                 }
             }
         }

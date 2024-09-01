@@ -17,7 +17,13 @@ public struct DailyContentView: View {
     
     @State var scrolledID: URL?
     
-    let dailyContent: DailyContentModel
+    private let dailyContent: DailyContentModel
+    private let commentAction: () -> Void
+    
+    public init(dailyContent: DailyContentModel, commentAction: @escaping () -> Void) {
+        self.dailyContent = dailyContent
+        self.commentAction = commentAction
+    }
     
     var pagingControl: some View {
         HStack(spacing: 3) {
@@ -91,11 +97,15 @@ public struct DailyContentView: View {
                     .frame(width: 24, height: 24)
                 Text(String(dailyContent.likeCounts))
                     .font(.pretendardBody14)
-                AppResourceAsset.Image.icComment.swiftUIImage
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                Text(String(dailyContent.messageCounts))
-                    .font(.pretendardBody14)
+                
+                HStack {
+                    AppResourceAsset.Image.icComment.swiftUIImage
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                    Text(String(dailyContent.messageCounts))
+                        .font(.pretendardBody14)
+                }
+                .onTapGesture { commentAction() }
             }
             .padding(.horizontal, 10)
             .padding(.top, 10)

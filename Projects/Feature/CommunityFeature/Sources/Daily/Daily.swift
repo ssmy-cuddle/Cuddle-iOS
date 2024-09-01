@@ -25,6 +25,7 @@ public struct Daily {
         
         public enum ViewAction: Equatable {
             case onAppear
+            case writeComment
         }
         
         public enum InnerAction: Equatable {
