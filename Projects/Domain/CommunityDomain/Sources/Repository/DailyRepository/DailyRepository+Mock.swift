@@ -17,13 +17,7 @@ public struct MockDailyRepository: DailyRepository {
     public func dailys() async throws -> [DailyContent] {
         try await Task.sleep(for: .milliseconds(1000))
         return (Self.isRegisterd ? [MockDailyContent.paduck] : []) +
-        [
-            MockDailyContent.ggeonu,
-            MockDailyContent.ggeonu1,
-            MockDailyContent.ggeonu2,
-            MockDailyContent.ggeonu3,
-            MockDailyContent.ggeonu4,
-        ]
+        MockDailyContent.items
     }
     
     public func register(
@@ -32,6 +26,24 @@ public struct MockDailyRepository: DailyRepository {
         MockDailyRepository.isRegisterd = true
         try await Task.sleep(for: .milliseconds(1000))
         return MockDailyContent.paduck
+    }
+    
+    public func like(id: UUID, _ isLike: Bool) async throws -> DailyContent {
+        if let index = MockDailyContent.items.firstIndex(where: { $0.id == id }) {
+            MockDailyContent.items[index] = DailyContent(
+                id: MockDailyContent.items[index].id,
+                imageURLs: MockDailyContent.items[index].imageURLs,
+                likeCounts: MockDailyContent.items[index].likeCounts + (isLike ? 1 : -1),
+                isLike: isLike,
+                messageCounts: MockDailyContent.items[index].messageCounts,
+                nickname: MockDailyContent.items[index].nickname,
+                profileImageURL: MockDailyContent.items[index].profileImageURL,
+                description: MockDailyContent.items[index].description,
+                createdAt: MockDailyContent.items[index].createdAt
+            )
+            return MockDailyContent.items[index]
+        }
+        return MockDailyContent.ggeonu
     }
     
     public func commentList(id: UUID) async throws -> [Comment] {

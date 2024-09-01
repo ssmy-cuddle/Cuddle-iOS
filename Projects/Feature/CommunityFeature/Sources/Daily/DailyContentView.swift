@@ -19,10 +19,16 @@ public struct DailyContentView: View {
     
     private let dailyContent: DailyContentModel
     private let commentAction: () -> Void
+    private let likeAction: () -> Void
     
-    public init(dailyContent: DailyContentModel, commentAction: @escaping () -> Void) {
+    public init(
+        dailyContent: DailyContentModel,
+        commentAction: @escaping () -> Void,
+        likeAction: @escaping () -> Void
+    ) {
         self.dailyContent = dailyContent
         self.commentAction = commentAction
+        self.likeAction = likeAction
     }
     
     var pagingControl: some View {
@@ -92,11 +98,22 @@ public struct DailyContentView: View {
             .aspectRatio(292 / 278, contentMode: .fill)
             
             HStack(alignment: .center, spacing: 8) {
-                AppResourceAsset.Image.icHeartSign.swiftUIImage
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                Text(String(dailyContent.likeCounts))
-                    .font(.pretendardBody14)
+                HStack {
+                    let likeImage: Image = if dailyContent.isLike {
+                        AppResourceAsset.Image.icHeartSignFilled.swiftUIImage
+                    } else {
+                        AppResourceAsset.Image.icHeartSign.swiftUIImage
+                    }
+                    
+                    likeImage
+                        .resizable()
+                        .foregroundStyle(dailyContent.isLike ? Color(red: 1, green: 0.39, blue: 0.68) : .black)
+                        .frame(width: 24, height: 24)
+                    
+                    Text(String(dailyContent.likeCounts))
+                        .font(.pretendardBody14)
+                }
+                .onTapGesture { likeAction() }
                 
                 HStack {
                     AppResourceAsset.Image.icComment.swiftUIImage

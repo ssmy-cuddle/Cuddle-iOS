@@ -17,6 +17,7 @@ import ComposableArchitecture
 public struct Daily {
     
     @Dependency(\.getDailyContentsUseCase) private var getDailyContentsUseCase
+    @Dependency(\.likeDailyUseCase) private var likeDailyUseCase
     
     public enum Action: FeatureAction, Equatable {
         case view(ViewAction)
@@ -26,10 +27,12 @@ public struct Daily {
         public enum ViewAction: Equatable {
             case onAppear
             case writeComment
+            case like(UUID, isLike: Bool)
         }
         
         public enum InnerAction: Equatable {
             case contents([DailyContentModel])
+            case update(DailyContentModel, index: Int)
             case loading(Bool)
         }
         
@@ -47,11 +50,17 @@ public struct Daily {
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .view(.onAppear): return onAppear(state: &state)
-            case let .inner(.contents(contents)): return self.contents(contents, state: &state)
+            case .view(.onAppear): 
+                return onAppear(state: &state)
+            case let .view(.like(id, isLike)):
+                return self.like(id: id, isLike: isLike, state: &state)
+            case let .inner(.contents(contents)):
+                return self.contents(contents, state: &state)
             case let .inner(.loading(isLoading)):
                 state.isLoading = isLoading
                 return .none
+            case let .inner(.update(daily, index: index)): 
+                return self.update(daily: daily, at: index, state: &state)
             case .delegate(.refresh):
                 return refresh(state: &state)
             default:
@@ -81,6 +90,35 @@ extension Daily {
         state.isLoading = false
         return .run { send in
             await send(.inner(.loading(false)))
+        }
+    }
+    
+    private func update(
+        daily: DailyContentModel,
+        at index: Int,
+        state: inout State
+    ) -> Effect<Action> {
+        var localState = state
+        localState.contents.remove(at: index)
+        localState.contents.insert(daily, at: index)
+        state.contents = localState.contents
+        return .none
+    }
+    
+    private func like(
+        id: UUID,
+        isLike: Bool,
+        state: inout State
+    ) -> Effect<Action> {
+        let localState = state
+        return .run {
+            let daily = try await likeDailyUseCase.execute(
+                parameters: .init(id: id, isLike: isLike)
+            ).asModel
+            if let index = localState.contents.firstIndex(where: { $0.id == id }) {
+                return await $0(.inner(.update(daily, index: index)))
+            }
+            return await $0(.inner(.contents(localState.contents)))
         }
     }
     

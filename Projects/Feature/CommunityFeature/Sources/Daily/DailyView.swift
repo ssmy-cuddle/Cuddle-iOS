@@ -23,10 +23,11 @@ public struct DailyView: View {
     public var body: some View {
         WithViewStore(store, observe: { $0 }) { store in
             LazyVStack(spacing: 12) {
-                ForEach(store.contents, id: \.id) {
+                ForEach(store.contents, id: \.id) { daily in
                     DailyContentView(
-                        dailyContent: $0,
-                        commentAction: { store.send(.view(.writeComment)) }
+                        dailyContent: daily,
+                        commentAction: { store.send(.view(.writeComment)) },
+                        likeAction: { store.send(.view(.like(daily.id, isLike: !daily.isLike))) }
                     )
                 }
             }

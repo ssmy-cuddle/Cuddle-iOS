@@ -11,6 +11,7 @@ public struct DailyContent {
     public let id: UUID
     public let imageURLs: [URL]
     public let likeCounts: Int
+    public let isLike: Bool
     public let messageCounts: Int
     public let nickname: String
     public let profileImageURL: URL
@@ -21,6 +22,7 @@ public struct DailyContent {
         id: UUID,
         imageURLs: [URL],
         likeCounts: Int,
+        isLike: Bool,
         messageCounts: Int,
         nickname: String,
         profileImageURL: URL,
@@ -30,6 +32,7 @@ public struct DailyContent {
         self.id = id
         self.imageURLs = imageURLs
         self.likeCounts = likeCounts
+        self.isLike = isLike
         self.messageCounts = messageCounts
         self.nickname = nickname
         self.profileImageURL = profileImageURL

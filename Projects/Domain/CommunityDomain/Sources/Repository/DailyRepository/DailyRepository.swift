@@ -14,6 +14,7 @@ public protocol DailyRepository: Repository {
     func register(
         parameters: RegisterDailyContentParameter
     ) async throws -> DailyContent
+    func like(id: UUID, _ isLike: Bool) async throws -> DailyContent
     func commentList(id: UUID) async throws -> [Comment]
     func registerComment(id: UUID, commentText: String) async throws -> [Comment]
 }

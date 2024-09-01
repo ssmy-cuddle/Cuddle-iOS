@@ -13,6 +13,7 @@ public struct DailyContentModel {
     public let id: UUID
     public let imageURLs: [URL]
     public let likeCounts: Int
+    public let isLike: Bool
     public let messageCounts: Int
     public let nickname: String
     public let profileIageURL: URL
@@ -23,6 +24,7 @@ public struct DailyContentModel {
         id: UUID,
         imageURLs: [URL],
         likeCounts: Int,
+        isLike: Bool,
         messageCounts: Int,
         nickname: String,
         profileIageURL: URL,
@@ -32,6 +34,7 @@ public struct DailyContentModel {
         self.id = id
         self.imageURLs = imageURLs
         self.likeCounts = likeCounts
+        self.isLike = isLike
         self.messageCounts = messageCounts
         self.nickname = nickname
         self.profileIageURL = profileIageURL
@@ -46,6 +49,7 @@ extension DailyContent {
             id: id,
             imageURLs: imageURLs,
             likeCounts: likeCounts,
+            isLike: isLike,
             messageCounts: messageCounts,
             nickname: nickname,
             profileIageURL: profileImageURL,
