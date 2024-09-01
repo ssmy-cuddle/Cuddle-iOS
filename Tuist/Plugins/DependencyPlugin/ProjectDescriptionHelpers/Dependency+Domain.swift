@@ -12,6 +12,7 @@ import ProjectDescription
 public enum Domain: CaseIterable {
     case base
     case community
+    case original
     case profile
 }
 
@@ -27,6 +28,11 @@ extension Domain: TargetDependencyCovertible {
                 .project(
                     target: "CommunityDomain",
                     path: .relativeToRoot("Projects/Domain/CommunityDomain")
+                )
+        case .original:
+                .project(
+                    target: "OriginalDomain",
+                    path: .relativeToRoot("Projects/Domain/OriginalDomain")
                 )
         case .profile:
                 .project(

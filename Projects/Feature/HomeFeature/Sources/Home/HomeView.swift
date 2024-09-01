@@ -14,9 +14,8 @@ import DesignSystem
 import ComposableArchitecture
 
 public struct HomeView: View {
-    private enum Metric {
-        static let headerViewHeight = 151.0
-    }
+    
+    let store: StoreOf<Home>
     
     @State private var offset: CGFloat = Metric.headerViewHeight {
         didSet {
@@ -24,6 +23,10 @@ public struct HomeView: View {
         }
     }
     @State private var backgroundAlpha = 1.0
+    
+    private enum Metric {
+        static let headerViewHeight = 151.0
+    }
     
     private var scrollObservableView: some View {
         GeometryReader { proxy in
@@ -36,7 +39,7 @@ public struct HomeView: View {
         .frame(height: 0)
     }
     
-    public init() {}
+    
     
     private let previewView: some View = PreviewFilterView(
         store: StoreOf<PreviewFilter>(
@@ -48,55 +51,87 @@ public struct HomeView: View {
     .padding(.horizontal, 16)
     .padding(.vertical, 20)
     
-    public var body: some View {
-        ScrollView {
-            LazyVStack(pinnedViews: [.sectionHeaders]) {
-                Section(
-                    header: HomeHeaderView()
-                        .opacity(backgroundAlpha)
-                ) {
-                    scrollObservableView
-                    VStack {
-                        OriginalView(contents: MockOriginalContent.contents)
-                            .padding(.top, 28)
-                        
-                        BannerView(
-                            store: StoreOf<Banner>(
-                                initialState: Banner.State()
-                            ) {
-                                Banner()
-                            }
-                        )
-                        .aspectRatio(290 / 71, contentMode: .fit)
-                        .padding(.horizontal, 16)
-                        .padding(.top, 20)
-                        
-                        previewView
-                    }
-                    .background(.white)
-                    .zIndex(3)
-                    .clipShape(.rect(cornerRadius: 30))
-                    .clipped()
-                }
-                
-            }
-        }
-        .ignoresSafeArea(.all, edges: .top)
-        .onPreferenceChange(ScrollOffsetKey.self) {
-            print("??????: \($0)")// 추가부분
-            offset = $0
-        }
+    public init(store: StoreOf<Home>) {
+        self.store = store
+//        UIRefreshControl().layer.zPosition = 1000
     }
     
+    public var body: some View {
+        WithViewStore(store, observe: { $0 }) { store in
+            ScrollView {
+                LazyVStack(pinnedViews: [.sectionHeaders]) {
+                    Section(
+                        header: HomeHeaderView(opacity: .constant(CGFloat(backgroundAlpha)))
+                            .opacity(backgroundAlpha)
+                    ) {
+                        scrollObservableView
+                        VStack {
+                            originalView
+                                .padding(.top, 28)
+                            bannerView
+                            previewView
+                        }
+                        .background(.white)
+                        .zIndex(3)
+                        .clipShape(.rect(cornerRadius: 30))
+                        .clipped()
+                    }
+                    
+                }
+            }
+            .onPreferenceChange(ScrollOffsetKey.self) { offset = $0 }
+            .refreshable {
+                await store.send(.original(.view(.onAppear)))
+                    .finish()
+            }
+        }
+    }
 }
 
+extension HomeView {
+    
+//    private var previewView: some View {
+//        Preview
+//    }
+//    
+    
+    private var originalView: some View {
+        OriginalView(
+            store: store.scope(state: \.original, action: \.original)
+        )
+    }
+    
+    private var bannerView: some View {
+        BannerView(
+            store: StoreOf<Banner>(
+                initialState: Banner.State()
+            ) {
+                Banner()
+            }
+        )
+        .aspectRatio(290 / 71, contentMode: .fit)
+        .padding(.horizontal, 16)
+        .padding(.top, 20)
+    }
+}
+
+
+
+
 public struct HomeHeaderView: View {
+    
+    @Binding private var opacity: CGFloat
+    
+    public init(opacity: Binding<CGFloat>) {
+        self._opacity = opacity
+    }
+    
     public var body: some View {
         AppResourceAsset.Image.cuddleHomeBackground.swiftUIImage
             .resizable()
             .aspectRatio(320 / 269, contentMode: .fill)
-            .zIndex(1)
-            .frame(height: 151, alignment: .center)
+            .frame(height: 100, alignment: .center)
+            .opacity(opacity)
             .overlay {
                 HStack(alignment: .center, spacing: 16) {
                     VStack(alignment: .leading) {
@@ -114,7 +149,6 @@ public struct HomeHeaderView: View {
                 }
                 .padding(.leading, 24)
                 .padding(.trailing, 14)
-                .padding(.top, 24)
             }
     }
 }

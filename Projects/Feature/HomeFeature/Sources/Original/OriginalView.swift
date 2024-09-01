@@ -10,30 +10,39 @@ import SwiftUI
 
 import DesignSystem
 
+import ComposableArchitecture
+
 public struct OriginalView: View {
     
-    private let contents: [OriginalContentModel]
+    let store: StoreOf<Original>
     
-    public init(contents: [OriginalContentModel]) {
-        self.contents = contents
+    public init(store: StoreOf<Original>) {
+        self.store = store
     }
     
     public var body: some View {
-        VStack(alignment: .leading) {
-            Text("Cuddle Originals")
-                .font(.npsHeader16)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 12)
-            
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: 12) {
-                    ForEach(contents) { OriginalContentView(content: $0) }
+        
+        WithViewStore(store, observe: { $0 }) { store in
+            VStack(alignment: .leading) {
+                Text("Cuddle Originals")
+                    .font(.npsHeader16)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
+                
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 12) {
+                        ForEach(store.contents) {
+                            OriginalContentView(content: $0)
+                                .frame(width: UIScreen.main.bounds.width * 0.8)
+                        }
+                    }
+                    .scrollTargetLayout()
                 }
-                .scrollTargetLayout()
+                .scrollTargetBehavior(.viewAligned)
+                .scrollIndicators(.hidden)
+                .contentMargins(.horizontal, 16)
             }
-            .scrollTargetBehavior(.viewAligned)
-            .scrollIndicators(.hidden)
-            .contentMargins(.horizontal, 16)
+            .onAppear { store.send(.view(.onAppear)) }
         }
     }
 }

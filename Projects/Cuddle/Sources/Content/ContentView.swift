@@ -18,7 +18,14 @@ public struct ContentView: View {
     
     let store: StoreOf<Content>
     
-    private let homeView = HomeView()
+    private let homeView = HomeView(
+    
+        store: StoreOf<Home>(
+            initialState: Home.State()
+        ) {
+            Home()
+        }
+    )
     
     // MARK: Constants
     
@@ -64,7 +71,14 @@ public struct ContentView: View {
     @ViewBuilder
     public func buildView(for navigationType: NavigationTabType) -> some View {
         switch navigationType {
-        case .home: HomeView()
+        case .home: 
+            HomeView(
+                store: StoreOf<Home>(
+                    initialState: Home.State()
+                ) {
+                    Home()
+                }
+            )
         case .diary: Text("서비스 준비 중입니다.")
                 .font(.pretendardBody14)
         case .comumnity: communityNavigation
