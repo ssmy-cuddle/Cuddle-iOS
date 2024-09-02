@@ -9,6 +9,9 @@ import Foundation
 
 public enum MockDailyContent {
     
+    public static var isRegisterd: Bool = false
+    public static var isCommented: Bool = false
+    
     public enum Identifier {
         static let paduck = UUID(uuidString: "e5fa320b-3464-4fd3-9ae4-751c79db9ec9")!
         static let ggenou = UUID(uuidString: "064d22c8-d6f7-45a9-9957-4df752ec6769")!
@@ -19,12 +22,13 @@ public enum MockDailyContent {
     }
     
     public static var items: [DailyContent] = [
+        isRegisterd ? paduck : nil,
         ggeonu,
         ggeonu1,
         ggeonu2,
         ggeonu3,
-        ggeonu4
-    ]
+        ggeonu4,
+    ].compactMap { $0 }
     
     public static var paduck = DailyContent(
         id: Identifier.paduck,
@@ -126,72 +130,75 @@ public enum MockDailyContent {
         createdAt: Date().addingTimeInterval(-120)
     )
     
-    public static let comments: [Comment] = [
-        .init(
-            id: UUID(),
-            text: "같이 산책하고 싶네요~^^",
-            name: "영은",
-            profileImageURL: URL(
-                string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8"
-            )!,
-            createdAt: Date().addingTimeInterval(
-                -120
-            ),
-            subComments: [
-                SubComment(
-                    id: UUID(),
-                    text: "어디 사세요?",
-                    name: "건우",
-                    profileImageURL: URL(
-                        string: "https://fastly.picsum.photos/id/549/20/20.jpg?hmac=J2XsP-Qx3mvC2zswUYG18zPdKBVPG-hl7glg8huGZWc"
-                    )!,
-                    createdAt: Date().addingTimeInterval(-40)
-                ),
-                SubComment(
-                    id: UUID(),
-                    text: "봉천동이요!",
-                    name: "영은",
-                    profileImageURL: URL(
-                        string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8"
-                    )!,
-                    createdAt: Date().addingTimeInterval(-40)
-                )
-            ]
-        ),
-        .init(
-            id: UUID(),
-            text: "같이 산책하고 싶네요~^^",
-            name: "영은",
-            profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
-            createdAt: Date().addingTimeInterval(-120),
-            subComments: []
-        ),
-        .init(
-            id: UUID(),
-            text: "아이가 몇살 인가요?",
-            name: "영은",
-            profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
-            createdAt: Date().addingTimeInterval(-30),
-            subComments: []
-        ),
-        .init(
-            id: UUID(),
-            text: "같이 산책하고 싶네요~^^",
-            name: "영은",
-            profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
-            createdAt: Date().addingTimeInterval(-120),
-            subComments: []
-        )
-    ]
-    
-    public static var commentByGeonwoo: Comment {
-        .init(
-            id: UUID(),
-            text: "너무 귀여워요",
-            name: "건우",
-            profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
-            createdAt: Date().addingTimeInterval(-120),
-            subComments: []
-        )
+    public enum CommentIdentifier {
+        static var yeongeun = UUID(uuidString: "6e026c1e-324b-4a5a-bd76-50b1196013f3")!
+        static var ggeonu = UUID(uuidString: "192563eb-08f0-40e9-a9ae-16af1f1ab6ea")!
+        static var jaeseong = UUID(uuidString: "ce2765ef-8a6d-4bb3-be57-857ee80b21eb")!
+        static var jinhyuck = UUID(uuidString: "08ae3c3d-fdf8-4afc-b7c3-1e1b8e9085d3")!
+        static var ukjin = UUID(uuidString: "2f252001-7afb-4c8a-91dc-1e020e07842a")!
     }
+    
+    public static var yeongeun = Comment(
+        id: CommentIdentifier.yeongeun,
+        text: "같이 산책하고 싶네요~^^",
+        name: "영은",
+        profileImageURL: URL(
+            string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8"
+        )!,
+        createdAt: Date().addingTimeInterval(
+            60 * -6
+        ),
+        subComments: [
+            SubComment(
+                id: UUID(),
+                text: "어디 사세요?",
+                name: "건우",
+                profileImageURL: URL(
+                    string: "https://fastly.picsum.photos/id/549/20/20.jpg?hmac=J2XsP-Qx3mvC2zswUYG18zPdKBVPG-hl7glg8huGZWc"
+                )!,
+                createdAt: Date().addingTimeInterval(60 * -4)
+            ),
+            SubComment(
+                id: UUID(),
+                text: "봉천동이요!",
+                name: "영은",
+                profileImageURL: URL(
+                    string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8"
+                )!,
+                createdAt: Date().addingTimeInterval(60 * -2)
+            )
+        ]
+    )
+    
+    public static var ggeonuComment = Comment(
+        id: CommentIdentifier.ggeonu,
+        text: "너무 귀여워요",
+        name: "건우",
+        profileImageURL: URL(
+            string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8"
+        )!,
+        createdAt: Date().addingTimeInterval(
+            60 * -4
+        ),
+        subComments: []
+    )
+    
+    public static var jinhyuck = Comment(
+        id: CommentIdentifier.jinhyuck,
+        text: "아이가 몇살 인가요?",
+        name: "진혁",
+        profileImageURL: URL(
+            string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8"
+        )!,
+        createdAt: Date().addingTimeInterval(
+            60 * -3
+        ),
+        subComments: []
+    )
+    
+    public static var comments: [Comment] = [
+        yeongeun,
+        jinhyuck,
+        isCommented ? ggeonuComment : nil
+    ].compactMap { $0 }
 }

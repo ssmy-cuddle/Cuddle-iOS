@@ -128,6 +128,9 @@ public struct CommunityView: View {
                     ScrollView {
                         ZStack(alignment: .top) {
                             AppResourceAsset.Image.cuddleCommunityBackground.swiftUIImage
+                                .frame(height: 100, alignment: .top)
+                                .aspectRatio(472 / 448, contentMode: .fit)
+                            
                             VStack(alignment: .leading) {
                                 HStack {
                                     VStack(alignment: .leading) {
@@ -140,25 +143,28 @@ public struct CommunityView: View {
                                 .padding(.horizontal, 28)
                                 .padding(.top, 38)
                                 
-                                LazyVStack(
-                                    pinnedViews: [.sectionHeaders]
-                                ) {
-                                    Section(
-                                        header: CommunityCategoryView(store: categoryStore)
-                                    ) {
-                                        BannerView(
-                                            store: StoreOf<Banner>(
-                                                initialState: Banner.State()
-                                            ) {
-                                                Banner()
-                                            }
-                                        )
-                                        .aspectRatio(290 / 71, contentMode: .fit)
-                                        .padding(.horizontal, 16)
-                                        .padding(.top, 90)
-                                        
-                                        buildContentView(category: categoryStore.selectedCategory)
-                                    }
+                                VStack {
+                                    
+                                    //                                LazyVStack(
+                                    //                                    pinnedViews: [.sectionHeaders]
+                                    //                                ) {
+                                    //                                    Section(
+                                    //                                        header: CommunityCategoryView(store: categoryStore)
+                                    //                                    ) {
+
+                                    
+                                    BannerView(
+                                        store: StoreOf<Banner>(
+                                            initialState: Banner.State()
+                                        ) {
+                                            Banner()
+                                        }
+                                    )
+                                    .aspectRatio(290 / 71, contentMode: .fit)
+                                    .padding(.horizontal, 16)
+                                    
+                                    buildContentView(category: categoryStore.selectedCategory)
+
                                 }
                                 
                             }

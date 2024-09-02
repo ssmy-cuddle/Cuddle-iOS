@@ -45,10 +45,8 @@ public struct CommunityNavigationView: View {
                             .onDisappear {
                                 self.store.send(.commentDismissed)
                             }
-                            .presentationDetents([.medium, .large])
                         }
                 }
-                
             case .register:
                 if let store = store.scope(state: \.register, action: \.navigateToRegister) {
                     RegisterView(store: store)

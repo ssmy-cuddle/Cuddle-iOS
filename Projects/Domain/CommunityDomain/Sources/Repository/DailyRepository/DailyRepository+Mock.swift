@@ -7,23 +7,23 @@
 
 import Foundation
 
+public enum MockDailyRepositoryError: Error {
+    case idNotFound
+}
+
 public struct MockDailyRepository: DailyRepository {
-    
-    public static var isRegisterd: Bool = false
-    public static var isCommented: Bool = false
     
     public init() {}
     
     public func dailys() async throws -> [DailyContent] {
         try await Task.sleep(for: .milliseconds(1000))
-        return (Self.isRegisterd ? [MockDailyContent.paduck] : []) +
-        MockDailyContent.items
+        return MockDailyContent.items
     }
     
     public func register(
         parameters: RegisterDailyContentParameter
     ) async throws -> DailyContent {
-        MockDailyRepository.isRegisterd = true
+        MockDailyContent.isRegisterd = true
         try await Task.sleep(for: .milliseconds(1000))
         return MockDailyContent.paduck
     }
@@ -47,16 +47,48 @@ public struct MockDailyRepository: DailyRepository {
     }
     
     public func commentList(id: UUID) async throws -> [Comment] {
-        MockDailyContent.comments + [
-            Self.isRegisterd ? MockDailyContent.commentByGeonwoo : nil
-        ].compactMap { $0 }
+        MockDailyContent.comments
     }
     
     public func registerComment(
         id: UUID,
         commentText: String
     ) async throws -> [Comment] {
-        Self.isRegisterd = true
-        return MockDailyContent.comments + [MockDailyContent.commentByGeonwoo]
+        MockDailyContent.comments += [
+            Comment(
+                id: UUID(),
+                text: commentText,
+                name: "건우", 
+                profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
+                createdAt: Date().addingTimeInterval(-1),
+                subComments: []
+            )
+        ]
+        return MockDailyContent.comments
+    }
+    
+    public func registerSubComment(
+        commentID: UUID,
+        commentText: String
+    ) async throws -> Comment {
+        if let index = MockDailyContent.comments.firstIndex(where: { $0.id == commentID }) {
+            let subComment = SubComment(
+                id: UUID(),
+                text: commentText,
+                name: "건우",
+                profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
+                createdAt: Date()
+            )
+            MockDailyContent.comments[index] = Comment(
+                id: MockDailyContent.comments[index].id,
+                text: MockDailyContent.comments[index].text,
+                name: MockDailyContent.comments[index].name,
+                profileImageURL: MockDailyContent.comments[index].profileImageURL,
+                createdAt: MockDailyContent.comments[index].createdAt,
+                subComments: MockDailyContent.comments[index].subComments + [subComment]
+            )
+            return MockDailyContent.comments[index]
+        }
+        throw MockDailyRepositoryError.idNotFound
     }
 }
