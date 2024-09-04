@@ -128,8 +128,9 @@ public struct CommunityView: View {
                     ScrollView {
                         ZStack(alignment: .top) {
                             AppResourceAsset.Image.cuddleCommunityBackground.swiftUIImage
-                                .frame(height: 100, alignment: .top)
+                                .frame(height: 135, alignment: .top)
                                 .aspectRatio(472 / 448, contentMode: .fit)
+                                .clipped()
                             
                             VStack(alignment: .leading) {
                                 HStack {

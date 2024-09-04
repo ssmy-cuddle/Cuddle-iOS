@@ -134,6 +134,7 @@ extension Comment {
         localState.comments[index] = comment
         state.comments = localState.comments
         state.latestAddItem = .subComment(commentID: localState.comments[index].id, subCommentID: localState.comments[index].subComments.last!.id)
+        state.commentType = .normal
         return .none
     }
     
