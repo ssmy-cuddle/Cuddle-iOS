@@ -22,9 +22,7 @@ public struct CommunityNavigationView: View {
     
     public var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            NavigationLink(state: CommunityNavigation.Path.State.main(.init())) {
-                Rectangle()
-            }
+            Color.white
         } destination: { store in
             switch store.state {
             case .main:

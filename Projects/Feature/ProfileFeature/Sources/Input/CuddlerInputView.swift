@@ -68,20 +68,8 @@ public struct CuddlerProfileInputView: View {
                         .zIndex(40)
                 }
                 VStack {
-                    ZStack(alignment: .leading) {
-                        Rectangle()
-                            .foregroundColor(.white)
-                            .frame(height: 17 + 16 + 16)
-                            .frame(maxWidth: .infinity)
-                            .shadow(color: .black.opacity(0.1), radius: 3, x: .zero, y: 4)
-                        
-                        Button(
-                            action: { store.send(.back) }
-                        ) {
-                            AppResourceAsset.Image.icButtonBack.swiftUIImage
-                                .foregroundColor(.black)
-                                .frame(width: 36, height: 36, alignment: .leading)
-                        }
+                    CuddleNavigationBar() {
+                        store.send(.back)
                     }
                     
                     ScrollView {

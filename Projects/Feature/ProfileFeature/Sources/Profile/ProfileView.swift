@@ -114,7 +114,7 @@ public struct ProfileView: View {
                                 .padding(.top, 14)
                                 
                                 CuddleTextButton(
-                                    action: {},
+                                    action: { store.send(.view(.userProfileButtonTapped(store.profile))) },
                                     theme: .primary(.custom(AppResourceAsset.Color.cuddleGreen.swiftUIColor)),
                                     text: "프로필 수정",
                                     font: .pretendardTitle12

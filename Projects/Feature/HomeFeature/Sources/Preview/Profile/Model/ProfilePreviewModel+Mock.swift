@@ -1,23 +1,11 @@
 //
-//  ProfilePreview.swift
+//  ProfilePreviewModel+Mock.swift
 //  HomeFeature
 //
-//  Created by mvldev7 on 7/29/24.
+//  Created by mvldev7 on 9/6/24.
 //
 
 import Foundation
-import SwiftUI
-
-import ComposableArchitecture
-
-@Reducer
-public struct ProfilePreview {
-    
-    @ObservableState
-    public struct State: Equatable {
-        var contents: [ProfilePreviewModel] = MockProfilePreviewModel.items
-    }
-}
 
 enum MockProfilePreviewModel {
     static var items: [ProfilePreviewModel] = [

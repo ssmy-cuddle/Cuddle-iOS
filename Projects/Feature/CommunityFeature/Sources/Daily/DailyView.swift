@@ -32,6 +32,5 @@ public struct DailyView: View {
                 }
             }
         }
-//        .onAppear { store.send(.view(.onAppear)) }
     }
 }

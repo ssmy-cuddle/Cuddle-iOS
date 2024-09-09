@@ -23,5 +23,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ProfilePreviewContentView()
+    ProfilePreviewItemView()
 }

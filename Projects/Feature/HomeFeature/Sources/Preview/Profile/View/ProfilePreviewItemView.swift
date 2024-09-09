@@ -1,5 +1,5 @@
 //
-//  ProfilePreviewContentView.swift
+//  ProfilePreviewItemView.swift
 //  HomeFeature
 //
 //  Created by mvldev7 on 7/29/24.
@@ -12,9 +12,9 @@ import DesignSystem
 
 import Kingfisher
 
-public struct ProfilePreviewContentView: View {
+public struct ProfilePreviewItemView: View {
     
-    let profile: ProfilePreviewModel
+    private let profile: ProfilePreviewModel
     
     public init(
         profile: ProfilePreviewModel
@@ -40,6 +40,7 @@ public struct ProfilePreviewContentView: View {
                         RoundedRectangle(cornerRadius: 14, style: .circular)
                             .strokeBorder(.white, lineWidth: 2)
                     }
+                
                 Text(profile.nickname)
                     .font(.pretendardBody12)
                     .frame(maxWidth: .infinity, alignment: .leading)

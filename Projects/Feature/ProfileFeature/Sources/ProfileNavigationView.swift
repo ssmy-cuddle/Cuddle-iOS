@@ -12,7 +12,7 @@ import ComposableArchitecture
 
 public struct ProfileNavigationView: View {
     
-    @State var store: StoreOf<ProfileNavigation>
+    let store: StoreOf<ProfileNavigation>
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     
     public init(store: StoreOf<ProfileNavigation>) {
@@ -20,9 +20,10 @@ public struct ProfileNavigationView: View {
     }
     
     public var body: some View {
-        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            Rectangle()
-        } destination: { store in
+        NavigationStackStore(
+            store.scope(state: \.path, action: \.path),
+            root: { Color.white }
+        ) { store in
             switch store.state {
             case .main:
                 if let store = store.scope(state: \.main, action: \.main) {
@@ -35,9 +36,41 @@ public struct ProfileNavigationView: View {
                         .padding(.top, safeAreaInsets.top)
                         .navigationBarBackButtonHidden()
                 }
+            case .userProfile:
+                if let store = store.scope(state: \.userProfile, action: \.userProfile) {
+                    UserProfileInputView(store: store)
+                        .padding(.top, safeAreaInsets.top)
+                        .navigationBarBackButtonHidden()
+                }
             }
         }
     }
+//
+//        
+//        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+//            Rectangle()
+//        } destination: { store in
+//            switch store.state {
+//            case .main:
+//                if let store = store.scope(state: \.main, action: \.main) {
+//                    ProfileView(store: store)
+//                        .navigationBarBackButtonHidden()
+//                }
+//            case .input:
+//                if let store = store.scope(state: \.input, action: \.input) {
+//                    CuddlerProfileInputView(store: store)
+//                        .padding(.top, safeAreaInsets.top)
+//                        .navigationBarBackButtonHidden()
+//                }
+//            case .userProfile:
+//                if let store = store.scope(state: \.userProfile, action: \.userProfile) {
+//                    UserProfileInputView(store: store)
+//                        .padding(.top, safeAreaInsets.top)
+//                        .navigationBarBackButtonHidden()
+//                }
+//            }
+//        }
+//    }
 }
 
 private struct SafeAreaInsetsKey: EnvironmentKey {

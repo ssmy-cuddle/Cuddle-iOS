@@ -43,10 +43,13 @@ public struct Profile {
             case onAppear
             case registerButtonTapped
             case editButtonTapped(CuddlerProfileModel)
+            case userProfileButtonTapped(UserProfileModel?)
         }
         
         public enum InnerAction: Equatable {
             case profile(UserProfileModel)
+            case isLoading(Bool)
+            case isRefreshRequired(Bool)
         }
         
         public enum DelegateAction: Equatable {}
@@ -54,19 +57,24 @@ public struct Profile {
     
     @ObservableState
     public struct State: Equatable {
+        public var isRefreshRequired: Bool
         public var profile: UserProfileModel?
         public var cuddlerItems: [CuddlerViewType] {
             (profile?.cuddlers ?? []).map { .profile($0) } + [.add]
         }
         public var isLoading: Bool = false
+        
+        public init(isRefreshRequired: Bool) {
+            self.isRefreshRequired = isRefreshRequired
+        }
     }
     
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .view(.onAppear): onAppear(state: &state)
-            case let .inner(.profile(profile)): self.profile(profile, state: &state)
-            default: .none
+            case let .view(action): self.reduce(viewAction: action, state: &state)
+            case let .inner(action): self.reduce(innerAction: action, state: &state)
+            case .delegate: .none
             }
         }
     }
@@ -76,17 +84,50 @@ public struct Profile {
 
 extension Profile {
     
-    private func onAppear(state: inout State) -> Effect<Action> {
-        state.isLoading = true
-        return .run { send in
-            let profile = try await getUserProfileUseCase.execute()
-            await send(.inner(.profile(profile.asModel)))
+    private func reduce(viewAction: Action.ViewAction, state: inout State) -> Effect<Action> {
+        switch viewAction {
+        case .onAppear: self.onAppear(state: &state)
+        case .registerButtonTapped: .none
+        case .editButtonTapped: .none
+        case .userProfileButtonTapped: .none
         }
     }
     
+    private func reduce(innerAction: Action.InnerAction, state: inout State) -> Effect<Action> {
+        switch innerAction {
+        case let .profile(profile): self.profile(profile, state: &state)
+        case let .isLoading(isLoading): self.isLoading(isLoading, state: &state)
+        case let .isRefreshRequired(isRequired): self.isRefreshRequired(isRequired, state: &state)
+        }
+    }
+    
+    // MARK: View
+    
+    private func onAppear(state: inout State) -> Effect<Action> {
+        guard state.isRefreshRequired else { return .none }
+        return .run {
+            await $0(.inner(.isRefreshRequired(false)))
+            await $0(.inner(.isLoading(true)))
+            let profile = try await getUserProfileUseCase.execute().asModel
+            await $0(.inner(.profile(profile)))
+            await $0(.inner(.isLoading(false)))
+        }
+    }
+    
+    // MARK: Inner
+    
     private func profile(_ profile: UserProfileModel, state: inout State) -> Effect<Action> {
         state.profile = profile
-        state.isLoading = false
+        return .none
+    }
+    
+    private func isLoading(_ isLoading: Bool, state: inout State) -> Effect<Action> {
+        state.isLoading = isLoading
+        return .none
+    }
+    
+    private func isRefreshRequired(_ isRequired: Bool, state: inout State) -> Effect<Action> {
+        state.isRefreshRequired = isRequired
         return .none
     }
 }

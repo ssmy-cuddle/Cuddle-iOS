@@ -11,7 +11,8 @@ import PackageDescription
         productTypes: [
             "ComposableArchitecture": .framework,
             "Swinject": .framework,
-            "Lottie": .framework
+            "Lottie": .framework,
+            "SkeletonUI": .framework
         ]
     )
 #endif
@@ -21,6 +22,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.11.2"),
         .package(url: "https://github.com/onevcat/Kingfisher", from: "7.12.0"),
-        .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.0")
+        .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.0"),
+        .package(url: "https://github.com/CSolanaM/SkeletonUI.git", from: "2.0.2")
     ]
 )

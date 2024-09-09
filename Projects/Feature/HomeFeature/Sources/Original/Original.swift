@@ -14,7 +14,7 @@ import OriginalDomain
 import ComposableArchitecture
 
 @Reducer
-public struct Original {
+public struct OriginalFeature {
     
     @Dependency(\.getCuddleOriginalListUseCase) private var getCuddleOriginalListUseCase
     
@@ -27,46 +27,100 @@ public struct Original {
             case onAppear
         }
         public enum InnerAction: Equatable {
-            case contents([OriginalContentModel])
+            case originals([OriginalContentModel])
+            case isSkeletonLoading(Bool)
         }
         public enum DelegateAction: Equatable {
-            case isLoading(Bool)
+            case refresh
         }
     }
     
     public struct State: Equatable {
-        public var contents: [OriginalContentModel] = []
+        public var originals: [OriginalContentModel] = []
+        public var isSkeletonLoading: Bool = false
+        
+        public init() {}
     }
     
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .view(.onAppear):
-                self.original(state: &state)
-            case let .inner(.contents(contents)):
-                self.contents(contents, state: &state)
-            case let .delegate(.isLoading(isLoading)):
-                .none
+            case let .view(action): self.reduceViewAction(action, state: &state)
+            case let .inner(action): self.reduceInnerAction(action, state: &state)
+            case let .delegate(action): self.reduceDelegateAction(action, state: &state)
             }
         }
     }
 }
 
-public extension Original {
-    func original(state: inout State) -> Effect<Action> {
-        .run { send in
-//            await send(.delegate(.isLoading(true)))
-            let contents = try await getCuddleOriginalListUseCase.execute()
-                .map(\.asModel)
-            return await send(.inner(.contents(contents)))
+extension OriginalFeature {
+    
+    private func reduceViewAction(
+        _ action: Action.ViewAction,
+        state: inout State
+    ) -> Effect<Action> {
+        switch action {
+        case .onAppear: self.onAppear()
         }
     }
     
-    func contents(
-        _ contents: [OriginalContentModel],
+    private func reduceInnerAction(
+        _ action: Action.InnerAction,
         state: inout State
     ) -> Effect<Action> {
-        state.contents = contents
-        return .run { await $0(.delegate(.isLoading(false))) }
+        switch action {
+        case let .originals(originals): self.originals(originals, state: &state)
+        case let .isSkeletonLoading(isLoading): self.isSkeletonLoading(isLoading, state: &state)
+        }
+    }
+    
+    private func reduceDelegateAction(
+        _ action: Action.DelegateAction,
+        state: inout State
+    ) -> Effect<Action> {
+        switch action {
+        case .refresh: self.refresh(state: &state)
+        }
+    }
+}
+
+extension OriginalFeature {
+    
+    // MARK: View
+    
+    private func onAppear() -> Effect<Action> {
+        .run {
+            await $0(.inner(.isSkeletonLoading(true)))
+            let originals = try await getCuddleOriginalListUseCase.execute()
+                .map(\.asModel)
+            return await $0(.inner(.originals(originals)))
+        }
+    }
+    
+    // MARK: Inner
+    
+    private func originals(
+        _ originals: [OriginalContentModel],
+        state: inout State
+    ) -> Effect<Action> {
+        state.originals = originals
+        return .run {
+            await $0(.inner(.isSkeletonLoading(false)))
+        }
+    }
+    
+    // MARK: Delegate
+    
+    private func refresh(state: inout State) -> Effect<Action> {
+        .run {
+            let originals = try await getCuddleOriginalListUseCase.execute()
+                .map(\.asModel)
+            return await $0(.inner(.originals(originals)))
+        }
+    }
+    
+    private func isSkeletonLoading(_ isLoading: Bool, state: inout State) -> Effect<Action> {
+        state.isSkeletonLoading = isLoading
+        return .none
     }
 }

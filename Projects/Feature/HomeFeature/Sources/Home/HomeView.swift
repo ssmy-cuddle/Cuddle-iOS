@@ -10,91 +10,74 @@ import SwiftUI
 
 import AppResource
 import DesignSystem
+import UIComponent
 
 import ComposableArchitecture
 
 public struct HomeView: View {
     
-    let store: StoreOf<Home>
-    
-    @State private var offset: CGFloat = Metric.headerViewHeight {
-        didSet {
-            backgroundAlpha = offset / Metric.headerViewHeight
-        }
-    }
-    @State private var backgroundAlpha = 1.0
-    
     private enum Metric {
-        static let headerViewHeight = 151.0
+        static let headerViewHeight = 110.0
     }
+
+    @State private var headerViewOpacity: CGFloat = 1.0
+    @Environment(\.safeAreaInsets) private var safeAreaInsets
     
-    private var scrollObservableView: some View {
-        GeometryReader { proxy in
-            Color.clear
-                .preference(
-                    key: ScrollOffsetKey.self,
-                    value: proxy.frame(in: .global).minY
-                )
-        }
-        .frame(height: 0)
-    }
-    
-    
-    
-    private let previewView: some View = PreviewFilterView(
-        store: StoreOf<PreviewFilter>(
-            initialState: PreviewFilter.State()
-        ) {
-            PreviewFilter()
-        }
-    )
-    .padding(.horizontal, 16)
-    .padding(.vertical, 20)
-    
-    public init(store: StoreOf<Home>) {
+    private let store: StoreOf<HomeFeature>
+
+    public init(store: StoreOf<HomeFeature>) {
         self.store = store
-//        UIRefreshControl().layer.zPosition = 1000
     }
     
     public var body: some View {
         WithViewStore(store, observe: { $0 }) { store in
-            ScrollView {
-                LazyVStack(pinnedViews: [.sectionHeaders]) {
-                    Section(
-                        header: HomeHeaderView(opacity: .constant(CGFloat(backgroundAlpha)))
-                            .opacity(backgroundAlpha)
+            if store.isSkeletonLoading {
+                HomeSkeletonView()
+                    .padding(.top, safeAreaInsets.top)
+            } else {
+                ScrollView {
+                    LazyVStack(
+                        pinnedViews: [.sectionHeaders]
                     ) {
-                        scrollObservableView
-                        VStack {
-                            originalView
-                                .padding(.top, 28)
-                            bannerView
-                            previewView
+                        Section(
+                            header: HomeHeaderView(opacity: $headerViewOpacity)
+                        ) {
+                            ScrollObserverableView()
+                            VStack(spacing: 28) {
+                                originalView
+                                
+                                bannerView
+                                    .padding(.horizontal, 16)
+                                
+                                dailyPreviewView
+                                    .padding(.horizontal, 16)
+                                
+                                profilePreviewView
+                            }
+                            .padding(.vertical, 28)
+                            .background(.white)
+                            .zIndex(3)
+                            .clipShape(.rect(cornerRadius: 30))
+                            .clipped()
                         }
-                        .background(.white)
-                        .zIndex(3)
-                        .clipShape(.rect(cornerRadius: 30))
-                        .clipped()
                     }
-                    
+                    .padding(.top, safeAreaInsets.top)
+                }
+                .onPreferenceChange(ScrollOffsetKey.self) {
+                    headerViewOpacity = $0 / Metric.headerViewHeight
+                }
+                .refreshable {
+                    await store.send(.original(.delegate(.refresh)))
+                        .finish()
                 }
             }
-            .onPreferenceChange(ScrollOffsetKey.self) { offset = $0 }
-            .refreshable {
-                await store.send(.original(.view(.onAppear)))
-                    .finish()
-            }
         }
+        .onAppear { store.send(.view(.onAppear)) }
     }
 }
 
 extension HomeView {
-    
-//    private var previewView: some View {
-//        Preview
-//    }
-//    
-    
+
     private var originalView: some View {
         OriginalView(
             store: store.scope(state: \.original, action: \.original)
@@ -110,53 +93,46 @@ extension HomeView {
             }
         )
         .aspectRatio(290 / 71, contentMode: .fit)
-        .padding(.horizontal, 16)
-        .padding(.top, 20)
+    }
+    
+    private var dailyPreviewView: some View {
+        DailyPreviewView(
+            store: store.scope(state: \.daily, action: \.daily)
+        )
+    }
+    
+    private var profilePreviewView: some View {
+        ProfilePreviewView(
+            store: store.scope(state: \.profile, action: \.profile)
+        )
     }
 }
 
-
-
-
-public struct HomeHeaderView: View {
+public struct BlinkViewModifier: ViewModifier {
+    let duration: Double
+    @State private var blinking: Bool = false
     
-    @Binding private var opacity: CGFloat
-    
-    public init(opacity: Binding<CGFloat>) {
-        self._opacity = opacity
-    }
-    
-    public var body: some View {
-        AppResourceAsset.Image.cuddleHomeBackground.swiftUIImage
-            .resizable()
-            .aspectRatio(320 / 269, contentMode: .fill)
-            .frame(height: 100, alignment: .center)
-            .opacity(opacity)
-            .overlay {
-                HStack(alignment: .center, spacing: 16) {
-                    VStack(alignment: .leading) {
-                        Text("발에서 마음까지")
-                            .font(.npsBody10)
-                        Text("Cuddle")
-                            .font(.custom(NPS.title.name, size: 25))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    AppResourceAsset.Image.cuddleMainLogo.swiftUIImage
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 81, height: 53)
-                }
-                .padding(.leading, 24)
-                .padding(.trailing, 14)
+    public func body(content: Content) -> some View {
+        content
+            .opacity(blinking ? 0.3 : 1)
+            .animation(.easeInOut(duration: duration).repeatForever(), value: blinking)
+            .onAppear {
+                // Animation will only start when blinking value changes
+                blinking.toggle()
             }
     }
 }
 
-
-struct ScrollOffsetKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value += nextValue()
+extension View {
+    func blinking(duration: Double = 1) -> some View {
+        modifier(BlinkViewModifier(duration: duration))
+    }
+}
+struct SkeletonCellView: View {
+    let primaryColor = Color(.init(gray: 0.9, alpha: 1.0))
+    let secondaryColor  = Color(.init(gray: 0.8, alpha: 1.0))
+    
+    var body: some View {
+        primaryColor
     }
 }

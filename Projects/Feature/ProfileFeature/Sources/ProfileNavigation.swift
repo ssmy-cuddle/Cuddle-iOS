@@ -13,7 +13,7 @@ import ComposableArchitecture
 public struct ProfileNavigation {
     
     public static var initialState: Path.State {
-        .main(Profile.State())
+        .main(Profile.State(isRefreshRequired: true))
     }
     
     public enum Action {
@@ -23,10 +23,10 @@ public struct ProfileNavigation {
     
     @ObservableState
     public struct State {
-        public var path = StackState<Path.State>()
+        public var path = StackState<Path.State>([ProfileNavigation.initialState])
         
         public init() {
-            path.append(ProfileNavigation.initialState)
+//            path.append(ProfileNavigation.initialState)
         }
     }
     
@@ -43,6 +43,9 @@ public struct ProfileNavigation {
                 case let .element(_, .main(.view(.editButtonTapped(cuddler)))):
                     state.path.append(.input(CuddlerInput.State(inputType: .edit(cuddler))))
                     return .none
+                case let .element(_, action: .main(.view(.userProfileButtonTapped(userProfile)))):
+                    state.path.append(.userProfile(UserProfileInputFeature.State(userProfile: userProfile)))
+                    return .none
                 case .element(_, .main):
                     return .none
                 case .element(_, .input(.back)):
@@ -51,8 +54,12 @@ public struct ProfileNavigation {
                 case .element(_, .input(.didEndRegister)):
                     state.path.removeAll()
                     state.path.append(
-                        .main(Profile.State())
+                        .main(Profile.State(isRefreshRequired: true))
                     )
+                    return .none
+                    
+                case .element(_, .userProfile(.view(.back))):
+                    state.path.removeLast()
                     return .none
                 default:
                     return .none
@@ -74,19 +81,24 @@ extension ProfileNavigation {
         public enum State: Equatable {
             case main(Profile.State)
             case input(CuddlerInput.State)
+            case userProfile(UserProfileInputFeature.State)
         }
     
         public enum Action {
             case main(Profile.Action)
             case input(CuddlerInput.Action)
+            case userProfile(UserProfileInputFeature.Action)
         }
         
         public var body: some ReducerOf<Self> {
-            Scope(state: \.main, action: \.main) {
+            Scope(state: \.main, action: /Action.main) {
                 Profile()
             }
             Scope(state: \.input, action: \.input) {
                 CuddlerInput()
+            }
+            Scope(state: \.userProfile, action: \.userProfile) {
+                UserProfileInputFeature()
             }
         }
     }

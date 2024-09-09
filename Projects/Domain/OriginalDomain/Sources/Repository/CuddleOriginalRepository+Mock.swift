@@ -9,7 +9,7 @@ import Foundation
 
 public struct MockCuddleOriginalRepository: CuddleOriginalRepository {
     public func list() async throws -> [CuddleOriginal] {
-        try await Task.sleep(for: .milliseconds(1000))
+        try await Task.sleep(for: .milliseconds(2000))
         return [
             MockCuddleOriginal.cuddleOpen2,
             MockCuddleOriginal.cuddleOpen

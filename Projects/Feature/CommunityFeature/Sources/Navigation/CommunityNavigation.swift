@@ -26,11 +26,11 @@ public struct CommunityNavigation {
     
     @ObservableState
     public struct State: Equatable {
-        public var path = StackState<Path.State>()
+        public var path = StackState<Path.State>([.main(.init())])
         public var isCommentPresent: Bool = false
         
         public init() {
-            path.append(CommunityNavigation.initialState)
+//            path.append(CommunityNavigation.initialState)
         }
     }
     

@@ -20,10 +20,10 @@ public struct ContentView: View {
     
     private let homeView = HomeView(
     
-        store: StoreOf<Home>(
-            initialState: Home.State()
+        store: StoreOf<HomeFeature>(
+            initialState: HomeFeature.State()
         ) {
-            Home()
+            HomeFeature()
         }
     )
     
@@ -43,6 +43,13 @@ public struct ContentView: View {
 //        UITabBar.appearance().standardAppearance = tabBarAppearance
 //        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
     }
+    let homeNavigationView = HomeNavigationView(
+        store: StoreOf<HomeNavigation>(
+            initialState: HomeNavigation.State()
+        ) {
+            HomeNavigation()
+        }
+    )
     
     let communityNavigation = CommunityNavigationView(
         store: StoreOf<CommunityNavigation>(
@@ -68,33 +75,47 @@ public struct ContentView: View {
     
     // MARK: Body
     
+//    @ViewBuilder
+//    public func buildView(for navigationType: NavigationTabType) -> some View {
+//        switch navigationType {
+//        case .home: 
+//            HomeView(
+//                store: StoreOf<HomeFeature>(
+//                    initialState: HomeFeature.State()
+//                ) {
+//                    HomeFeature()
+//                }
+//            )
+//        case .diary: Text("서비스 준비 중입니다.")
+//                .font(.pretendardBody14)
+//        case .comumnity: communityNavigation
+//        case .donation:
+//            DonnationView()
+////                .font(.pretendardBody14)
+//        case .profile: ProfileNavigationView(
+//            store: StoreOf<ProfileNavigation>(
+//                initialState: ProfileNavigation.State()
+//            ) {
+//                ProfileNavigation()
+//            }
+//        )
+//        }
+//    }
+//    
     @ViewBuilder
     public func buildView(for navigationType: NavigationTabType) -> some View {
         switch navigationType {
-        case .home: 
-            HomeView(
-                store: StoreOf<Home>(
-                    initialState: Home.State()
-                ) {
-                    Home()
-                }
-            )
+        case .home: homeNavigationView
         case .diary: Text("서비스 준비 중입니다.")
                 .font(.pretendardBody14)
         case .comumnity: communityNavigation
         case .donation:
             DonnationView()
-//                .font(.pretendardBody14)
-        case .profile: ProfileNavigationView(
-            store: StoreOf<ProfileNavigation>(
-                initialState: ProfileNavigation.State()
-            ) {
-                ProfileNavigation()
-            }
-        )
+            //                .font(.pretendardBody14)
+        case .profile: profileNavigation
         }
     }
-//    
+//
 //    public lazy var tabView: some View  WithViewStore(store, observe: { $0 }) { store in
 //        TabView(
 //            selection: store.binding(get: \.contentType) {
@@ -110,21 +131,19 @@ public struct ContentView: View {
 //        }
 //    }
     
-    public var tabView: some View {
-        WithViewStore(store, observe: { $0 }) { store in
-            TabView(
-                selection: store.binding(get: \.contentType) {
-                    Content.Action.view(.changeTab($0))
-                }
-            ) {
-                Group {
-                    ForEach(store.navigationTabs, id: \.hashValue) {
-                        buildView(for: $0).tag($0)
-                    }
-                }
-                .toolbar(.hidden, for: .tabBar)
-                .toolbarBackground(.hidden, for: .tabBar)
+    public func tabView(store: ViewStore<Content.State, Content.Action>) -> some View {
+        TabView(
+            selection: store.binding(get: \.contentType) {
+                Content.Action.view(.changeTab($0))
             }
+        ) {
+            Group {
+                ForEach(store.navigationTabs, id: \.hashValue) {
+                    buildView(for: $0).tag($0)
+                }
+            }
+            .toolbar(.hidden, for: .tabBar)
+            .toolbarBackground(.hidden, for: .tabBar)
         }
     }
     
@@ -138,9 +157,42 @@ public struct ContentView: View {
                         }
                     ) {
                         Group {
+                            
+//                            tabView(store: store)
                             ForEach(store.navigationTabs, id: \.hashValue) {
                                 buildView(for: $0).tag($0)
                             }
+                            
+//                            HomeView(
+//                                store: StoreOf<HomeFeature>(
+//                                    initialState: HomeFeature.State()
+//                                ) {
+//                                    HomeFeature()
+//                                }
+//                            ).tag(NavigationTabType.home)
+////                            
+////                            Text("서비스 준비 중입니다.")
+////                                .font(.pretendardBody14)
+////                                .tag(NavigationTabType.diary)
+////                            
+//                            communityNavigation
+//                                .tag(NavigationTabType.comumnity)
+////                            
+////                            
+////                            DonnationView()
+////                                .tag(NavigationTabType.donation)
+////                            
+//                            profileNavigation
+//                                .tag(NavigationTabType.profile)
+//                            
+//                            ProfileNavigationView(
+//                                store: StoreOf<ProfileNavigation>(
+//                                    initialState: ProfileNavigation.State()
+//                                ) {
+//                                    ProfileNavigation()
+//                                }
+//                            )
+//                            .tag(NavigationTabType.profile)
                         }
                         .toolbar(.hidden, for: .tabBar)
                         .toolbarBackground(.hidden, for: .tabBar)

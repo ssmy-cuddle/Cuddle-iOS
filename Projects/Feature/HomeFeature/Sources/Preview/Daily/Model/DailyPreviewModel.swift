@@ -1,5 +1,5 @@
 //
-//  DailyContentGridItemModel.swift
+//  DailyPreviewModel.swift
 //  HomeFeature
 //
 //  Created by mvldev7 on 7/19/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct DailyContentGridItemModel {
+public struct DailyPreviewModel {
     let id: UUID
     let thumbnailURL: URL
     let profileImage: URL
@@ -15,4 +15,4 @@ public struct DailyContentGridItemModel {
     let nickname: String
 }
 
-extension DailyContentGridItemModel: Equatable {}
+extension DailyPreviewModel: Equatable {}
