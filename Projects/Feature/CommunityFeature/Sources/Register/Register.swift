@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-import CommunityDomain
+import CommunityClient
 
 import ComposableArchitecture
 

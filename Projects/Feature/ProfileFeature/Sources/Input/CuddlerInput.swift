@@ -11,7 +11,7 @@ import UIKit
 import BaseFeature
 
 import ComposableArchitecture
-import ProfileDomain
+import ProfileClient
 
 public enum ImageStatus: Equatable {
     case url(URL)

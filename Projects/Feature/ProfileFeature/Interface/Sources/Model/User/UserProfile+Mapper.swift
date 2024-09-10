@@ -7,7 +7,7 @@
 
 import Foundation
 
-import ProfileDomain
+import ProfileClient
 
 public extension UserProfile {
     var asModel: UserProfileModel {

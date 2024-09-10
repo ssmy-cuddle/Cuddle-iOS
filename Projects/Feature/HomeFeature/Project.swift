@@ -12,7 +12,7 @@ let project = Project.feature(
         Core.designSystem.targetDependency,
         Core.uiComponent.targetDependency,
         Feature.base.targetDependency,
-        Domain.original.targetDependency,
+        Client.original.targetDependency,
         External.composableArchitecture.targetDependency,
         External.kingfisher.targetDependency
     ]

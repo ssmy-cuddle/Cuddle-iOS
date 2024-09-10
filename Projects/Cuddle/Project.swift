@@ -3,7 +3,7 @@ import DependencyPlugin
 
 let coreDependencies: [TargetDependency] = Core.allCases.map(\.targetDependency)
 let featureDependencies: [TargetDependency] = Feature.allCases.map(\.targetDependency)
-let domainDependencies: [TargetDependency] = Domain.allCases.map(\.targetDependency)
+let clientDependencies: [TargetDependency] = Client.allCases.map(\.targetDependency)
 let externalDependencies: [TargetDependency] = External.allCases.map(\.targetDependency)
 
 let project = Project(
@@ -24,7 +24,7 @@ let project = Project(
             ),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            dependencies: coreDependencies + featureDependencies + domainDependencies + externalDependencies
+            dependencies: coreDependencies + featureDependencies + clientDependencies + externalDependencies
         ),
         .target(
             name: "CuddleTests",

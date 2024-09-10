@@ -16,6 +16,6 @@ let project = Project.feature(
         External.kingfisher.targetDependency,
     ],
     interfaceDependencies: [
-        Domain.profile.targetDependency
+        Client.profile.targetDependency
     ]
 )

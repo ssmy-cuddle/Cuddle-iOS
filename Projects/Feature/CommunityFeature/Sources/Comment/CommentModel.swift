@@ -7,7 +7,7 @@
 
 import Foundation
 
-import CommunityDomain
+import CommunityClient
 
 public struct CommentModel {
     public let id: UUID
@@ -62,7 +62,7 @@ public struct SubCommentModel {
 extension SubCommentModel: Equatable {}
 
 
-extension CommunityDomain.Comment {
+extension CommunityClient.Comment {
     var asModel: CommentModel {
         CommentModel(
             id: id,

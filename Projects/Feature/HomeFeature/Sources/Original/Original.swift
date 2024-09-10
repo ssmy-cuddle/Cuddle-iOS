@@ -9,14 +9,14 @@ import Foundation
 import SwiftUI
 
 import BaseFeature
-import OriginalDomain
+import OriginalClient
 
 import ComposableArchitecture
 
 @Reducer
 public struct OriginalFeature {
     
-    @Dependency(\.getCuddleOriginalListUseCase) private var getCuddleOriginalListUseCase
+    @Dependency(\.originalClient) private var originalClient
     
     public enum Action: FeatureAction, Equatable {
         case view(ViewAction)
@@ -91,7 +91,7 @@ extension OriginalFeature {
     private func onAppear() -> Effect<Action> {
         .run {
             await $0(.inner(.isSkeletonLoading(true)))
-            let originals = try await getCuddleOriginalListUseCase.execute()
+            let originals = try await originalClient.list(id: "")
                 .map(\.asModel)
             return await $0(.inner(.originals(originals)))
         }
@@ -113,7 +113,7 @@ extension OriginalFeature {
     
     private func refresh(state: inout State) -> Effect<Action> {
         .run {
-            let originals = try await getCuddleOriginalListUseCase.execute()
+            let originals = try await originalClient.list(id: "")
                 .map(\.asModel)
             return await $0(.inner(.originals(originals)))
         }

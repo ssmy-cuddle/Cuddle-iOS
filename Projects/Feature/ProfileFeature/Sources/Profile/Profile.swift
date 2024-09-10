@@ -8,7 +8,7 @@
 import Foundation
 
 import BaseFeature
-import ProfileDomain
+import ProfileClient
 import ProfileFeatureInterface
 
 import ComposableArchitecture

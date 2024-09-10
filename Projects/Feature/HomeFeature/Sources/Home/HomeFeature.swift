@@ -47,7 +47,12 @@ public struct HomeFeature {
     
     public var body: some Reducer<State, Action> {
         Scope(state: \.original, action: /Action.original) {
-            OriginalFeature()
+//            OriginalFeature()
+            withDependencies {
+                $0.originalClient = .previewValue
+            } operation: {
+                OriginalFeature()
+            }
         }
         Scope(state: \.daily, action: /Action.daily) {
             DailyPreviewFeature()

@@ -7,7 +7,7 @@
 
 import Foundation
 
-import BaseDomain
+import BaseClient
 
 public enum GenderModel {
     case male

@@ -13,7 +13,7 @@ let project = Project.feature(
         Core.uiComponent.targetDependency,
         Feature.base.targetDependency,
         Feature.home.targetDependency,
-        Domain.community.targetDependency,
+        Client.community.targetDependency,
         External.composableArchitecture.targetDependency,
     ]
 )

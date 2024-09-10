@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 import BaseFeature
-import CommunityDomain
+import CommunityClient
 
 import ComposableArchitecture
 

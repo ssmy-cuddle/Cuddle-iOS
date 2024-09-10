@@ -7,7 +7,7 @@
 
 import Foundation
 
-import BaseDomain
+import BaseClient
 
 public extension Gender {
     var asModel: GenderModel {

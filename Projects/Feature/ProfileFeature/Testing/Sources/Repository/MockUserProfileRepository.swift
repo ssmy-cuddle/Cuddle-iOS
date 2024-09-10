@@ -7,8 +7,8 @@
 
 import Foundation
 
-import BaseDomain
-import ProfileDomain
+import BaseClient
+import ProfileClient
 
 public struct MockUserProfileRepository: UserProfileRepository {
     

@@ -8,7 +8,7 @@
 import Foundation
 
 import BaseFeature
-import CommunityDomain
+import CommunityClient
 
 import ComposableArchitecture
 

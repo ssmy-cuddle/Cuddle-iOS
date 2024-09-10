@@ -7,7 +7,7 @@
 
 import Foundation
 
-import CommunityDomain
+import CommunityClient
 
 public struct DailyContentModel {
     public let id: UUID

@@ -11,7 +11,14 @@ struct CuddleApp: App {
     let contentView: ContentView?
     
     init() {
-        self.contentView = AppContainer.shared.resolve(ContentView.self)
+//        self.contentView = AppContainer.shared.resolve(ContentView.self)
+        self.contentView = ContentView(
+            store: StoreOf<Content>(
+                initialState: Content.State()
+            ) {
+                Content()
+            }
+        )
         registerCustomFonts()
     }
     

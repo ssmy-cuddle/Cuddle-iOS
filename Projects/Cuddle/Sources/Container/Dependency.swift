@@ -7,7 +7,7 @@
 
 import Foundation
 
-import ProfileDomain
+import ProfileClient
 //import ProfileFeatureTesting
 
 import Dependencies

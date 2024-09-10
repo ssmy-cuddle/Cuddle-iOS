@@ -1,0 +1,8 @@
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project.client(
+    name: "{{ name }}Client",
+    bundleID: "{{ name }}Client",
+    targets: [.staticFramework, .tests]
+)

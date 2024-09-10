@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 import AppResource
-import OriginalDomain
+import OriginalClient
 
 public struct OriginalContentModel: Identifiable {
     public let id: UUID
