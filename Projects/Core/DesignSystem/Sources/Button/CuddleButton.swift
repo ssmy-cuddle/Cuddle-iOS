@@ -48,21 +48,30 @@ public enum CuddleButtonTheme {
 
 public struct CuddleTextButton: View {
     
+    private enum DisabledColor {
+        static let foreground = Color(red: 0.74, green: 0.74, blue: 0.74)
+        static let background = Color(red: 0.96, green: 0.96, blue: 0.96)
+    }
+    
     private let theme: CuddleButtonTheme
     private let action: () -> Void
     private let text: String
     private let font: Font
     
+    @Binding var isEnabled: Bool
+    
     public init(
         action: @escaping () -> Void,
         theme: CuddleButtonTheme,
         text: String,
-        font: Font
+        font: Font,
+        isEnabled: Binding<Bool> = .constant(true)
     ) {
         self.theme = theme
         self.action = action
         self.text = text
         self.font = font
+        self._isEnabled = isEnabled
     }
     
     public var body: some View {
@@ -72,11 +81,12 @@ public struct CuddleTextButton: View {
                 Text(text)
                     .font(font)
                     .padding(.vertical, 16)
-                    .foregroundStyle(theme.textColor)
+                    .foregroundStyle(isEnabled ? theme.textColor : DisabledColor.foreground)
                     .frame(maxWidth: .infinity)
             }
         )
-        .background(theme.backgroundColor)
+        .background(isEnabled ? theme.backgroundColor : DisabledColor.background)
         .cornerRadius(25)
+        .disabled(!isEnabled)
     }
 }
