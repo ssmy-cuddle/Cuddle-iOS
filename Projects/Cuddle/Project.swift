@@ -20,6 +20,7 @@ let project = Project(
                         "UIColorName": "white",
                         "UIImageName": "cuddle-launch",
                     ],
+                    "UIUserInterfaceStyle": "Light"
                 ]
             ),
             sources: ["Sources/**"],

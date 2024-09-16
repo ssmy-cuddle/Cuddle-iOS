@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-import SkeletonUI
+//import SkeletonUI
 
 public struct HomeSkeletonView: View {
     
