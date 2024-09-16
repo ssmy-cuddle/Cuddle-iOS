@@ -9,13 +9,19 @@ import Foundation
 import SwiftUI
 
 import AppResource
+import DesignSystem
 
 public struct CuddleNavigationBar: View {
     
+    private var title: String?
     private var onButtonTap: () -> Void
     
-    public init(onButtonTap: @escaping () -> Void) {
+    public init(
+        title: String? = nil,
+        onButtonTap: @escaping () -> Void
+    ) {
         self.onButtonTap = onButtonTap
+        self.title = title
     }
     
     public var body: some View {
@@ -24,7 +30,15 @@ public struct CuddleNavigationBar: View {
                 .foregroundColor(.white)
                 .frame(height: 17 + 16 + 16)
                 .frame(maxWidth: .infinity)
-                .shadow(color: .black.opacity(0.1), radius: 3, x: .zero, y: 4)
+                .shadow(color: .black.opacity(0.1), radius: 3, x: .zero, y: 3)
+            
+            if let title {
+                Text(title)
+                    .padding(.all, 16)
+                    .font(.pretendardTitle14)
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.center)
+            }
             
             Button(
                 action: { onButtonTap() }

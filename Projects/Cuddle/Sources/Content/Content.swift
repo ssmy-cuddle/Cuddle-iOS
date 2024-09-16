@@ -8,6 +8,13 @@
 import Foundation
 import SwiftUI
 
+import BaseFeature
+import UIComponent
+
+import CommunityFeature
+import HomeFeature
+import ProfileFeature
+
 import ComposableArchitecture
 
 @Reducer
@@ -17,18 +24,23 @@ public struct Content {
     public struct State: Equatable {
         var navigationTabs: [NavigationTabType] = NavigationTabType.allCases
         var contentType: NavigationTabType = .default
+        var isTabBarVisible: Bool = true
     }
     
     public enum Action: FeatureAction {
         case view(ViewAction)
         case inner(InnerAction)
+        case delegate(DelegateAction)
+
+        public enum ViewAction: Equatable {
+            case changeTab(NavigationTabType)
+            case changeTabBarVisible(Bool)
+        }
+        public enum InnerAction: Equatable {}
+        public enum DelegateAction: Equatable {
+            
+        }
     }
-    
-    public enum ViewAction: Equatable {
-        case changeTab(NavigationTabType)
-    }
-    
-    public enum InnerAction {}
     
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
@@ -38,19 +50,11 @@ public struct Content {
                 case let .changeTab(contentType):
                     state.contentType = contentType
                     return .none
+                case let .changeTabBarVisible(isVisible):
+                    state.isTabBarVisible = isVisible
+                    return .none
                 }
             }
         }
     }
-}
-
-public protocol FeatureAction {
-  associatedtype ViewAction
-  associatedtype InnerAction
-
-  // NOTE: view 에서 사용되는 Action 을 정의합니다.
-  static func view(_: ViewAction) -> Self
-
-  // NOTE: 그 외 Reducer 내부적으로 사용되는 Action 을 정의합니다.
-  static func inner(_: InnerAction) -> Self
 }

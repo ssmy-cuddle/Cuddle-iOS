@@ -20,10 +20,11 @@ public struct HomeHeaderView: View {
     }
     
     public var body: some View {
-        AppResourceAsset.Image.cuddleHomeBackground.swiftUIImage
+        AppResourceAsset.Image.homeBackgroundWithAlpha.swiftUIImage
             .resizable()
-            .aspectRatio(320 / 269, contentMode: .fill)
-            .frame(height: 110, alignment: .center)
+            .aspectRatio(320 / 476, contentMode: .fill)
+            .frame(height: 112, alignment: .bottom)
+            .padding(.bottom, -16)
             .overlay {
                 HStack(alignment: .top, spacing: 16) {
                     VStack(alignment: .leading) {
@@ -41,6 +42,7 @@ public struct HomeHeaderView: View {
                 }
                 .padding(.leading, 24)
                 .padding(.trailing, 14)
+                .frame(maxHeight: .infinity)
             }
             .opacity(opacity)
     }

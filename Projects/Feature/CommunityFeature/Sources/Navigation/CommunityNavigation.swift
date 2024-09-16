@@ -12,58 +12,44 @@ import ComposableArchitecture
 @Reducer
 public struct CommunityNavigation {
     
-    public static var initialState: Path.State {
-        Path.State.main(Community.State())
+    private static var rootPath: Path.State {
+        Path.State.main(CommunityFeature.State(isRefreshRequired: true))
     }
     
     public init() {}
     
-    public enum Action {
-        case path(StackAction<Path.State, Path.Action>)
-        case popToRoot
-        case commentDismissed
-    }
-    
     @ObservableState
-    public struct State: Equatable {
-        public var path = StackState<Path.State>([.main(.init())])
-        public var isCommentPresent: Bool = false
+    public struct State {
+        public var path = StackState<Path.State>(
+            [.main(.init(isRefreshRequired: true))]
+        )
+        @Presents var comment: Comment.State?
         
-        public init() {
-//            path.append(CommunityNavigation.initialState)
-        }
+        public init() {}
     }
     
-    public var body: some Reducer<State, Action> {
+    public enum Action {
+        case path(StackActionOf<Path>)
+        case popToRoot
+        case comment(PresentationAction<Comment.Action>)
+    }
+    
+    public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case let .path(action):
-                switch action {
-                case .element(_, .navigateToMainView(.register)):
-                    state.path.append(.register(Register.State()))
-                    return .none
-                case .element(_, .navigateToRegister(.back)):
-                    state.path.removeLast()
-                    return .none
-                case .element(_, .navigateToRegister(.didEndRegister)):
-                    state.path.removeAll()
-                    state.path.append(.main(Community.State()))
-                    return .none
-                case .element(_, .navigateToMainView(.daily(.view(.writeComment)))):
-                    state.isCommentPresent = true
-                    return .none
-                default:
-                    return .none
-                }
-            case .commentDismissed:
-                state.isCommentPresent = false
-                return .none
+            case let .path(.element(_, .main(action))):
+                self.reduce(mainAction: action, state: &state)
+            case let .path(.element(_, .register(action))):
+                self.reduce(registerAction: action, state: &state)
+            case .popToRoot:
+                self.popToRoot(state: &state)
             default:
-                return .none
+                .none
             }
         }
-        .forEach(\.path, action: /Action.path) {
-            Path()
+        .forEach(\.path, action: \.path)
+        .ifLet(\.$comment, action: \.comment) {
+            Comment()
         }
     }
 }
@@ -72,25 +58,66 @@ public struct CommunityNavigation {
 extension CommunityNavigation {
     
     @Reducer
-    public struct Path {
-        @ObservableState
-        public enum State: Equatable {
-            case main(Community.State)
-            case register(Register.State)
-        }
+    public enum Path {
+        case main(CommunityFeature)
+        case register(RegisterFeature)
+    }
+}
+
+extension CommunityNavigation {
     
-        public enum Action {
-            case navigateToMainView(Community.Action)
-            case navigateToRegister(Register.Action)
+    // MARK: - Main
+    
+    private func reduce(mainAction: CommunityFeature.Action, state: inout State) -> Effect<Action> {
+        switch mainAction {
+        case .view(.registerButtonTapped):
+            self.registerButtonTapped(state: &state)
+        case let .daily(.view(.writeComment(id))):
+            self.writeCommentButtonTapped(id: id, state: &state)
+        default:
+            .none
         }
-        
-        public var body: some ReducerOf<Self> {
-            Scope(state: \.main, action: \.navigateToMainView) {
-                Community()
-            }
-            Scope(state: \.register, action: \.navigateToRegister) {
-                Register()
-            }
+    }
+    
+    private func registerButtonTapped(state: inout State) -> Effect<Action> {
+        state.path.append(.register(.init()))
+        return .none
+    }
+    
+    private func writeCommentButtonTapped(id: UUID, state: inout State) -> Effect<Action> {
+        state.comment = Comment.State(id: id)
+        return .none
+    }
+    
+    // MARK: - Register
+    
+    private func reduce(registerAction: RegisterFeature.Action, state: inout State) -> Effect<Action> {
+        switch registerAction {
+        case .view(.backButtomTapped):
+            self.backButtonTapped(state: &state)
+        case .inner(.registered):
+            self.dailyRegistered(state: &state)
+        default:
+            .none
         }
+    }
+    
+    private func backButtonTapped(state: inout State) -> Effect<Action> {
+        state.path.removeLast()
+        return .none
+    }
+    
+    private func dailyRegistered(state: inout State) -> Effect<Action> {
+        state.path.removeAll()
+        state.path.append(.main(.init(isRefreshRequired: true)))
+        return .none
+    }
+    
+    // MARK: - PopToRoot
+    
+    private func popToRoot(state: inout State) -> Effect<Action> {
+        state.path.removeAll()
+        state.path.append(CommunityNavigation.rootPath)
+        return .none
     }
 }

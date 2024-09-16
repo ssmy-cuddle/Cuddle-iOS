@@ -71,7 +71,8 @@ public struct UserProfileInputView: View {
                                 action: {},
                                 theme: .primary(.yellow),
                                 text: "수정완료",
-                                font: .pretendardTitle16
+                                font: .pretendardTitle16,
+                                isEnabled: .constant(store.isConfirmButtonEnabled)
                             )
                             .padding(.bottom, 16)
                         }
@@ -81,6 +82,9 @@ public struct UserProfileInputView: View {
                 }
             }
         }
+        .navigationBarTitle("", displayMode: .inline) //this must be empty
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
     }
 }
 

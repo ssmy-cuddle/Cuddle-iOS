@@ -114,10 +114,13 @@ public struct ProfileView: View {
                                 .padding(.top, 14)
                                 
                                 CuddleTextButton(
-                                    action: { store.send(.view(.userProfileButtonTapped(store.profile))) },
+                                    action: {
+                                        store.send(.view(.userProfileButtonTapped(store.profile)))
+                                    },
                                     theme: .primary(.custom(AppResourceAsset.Color.cuddleGreen.swiftUIColor)),
                                     text: "프로필 수정",
-                                    font: .pretendardTitle12
+                                    font: .pretendardTitle12,
+                                    isEnabled: .constant(true)
                                 )
                                 .padding(.horizontal, 28)
                                 .padding(.top, 16)
@@ -134,7 +137,7 @@ public struct ProfileView: View {
                                         case let .profile(profile):
                                             CuddlerProfileView(
                                                 cuddler: profile,
-                                                editAction: { store.send(.view(.editButtonTapped($0)))  }
+                                                editAction: { store.send(.view(.editButtonTapped($0)), animation: .easeInOut)  }
                                             )
                                         case .add:
                                             CuddlerAddProfileView(
@@ -149,10 +152,12 @@ public struct ProfileView: View {
                         }
                         .padding(.vertical, 32)
                     }
-                    .padding(.top, safeAreaInsets.top)
                 }
             }
             .onAppear { store.send(.view(.onAppear)) }
+            .navigationBarTitle("", displayMode: .inline) //this must be empty
+            .navigationBarHidden(true)
+            .navigationBarBackButtonHidden(true)
         }
     }
 

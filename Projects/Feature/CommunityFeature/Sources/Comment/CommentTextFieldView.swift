@@ -85,7 +85,8 @@ extension CommentTextField {
                 action: { register() },
                 theme: .primary(.custom(Color(red: 1, green: 0.45, blue: 0.45))),
                 text: "등록",
-                font: .pretendardBody12
+                font: .pretendardBody12,
+                isEnabled: .constant(true)
             )
             .frame(width: 72)
             .scaledToFit()

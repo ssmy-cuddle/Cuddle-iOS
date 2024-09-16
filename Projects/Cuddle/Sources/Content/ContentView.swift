@@ -3,6 +3,7 @@ import SwiftUI
 
 import AppResource
 import DesignSystem
+import UIComponent
 
 import CommunityFeature
 import HomeFeature
@@ -14,36 +15,31 @@ import ComposableArchitecture
 
 public struct ContentView: View {
     
-    @StateObject private var keyboardResponder = KeyboardResponder()
+    @ObservedObject private var keyboardResponder = KeyboardResponder()
+    @ObservedObject private var tabBarVisibility = TabBarVisibility(isTabBarVisible: true)
+    @Environment(\.safeAreaInsets) private var safeAreaInsets
     
-    let store: StoreOf<Content>
+    @State private var forceUpdate = false
     
-    private let homeView = HomeView(
+    @State private var isTabBarVisible = true
     
-        store: StoreOf<HomeFeature>(
-            initialState: HomeFeature.State()
-        ) {
-            HomeFeature()
-        }
-    )
+    @State private var height: CGFloat = 62.0
     
-    // MARK: Constants
-    
-    private enum Metric {
-        static let splashDismissAnimationTimeInterval = 0.1
-    }
+    private let store: StoreOf<Content>
     
     // MARK: Init
     
     public init(store: StoreOf<Content>) {
         self.store = store
         
-//        let tabBarAppearance = UITabBarAppearance()
-//        tabBarAppearance.configureWithTransparentBackground()
-//        UITabBar.appearance().standardAppearance = tabBarAppearance
-//        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        tabBarVisibility.$isTabBarVisible
+            .sink { [self] _ in
+                print("???????!?!??!?")
+                self.forceUpdate.toggle()
+            }
     }
-    let homeNavigationView = HomeNavigationView(
+    
+    private let homeNavigationView = HomeNavigationView(
         store: StoreOf<HomeNavigation>(
             initialState: HomeNavigation.State()
         ) {
@@ -51,7 +47,10 @@ public struct ContentView: View {
         }
     )
     
-    let communityNavigation = CommunityNavigationView(
+    private let diaryView = Text("서비스 준비 중입니다.")
+        .font(.pretendardBody14)
+    
+    private let communityNavigation = CommunityNavigationView(
         store: StoreOf<CommunityNavigation>(
             initialState: CommunityNavigation.State()
         ) {
@@ -59,7 +58,9 @@ public struct ContentView: View {
         }
     )
     
-    let profileNavigation = ProfileNavigationView(
+    private let donationView = DonnationView()
+    
+    private let profileNavigation = ProfileNavigationView(
         store: StoreOf<ProfileNavigation>(
             initialState: ProfileNavigation.State()
         ) {
@@ -67,285 +68,102 @@ public struct ContentView: View {
         }
     )
     
-    // MARK: View Property
+    public var body: some View {
+        WithPerceptionTracking {
+            GeometryReader { proxy in
+                VStack(spacing: 0) {
+                    contentView(for: store.contentType)
+//                        .padding(.bottom, tabBarVisibility.isTabBarVisible ? 0 : -62)
+                    
+                    if tabBarVisibility.isTabBarVisible {
+                        VStack(spacing: .zero) {
+                            dividerView
+                            navigationView(tabs: store.navigationTabs)
+                        }
+                    } else {
+                        Spacer().frame(height: .zero)
+                    }
+//                    VStack(spacing: .zero) {
+//                        dividerView
+//                        navigationView(tabs: store.navigationTabs)
+//                    }
+//                    .frame(height: 62) // TabBar의 고정 높이 설정
+//                    .opacity(tabBarVisibility.isTabBarVisible ? 1 : 0) // 가시성에 따른 투명도 설정
+//                    .animation(.easeInOut, value: tabBarVisibility.isTabBarVisible)
+                }
+                .environmentObject(tabBarVisibility)
+            }
+        }
+    }
+}
+
+extension ContentView {
     
-    private let splashScreenTransition: AnyTransition = .opacity.animation(
-        .easeInOut(duration: Metric.splashDismissAnimationTimeInterval)
-    )
-    
-    // MARK: Body
-    
-//    @ViewBuilder
-//    public func buildView(for navigationType: NavigationTabType) -> some View {
-//        switch navigationType {
-//        case .home: 
-//            HomeView(
-//                store: StoreOf<HomeFeature>(
-//                    initialState: HomeFeature.State()
-//                ) {
-//                    HomeFeature()
-//                }
-//            )
-//        case .diary: Text("서비스 준비 중입니다.")
-//                .font(.pretendardBody14)
-//        case .comumnity: communityNavigation
-//        case .donation:
-//            DonnationView()
-////                .font(.pretendardBody14)
-//        case .profile: ProfileNavigationView(
-//            store: StoreOf<ProfileNavigation>(
-//                initialState: ProfileNavigation.State()
-//            ) {
-//                ProfileNavigation()
-//            }
-//        )
-//        }
-//    }
-//    
     @ViewBuilder
     public func buildView(for navigationType: NavigationTabType) -> some View {
         switch navigationType {
         case .home: homeNavigationView
-        case .diary: Text("서비스 준비 중입니다.")
-                .font(.pretendardBody14)
+        case .diary: diaryView
         case .comumnity: communityNavigation
-        case .donation:
-            DonnationView()
-            //                .font(.pretendardBody14)
+        case .donation: donationView
         case .profile: profileNavigation
         }
     }
-//
-//    public lazy var tabView: some View  WithViewStore(store, observe: { $0 }) { store in
-//        TabView(
-//            selection: store.binding(get: \.contentType) {
-//                Content.Action.view(.changeTab($0))
-//            }
-//        ) {
-//            Group {
-//                ForEach(store.navigationTabs, id: \.hashValue) {
-//                    buildView(for: $0).tag($0)
-//                }
-//            }
-//            .toolbar(.hidden, for: .tabBar)
-//        }
-//    }
     
-    public func tabView(store: ViewStore<Content.State, Content.Action>) -> some View {
-        TabView(
-            selection: store.binding(get: \.contentType) {
-                Content.Action.view(.changeTab($0))
-            }
-        ) {
-            Group {
-                ForEach(store.navigationTabs, id: \.hashValue) {
-                    buildView(for: $0).tag($0)
+    @ViewBuilder
+    private func contentView(for contentType: NavigationTabType) -> some View {
+        ZStack {
+            buildView(for: contentType)
+        }
+//        .frame()
+    }
+    
+    @ViewBuilder 
+    private var dividerView: some View {
+        Rectangle()
+            .frame(height: 0.3)
+            .foregroundStyle(Color(red: 0.52, green: 0.52, blue: 0.52))
+    }
+    
+    
+    @ViewBuilder 
+    private func navigationView(tabs: [NavigationTabType]) -> some View {
+        HStack {
+            ForEach(tabs, id: \.hashValue) { navigationTab in
+                VStack {
+                    navigationItemView(tab: navigationTab)
+                }
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .background {
+                    store.state.contentType == navigationTab ? Circle()
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.1), radius: 10, x: 1, y: 1) : nil
+                }
+                .onTapGesture {
+                    store.send(.view(.changeTab(navigationTab)))
                 }
             }
-            .toolbar(.hidden, for: .tabBar)
-            .toolbarBackground(.hidden, for: .tabBar)
+        }
+        .background(.white)
+        .padding(.top, 3)
+        .padding(.horizontal, 8)
+    }
+    
+    @ViewBuilder 
+    private func navigationItemView(tab: NavigationTabType) -> some View {
+        VStack(spacing: 4) {
+            tab.icon
+                .renderingMode(.template)
+                .frame(width: 24, height: 24, alignment: .center)
+                .foregroundColor(
+                    store.state.contentType == tab ? tab.tintColor : Color(red: 0.52, green: 0.52, blue: 0.52)
+                )
+            Text(tab.title)
+                .font(.npsTitle10)
+                .foregroundStyle(
+                    store.state.contentType == tab ? tab.tintColor : Color(red: 0.52, green: 0.52, blue: 0.52)
+                )
         }
     }
-    
-    public var body: some View {
-        WithViewStore(store, observe: { $0 }) { store in
-//            ZStack(alignment: .bottom) {
-                VStack(spacing: 0) {
-                    TabView(
-                        selection: store.binding(get: \.contentType) {
-                            Content.Action.view(.changeTab($0))
-                        }
-                    ) {
-                        Group {
-                            
-//                            tabView(store: store)
-                            ForEach(store.navigationTabs, id: \.hashValue) {
-                                buildView(for: $0).tag($0)
-                            }
-                            
-//                            HomeView(
-//                                store: StoreOf<HomeFeature>(
-//                                    initialState: HomeFeature.State()
-//                                ) {
-//                                    HomeFeature()
-//                                }
-//                            ).tag(NavigationTabType.home)
-////                            
-////                            Text("서비스 준비 중입니다.")
-////                                .font(.pretendardBody14)
-////                                .tag(NavigationTabType.diary)
-////                            
-//                            communityNavigation
-//                                .tag(NavigationTabType.comumnity)
-////                            
-////                            
-////                            DonnationView()
-////                                .tag(NavigationTabType.donation)
-////                            
-//                            profileNavigation
-//                                .tag(NavigationTabType.profile)
-//                            
-//                            ProfileNavigationView(
-//                                store: StoreOf<ProfileNavigation>(
-//                                    initialState: ProfileNavigation.State()
-//                                ) {
-//                                    ProfileNavigation()
-//                                }
-//                            )
-//                            .tag(NavigationTabType.profile)
-                        }
-                        .toolbar(.hidden, for: .tabBar)
-                        .toolbarBackground(.hidden, for: .tabBar)
-                    }
-                    .ignoresSafeArea(.all)
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-
-                    Rectangle()
-                        .frame(height: 0.3)
-                        .foregroundStyle(Color(red: 0.52, green: 0.52, blue: 0.52))
-                    
-                    if !keyboardResponder.isKeyboardVisible {
-                        HStack {
-                            ForEach(store.navigationTabs, id: \.hashValue) { navigationTab in
-                                VStack {
-                                    VStack(spacing: 4) {
-                                        navigationTab.icon
-                                            .renderingMode(.template)
-                                            .frame(width: 24, height: 24, alignment: .center)
-                                            .foregroundColor(
-                                                store.state.contentType == navigationTab ? navigationTab.tintColor : Color(red: 0.52, green: 0.52, blue: 0.52)
-                                            )
-                                        Text(navigationTab.title)
-                                            .font(.npsTitle10)
-                                            .foregroundStyle(
-                                                store.state.contentType == navigationTab ? navigationTab.tintColor : Color(red: 0.52, green: 0.52, blue: 0.52)
-                                            )
-                                    }
-                                }
-                                .padding(.vertical, 8)
-                                .frame(maxWidth: .infinity)
-                                .background {
-                                    store.state.contentType == navigationTab ? Circle()
-                                        .foregroundColor(.white)
-                                        .shadow(color: .black.opacity(0.1), radius: 10, x: 1, y: 1) : nil
-                                }
-                                .onTapGesture {
-                                    store.send(.view(.changeTab(navigationTab)))
-                                }
-                            }
-                        }
-                        .background(.white)
-                        .padding(.top, 3)
-                        .padding(.horizontal, 8)
-                    }
-                }
-                .background(.white)
-            }
-//        }
-            
-//            
-//            
-//            
-//            WithViewStore(store, observe: { $0 }) { store in
-//                TabView(
-//                    selection: store.binding(get: \.contentType) {
-//                        Content.Action.view(.changeTab($0))
-//                    }
-//                ) {
-//                    ForEach(store.state.navigationTabs, id: \.hashValue) { navigationTab in
-//                        buildView(for: navigationTab)
-//                            .tabItem {
-//                                VStack {
-//                                    navigationTab.icon
-//                                        .renderingMode(.template)
-//                                        .frame(width: 24, height: 24, alignment: .center)
-//                                        .foregroundColor(
-//                                            store.state.contentType == navigationTab ? navigationTab.tintColor : Color(red: 0.52, green: 0.52, blue: 0.52)
-//                                        )
-//                                    Text(navigationTab.title)
-//                                        .font(.npsTitle12)
-//                                        .foregroundStyle(
-//                                            store.state.contentType == navigationTab ? navigationTab.tintColor : Color(red: 0.52, green: 0.52, blue: 0.52)
-//                                        )
-//                                }
-//                                .aspectRatio(1, contentMode: .fit)
-//                                .padding()
-//                                .shadow(color: .black, radius: 8, x: 1, y: 1)
-//                                .frame(width: 55, height: 55, alignment: .center)
-//                                .background(.red)
-//                                .background {
-//                                    Circle()
-//                                        .background(.white)
-//                                        .frame(width: 55, height: 55, alignment: .center)
-//                                        .shadow(color: .black, radius: 8, x: 1, y: 1)
-//                                }
-//                            }
-//                            .tag(navigationTab)
-//                            .onTapGesture {
-//                                store.send(.view(.changeTab(navigationTab)))
-//                            }
-//                    }
-//                }
-//            }
-//        }
-    }
 }
-
-
-struct ContentView_Previews: PreviewProvider {
-    
-    let store: StoreOf<Content>
-    
-    init(store: StoreOf<Content>) {
-        self.store = store
-    }
-    
-    static var previews: some View {
-        ContentView(
-            store: StoreOf<Content>(initialState: Content.State()) {
-                Content()
-            }
-        )
-    }
-}
-
-class KeyboardResponder: ObservableObject {
-    @Published var isKeyboardVisible: Bool = false
-    
-    private var willShowCancellable: AnyCancellable?
-    private var willHideCancellable: AnyCancellable?
-    
-    init() {
-        willShowCancellable = NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
-            .map { _ in true }
-            .assign(to: \.isKeyboardVisible, on: self)
-        
-        willHideCancellable = NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
-            .map { _ in false }
-            .assign(to: \.isKeyboardVisible, on: self)
-    }
-    
-    deinit {
-        willShowCancellable?.cancel()
-        willHideCancellable?.cancel()
-    }
-}
-
-//struct ContentView: View {
-//    @StateObject private var keyboardResponder = KeyboardResponder()
-//
-//    var body: some View {
-//        NavigationView {
-//            VStack {
-//                TextField("Enter something...", text: .constant(""))
-//                    .textFieldStyle(RoundedBorderTextFieldStyle())
-//                    .padding()
-//                Spacer()
-//            }
-//            .navigationTitle("My View")
-//            .navigationBarTitleDisplayMode(.inline)
-//            .navigationBarHidden(keyboardResponder.isKeyboardVisible) // 키보드 상태에 따라 NavigationBar 숨김
-//        }
-//        .animation(.easeInOut(duration: 0.3)) // 부드러운 전환
-//    }
-//}

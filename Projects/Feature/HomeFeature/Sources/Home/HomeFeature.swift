@@ -26,33 +26,35 @@ public struct HomeFeature {
         
         public enum ViewAction: Equatable {
             case onAppear
+            case refresh
         }
-        public enum InnerAction: Equatable {}
+        public enum InnerAction: Equatable {
+            case isRefreshRequired(Bool)
+        }
         public enum DelegateAction: Equatable {}
     }
     
     @ObservableState
     public struct State: Equatable {
-        public var isSkeletonLoading: Bool {
-            original.isSkeletonLoading || daily.isSkeletonLoading || profile.isSkeletonLoading
-        }
         public var original = OriginalFeature.State()
         public var daily = DailyPreviewFeature.State()
         public var profile = ProfilePreviewFeature.State()
+        public var isRefreshRequired: Bool
         
-        public init() {}
+        public var isSkeletonLoading: Bool {
+            original.isSkeletonLoading || daily.isSkeletonLoading || profile.isSkeletonLoading
+        }
+        
+        public init(isRefreshRequired: Bool) {
+            self.isRefreshRequired = isRefreshRequired
+        }
     }
     
     public init() {}
     
     public var body: some Reducer<State, Action> {
         Scope(state: \.original, action: /Action.original) {
-//            OriginalFeature()
-            withDependencies {
-                $0.originalClient = .previewValue
-            } operation: {
-                OriginalFeature()
-            }
+            OriginalFeature()
         }
         Scope(state: \.daily, action: /Action.daily) {
             DailyPreviewFeature()
@@ -60,11 +62,16 @@ public struct HomeFeature {
         Scope(state: \.profile, action: /Action.profile) {
             ProfilePreviewFeature()
         }
-        
         Reduce { state, action in
             switch action {
-            case let .view(action): self.reduce(viewAction: action, state: &state)
-            default: .none
+            case let .view(action): 
+                self.reduce(viewAction: action, state: &state)
+            case let .inner(action): 
+                self.reduce(innerAction: action, state: &state)
+            case let .delegate(action):
+                self.reduce(delegateAction: action, state: &state)
+            default:
+                .none
             }
         }
     }
@@ -72,23 +79,51 @@ public struct HomeFeature {
 
 extension HomeFeature {
     
+    // MARK: View
+    
     private func reduce(viewAction: Action.ViewAction, state: inout State) -> Effect<Action> {
         switch viewAction {
-        case .onAppear: self.onAppear()
+        case .onAppear: 
+            self.onAppear(state: &state)
+        case .refresh: 
+            self.refresh()
         }
     }
     
-    // MARK: View
-    
-    private func onAppear() -> Effect<Action> {
-        .merge(
+    private func onAppear(state: inout State) -> Effect<Action> {
+        guard state.isRefreshRequired else { return .none }
+        return .merge(
             .send(.original(.view(.onAppear))),
             .send(.daily(.view(.onAppear))),
-            .send(.profile(.view(.onAppear)))
+            .send(.profile(.view(.onAppear))),
+            .send(.inner(.isRefreshRequired(false)))
+        )
+    }
+    
+    private func refresh() -> Effect<Action> {
+        .concatenate(
+            .run { _ in try await Task.sleep(for: .seconds(1)) },
+            .run { await $0(.original(.delegate(.refresh))) }
         )
     }
     
     // MARK: Inner
     
+    private func reduce(innerAction: Action.InnerAction, state: inout State) -> Effect<Action> {
+        switch innerAction {
+        case let .isRefreshRequired(isRequired):
+            self.isRefreshRequired(isRequired, state: &state)
+        }
+    }
+    
+    private func isRefreshRequired(_ isRequired: Bool, state: inout State) -> Effect<Action> {
+        state.isRefreshRequired = isRequired
+        return .none
+    }
+    
     // MARK: Delegate
+    
+    private func reduce(delegateAction: Action.DelegateAction, state: inout State) -> Effect<Action> {
+        .none
+    }
 }

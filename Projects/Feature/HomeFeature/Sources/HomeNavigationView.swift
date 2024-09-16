@@ -14,8 +14,7 @@ import ComposableArchitecture
 
 public struct HomeNavigationView: View {
     
-    let store: StoreOf<HomeNavigation>
-    
+    @Bindable var store: StoreOf<HomeNavigation>
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     
     public init(store: StoreOf<HomeNavigation>) {
@@ -23,46 +22,14 @@ public struct HomeNavigationView: View {
     }
     
     public var body: some View {
-        NavigationStackStore(
-            store.scope(
-                state: \.path, action: \.path
-            )
-        ) {
-            Color.white
-        } destination: { state in
-            switch state {
-            case .home:
-                CaseLet(
-                    /HomeNavigation.Path.State.home,
-                    action: HomeNavigation.Path.Action.home,
-                    then: HomeView.init(store:)
-                )
-                .navigationBarBackButtonHidden()
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path),
+            root: { Color.clear }
+        ) { store in
+            switch store.case {
+            case let .home(store):
+                HomeView(store: store)
             }
         }
-        
-//        
-//        NavigationStackStore(
-//            store.scope(state: \.path, action: \.path),
-//            root: {
-////                HomeView(
-////                    store: StoreOf<HomeFeature>(
-////                        initialState: HomeFeature.State()
-////                    ) {
-////                        HomeFeature()
-////                    }
-////                )
-//                Color.white
-//            },
-//            destination: { state in
-//            switch state {
-//            case .home:
-//                CaseLet(
-//                    state: /HomeNavigation.Path.State.addItem,
-//                    action: HomeNavigation.Path.Action.addItem,
-//                    then: HomeView.init(store:)
-//                )
-//            }
-//        }
     }
 }

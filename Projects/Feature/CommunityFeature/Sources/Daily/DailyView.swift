@@ -26,7 +26,7 @@ public struct DailyView: View {
                 ForEach(store.contents, id: \.id) { daily in
                     DailyContentView(
                         dailyContent: daily,
-                        commentAction: { store.send(.view(.writeComment)) },
+                        commentAction: { store.send(.view(.writeComment(daily.id))) },
                         likeAction: { store.send(.view(.like(daily.id, isLike: !daily.isLike))) }
                     )
                 }

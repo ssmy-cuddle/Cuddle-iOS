@@ -12,52 +12,36 @@ import ComposableArchitecture
 @Reducer
 public struct HomeNavigation {
     
-    public static var initialPath: Path.State {
-        .home(HomeFeature.State())
-    }
-    
     public init() {}
     
     @ObservableState
-    public struct State: Equatable {
-        public var path = StackState<Path.State>([HomeNavigation.initialPath])
+    public struct State {
+        public var path = StackState<Path.State>([HomeNavigation.rootPath])
         
         public init() {}
     }
     
-    public enum Action: Equatable {
-        case path(StackAction<Path.State, Path.Action>)
+    public enum Action {
+        case path(StackActionOf<Path>)
         case popToRoot
     }
     
-    public var body: some Reducer<State, Action> {
+    public var body: some ReducerOf<Self> {
         Reduce { state, action in
             .none
         }
-        .forEach(\.path, action: /Action.path) {
-            Path()
-        }
+        .forEach(\.path, action: \.path)
     }
 }
 
 extension HomeNavigation {
     
+    private static var rootPath: Path.State {
+        .home(HomeFeature.State(isRefreshRequired: true))
+    }
+    
     @Reducer
-    public struct Path {
-        
-        @ObservableState
-        public enum State: Equatable {
-            case home(HomeFeature.State)
-        }
-        
-        public enum Action: Equatable {
-            case home(HomeFeature.Action)
-        }
-        
-        public var body: some ReducerOf<Self> {
-            Scope(state: \.home, action: \.home) {
-                HomeFeature()
-            }
-        }
+    public enum Path {
+        case home(HomeFeature)
     }
 }

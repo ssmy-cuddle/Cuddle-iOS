@@ -33,46 +33,60 @@ public struct HomeView: View {
         WithViewStore(store, observe: { $0 }) { store in
             if store.isSkeletonLoading {
                 HomeSkeletonView()
-                    .padding(.top, safeAreaInsets.top)
+                    .navigationBarTitle("", displayMode: .inline) //this must be empty
+                    .navigationBarHidden(true)
+                    .navigationBarBackButtonHidden(true)
             } else {
-                ScrollView {
-                    LazyVStack(
-                        pinnedViews: [.sectionHeaders]
-                    ) {
-                        Section(
-                            header: HomeHeaderView(opacity: $headerViewOpacity)
+                ZStack {
+                    ScrollView {
+                        LazyVStack(
+                            pinnedViews: [.sectionHeaders]
                         ) {
-                            ScrollObserverableView()
-                            VStack(spacing: 28) {
-                                originalView
-                                
-                                bannerView
-                                    .padding(.horizontal, 16)
-                                
-                                dailyPreviewView
-                                    .padding(.horizontal, 16)
-                                
-                                profilePreviewView
+                            Section(
+                                header: HomeHeaderView(opacity: $headerViewOpacity)
+                            ) {
+                                ScrollObserverableView()
+                                VStack(spacing: 28) {
+                                    originalView
+                                    
+                                    bannerView
+                                        .padding(.horizontal, 16)
+                                    
+                                    dailyPreviewView
+                                        .padding(.horizontal, 16)
+                                    
+                                    profilePreviewView
+                                }
+                                .padding(.vertical, 28)
+                                .background(.white)
+                                .zIndex(3)
+                                .clipShape(.rect(cornerRadius: 30))
                             }
-                            .padding(.vertical, 28)
-                            .background(.white)
-                            .zIndex(3)
-                            .clipShape(.rect(cornerRadius: 30))
-                            .clipped()
                         }
                     }
-                    .padding(.top, safeAreaInsets.top)
+                    .refreshable {
+                        await store.send(.view(.refresh)).finish()
+                    }
+                    .onPreferenceChange(ScrollOffsetKey.self) { offset in
+                        headerViewOpacity = offset / Metric.headerViewHeight
+                    }
+//                    .background(Color.clear)
+//                    .safeAreaInset(edge: .top) {
+//                        Color.clear
+//                            .frame(height: safeAreaInsets.top)
+//                    }
                 }
-                .onPreferenceChange(ScrollOffsetKey.self) {
-                    headerViewOpacity = $0 / Metric.headerViewHeight
-                }
-                .refreshable {
-                    await store.send(.original(.delegate(.refresh)))
-                        .finish()
-                }
+                .navigationBarTitle("", displayMode: .inline) //this must be empty
+                .navigationBarHidden(true)
+                .navigationBarBackButtonHidden(true)
+//                .background(.clear)
+//                .navigationBarBackButtonHidden()
             }
         }
         .onAppear { store.send(.view(.onAppear)) }
+        .navigationBarTitle("", displayMode: .inline) //this must be empty
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
     }
 }
 

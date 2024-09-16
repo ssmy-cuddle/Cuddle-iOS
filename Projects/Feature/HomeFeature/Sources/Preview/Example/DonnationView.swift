@@ -15,13 +15,42 @@ public struct DonnationView: View {
     public init() {}
     
     public var body: some View {
-        ScrollView {
-            ZStack {
-                AppResourceAsset.Image.cuddleDonation.swiftUIImage
-                    .resizable()
-                    .aspectRatio(320 / 888, contentMode: .fit)
+        VStack {
+            NavigationStack {
+                ScrollView {
+                    ZStack {
+                        AppResourceAsset.Image.cuddleDonation.swiftUIImage
+                            .resizable()
+                            .aspectRatio(320 / 888, contentMode: .fit)
+                    }
+                }
+                .ignoresSafeArea()
+                .navigationBarTitle("", displayMode: .inline) //this must be empty
+                .navigationBarHidden(true)
+                .navigationBarBackButtonHidden(true)
+                .toolbar(.hidden, for: .tabBar)
+                .toolbarBackground(.hidden, for: .tabBar)
             }
         }
-        .ignoresSafeArea()
+//        
+//        VStack {
+//            ScrollView {
+//                ZStack {
+//                    AppResourceAsset.Image.cuddleDonation.swiftUIImage
+//                        .resizable()
+//                        .aspectRatio(320 / 888, contentMode: .fit)
+//                }
+//            }
+//            .navigationBarTitle("", displayMode: .inline) //this must be empty
+//            .navigationBarHidden(true)
+//            .navigationBarBackButtonHidden(true)
+//            .clipped()
+//        }
+
+//        .ignoresSafeArea()
+//        .toolbar(.hidden, for: .tabBar)
+//        .toolbarBackground(.hidden, for: .tabBar)
+//        .toolbar(.hidden, for: .bottomBar)
+//        .toolbarBackground(.hidden, for: .bottomBar)
     }
 }

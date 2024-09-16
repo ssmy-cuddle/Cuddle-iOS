@@ -50,12 +50,15 @@ public struct Comment {
     
     @ObservableState
     public struct State: Equatable {
+        public let id: UUID
         public var commentType: CommentType = .normal
         public var comments: [CommentModel] = []
         public var writingComment: String = ""
         public var latestAddItem: LatestAddedItem? = nil
         
-        public init() {}
+        public init(id: UUID) {
+            self.id = id
+        }
     }
     
     public var body: some Reducer<State, Action> {

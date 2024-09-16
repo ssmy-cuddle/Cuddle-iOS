@@ -8,70 +8,43 @@
 import Foundation
 import SwiftUI
 
+import AppResource
+import UIComponent
+
 import ComposableArchitecture
 
 public struct CommunityNavigationView: View {
     
-    @State var store: StoreOf<CommunityNavigation>
-    @State private var sheetHeight: CGFloat = .zero
-    @Environment(\.safeAreaInsets) private var safeAreaInsets
+    @Bindable private var store: StoreOf<CommunityNavigation>
+    @EnvironmentObject private var tabBarVisibility: TabBarVisibility
     
     public init(store: StoreOf<CommunityNavigation>) {
         self.store = store
     }
     
     public var body: some View {
-        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            Color.white
-        } destination: { store in
-            switch store.state {
-            case .main:
-                if let store = store.scope(state: \.main, action: \.navigateToMainView) {
-                    CommunityView(store: store)
-                        .padding(.top, safeAreaInsets.top)
-                        .navigationBarBackButtonHidden()
-                        .sheet(
-                            isPresented: .constant(self.store.isCommentPresent)
-                        ) {
-                            CommentView(
-                                store: StoreOf<Comment>(
-                                    initialState: Comment.State()
-                                ) {
-                                    Comment()
-                                }
-                            )
-                            .onDisappear {
-                                self.store.send(.commentDismissed)
-                            }
-                        }
-                }
-            case .register:
-                if let store = store.scope(state: \.register, action: \.navigateToRegister) {
-                    RegisterView(store: store)
-                        .padding(.top, safeAreaInsets.top)
-                        .navigationBarBackButtonHidden()
-                }
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path),
+            root: { Color.clear }
+        ) { store in
+            switch store.case {
+            case let .main(store):
+                CommunityView(store: store)
+            case let .register(store):
+                RegisterView(store: store)
             }
+        }
+        .sheet(item: $store.scope(state: \.comment, action: \.comment)) { store in
+            CommentView(store: store)
+        }
+        .onChange(of: store.path.count) { _, count in
+            tabBarVisibility.isTabBarVisible = isTabBarVisible(count: count)
         }
     }
 }
 
-private struct SafeAreaInsetsKey: EnvironmentKey {
-    static var defaultValue: EdgeInsets {
-        (UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.safeAreaInsets ?? .zero).insets
-    }
-}
-
-extension EnvironmentValues {
-    
-    var safeAreaInsets: EdgeInsets {
-        self[SafeAreaInsetsKey.self]
-    }
-}
-
-private extension UIEdgeInsets {
-    
-    var insets: EdgeInsets {
-        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
+extension CommunityNavigationView {
+    private func isTabBarVisible(count: Int) -> Bool {
+        count < 2
     }
 }

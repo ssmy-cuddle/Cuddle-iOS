@@ -9,7 +9,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-public final class KeyboardObserver: ObservableObject {
+public final class KeyboardResponder: ObservableObject {
     @Published public var keyboardHeight: CGFloat = 0
     @Published public var isKeyboardVisible: Bool = false
 
@@ -33,5 +33,13 @@ public final class KeyboardObserver: ObservableObject {
                 self?.isKeyboardVisible = false
             }
             .store(in: &cancellables)
+    }
+}
+
+public class TabBarVisibility: ObservableObject {
+    @Published public var isTabBarVisible: Bool = true // 초기값은 보임
+    
+    public init(isTabBarVisible: Bool) {
+        self.isTabBarVisible = isTabBarVisible
     }
 }

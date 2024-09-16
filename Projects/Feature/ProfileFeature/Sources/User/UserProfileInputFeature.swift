@@ -38,6 +38,9 @@ public struct UserProfileInputFeature {
         public var image: ImageStatus
         public var name: String
         public var description: String
+        public var isConfirmButtonEnabled: Bool {
+            image != .none && name != "" && description != ""
+        }
         
         public init(userProfile: UserProfileModel?) {
             self.image = if let imageURL = userProfile?.imageURL {

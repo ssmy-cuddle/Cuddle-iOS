@@ -14,6 +14,7 @@ let project = Project.feature(
         Feature.base.targetDependency,
         External.composableArchitecture.targetDependency,
         External.kingfisher.targetDependency,
+        External.navigationTransitions.targetDependency
     ],
     interfaceDependencies: [
         Client.profile.targetDependency

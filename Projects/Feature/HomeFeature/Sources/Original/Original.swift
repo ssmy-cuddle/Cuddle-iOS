@@ -89,12 +89,15 @@ extension OriginalFeature {
     // MARK: View
     
     private func onAppear() -> Effect<Action> {
-        .run {
-            await $0(.inner(.isSkeletonLoading(true)))
-            let originals = try await originalClient.list(id: "")
-                .map(\.asModel)
-            return await $0(.inner(.originals(originals)))
-        }
+        .concatenate(
+            .run { await $0(.inner(.isSkeletonLoading(true))) },
+            .run {
+                let originals = try await originalClient.list(id: "")
+                    .map(\.asModel)
+                return await $0(.inner(.originals(originals)))
+            },
+            .run { await $0(.inner(.isSkeletonLoading(false))) }
+        )
     }
     
     // MARK: Inner
@@ -104,15 +107,14 @@ extension OriginalFeature {
         state: inout State
     ) -> Effect<Action> {
         state.originals = originals
-        return .run {
-            await $0(.inner(.isSkeletonLoading(false)))
-        }
+        return .none
     }
     
     // MARK: Delegate
     
     private func refresh(state: inout State) -> Effect<Action> {
         .run {
+            try await Task.sleep(for: .seconds(2))
             let originals = try await originalClient.list(id: "")
                 .map(\.asModel)
             return await $0(.inner(.originals(originals)))
