@@ -19,24 +19,12 @@ public struct ContentView: View {
     @ObservedObject private var tabBarVisibility = TabBarVisibility(isTabBarVisible: true)
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     
-    @State private var forceUpdate = false
-    
-    @State private var isTabBarVisible = true
-    
-    @State private var height: CGFloat = 62.0
-    
     private let store: StoreOf<Content>
     
     // MARK: Init
     
     public init(store: StoreOf<Content>) {
         self.store = store
-        
-        tabBarVisibility.$isTabBarVisible
-            .sink { [self] _ in
-                print("???????!?!??!?")
-                self.forceUpdate.toggle()
-            }
     }
     
     private let homeNavigationView = HomeNavigationView(
@@ -73,23 +61,14 @@ public struct ContentView: View {
             GeometryReader { proxy in
                 VStack(spacing: 0) {
                     contentView(for: store.contentType)
-//                        .padding(.bottom, tabBarVisibility.isTabBarVisible ? 0 : -62)
+                        .frame(maxHeight: .infinity)
                     
                     if tabBarVisibility.isTabBarVisible {
                         VStack(spacing: .zero) {
                             dividerView
                             navigationView(tabs: store.navigationTabs)
                         }
-                    } else {
-                        Spacer().frame(height: .zero)
                     }
-//                    VStack(spacing: .zero) {
-//                        dividerView
-//                        navigationView(tabs: store.navigationTabs)
-//                    }
-//                    .frame(height: 62) // TabBar의 고정 높이 설정
-//                    .opacity(tabBarVisibility.isTabBarVisible ? 1 : 0) // 가시성에 따른 투명도 설정
-//                    .animation(.easeInOut, value: tabBarVisibility.isTabBarVisible)
                 }
                 .environmentObject(tabBarVisibility)
             }
@@ -115,7 +94,6 @@ extension ContentView {
         ZStack {
             buildView(for: contentType)
         }
-//        .frame()
     }
     
     @ViewBuilder 

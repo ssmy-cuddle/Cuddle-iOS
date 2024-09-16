@@ -30,7 +30,7 @@ public struct CuddleNavigationBar: View {
                 .foregroundColor(.white)
                 .frame(height: 17 + 16 + 16)
                 .frame(maxWidth: .infinity)
-                .shadow(color: .black.opacity(0.1), radius: 3, x: .zero, y: 3)
+                .shadow(color: .black.opacity(0.1), radius: 3, x: .zero, y: 4)
             
             if let title {
                 Text(title)

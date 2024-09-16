@@ -22,9 +22,9 @@ public struct HomeHeaderView: View {
     public var body: some View {
         AppResourceAsset.Image.homeBackgroundWithAlpha.swiftUIImage
             .resizable()
-            .aspectRatio(320 / 476, contentMode: .fill)
-            .frame(height: 112, alignment: .bottom)
-            .padding(.bottom, -16)
+            .aspectRatio(320 / 387, contentMode: .fill)
+            .frame(height: 112, alignment: .center)
+            .offset(y: -140)
             .overlay {
                 HStack(alignment: .top, spacing: 16) {
                     VStack(alignment: .leading) {

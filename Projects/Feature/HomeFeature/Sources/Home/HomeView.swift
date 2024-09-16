@@ -33,9 +33,7 @@ public struct HomeView: View {
         WithViewStore(store, observe: { $0 }) { store in
             if store.isSkeletonLoading {
                 HomeSkeletonView()
-                    .navigationBarTitle("", displayMode: .inline) //this must be empty
-                    .navigationBarHidden(true)
-                    .navigationBarBackButtonHidden(true)
+                    .padding(.top, 24)
             } else {
                 ZStack {
                     ScrollView {
@@ -70,21 +68,11 @@ public struct HomeView: View {
                     .onPreferenceChange(ScrollOffsetKey.self) { offset in
                         headerViewOpacity = offset / Metric.headerViewHeight
                     }
-//                    .background(Color.clear)
-//                    .safeAreaInset(edge: .top) {
-//                        Color.clear
-//                            .frame(height: safeAreaInsets.top)
-//                    }
                 }
-                .navigationBarTitle("", displayMode: .inline) //this must be empty
-                .navigationBarHidden(true)
-                .navigationBarBackButtonHidden(true)
-//                .background(.clear)
-//                .navigationBarBackButtonHidden()
             }
         }
         .onAppear { store.send(.view(.onAppear)) }
-        .navigationBarTitle("", displayMode: .inline) //this must be empty
+        .navigationBarTitle("", displayMode: .inline)
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
     }

@@ -11,7 +11,6 @@ struct CuddleApp: App {
     let contentView: ContentView?
     
     init() {
-//        self.contentView = AppContainer.shared.resolve(ContentView.self)
         self.contentView = ContentView(
             store: StoreOf<Content>(
                 initialState: Content.State()
@@ -20,6 +19,7 @@ struct CuddleApp: App {
             }
         )
         registerCustomFonts()
+        configureRefreshControl()
     }
     
     var body: some Scene {
@@ -28,5 +28,9 @@ struct CuddleApp: App {
     
     private func registerCustomFonts() {
         Font.customFonts.forEach { $0.register() }
+    }
+    
+    private func configureRefreshControl() {
+        UIRefreshControl.appearance().tintColor = AppResourceAsset.Color.lubbyBlue.color
     }
 }
