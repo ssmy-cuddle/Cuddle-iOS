@@ -218,7 +218,7 @@ public struct CuddlerProfileInputView: View {
                 }
             }
         }
-        .navigationBarTitle("", displayMode: .inline) //this must be empty
+        .navigationBarTitle("", displayMode: .inline)
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
     }
