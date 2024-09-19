@@ -35,7 +35,7 @@ public struct ProfileView: View {
                 } else {
                     ScrollView {
                         ZStack {
-                            Button(action: {}) {
+                            Button(action: { store.send(.view(.logoutButtonTapped))}) {
                                 AppResourceAsset.Image.icSetting.swiftUIImage
                                     .foregroundStyle(.black)
                             }

@@ -14,6 +14,7 @@ public enum External {
     case kingfisher
     case lottie
     case navigationTransitions
+    case kakaoSDK
 }
 
 extension External: CaseIterable {}
@@ -25,6 +26,7 @@ extension External: TargetDependencyCovertible {
         case .kingfisher: .external(name: "Kingfisher")
         case .lottie: .external(name: "Lottie")
         case .navigationTransitions: .external(name: "NavigationTransitions")
+        case .kakaoSDK: .external(name: "KakaoSDK")
         }
     }
 }

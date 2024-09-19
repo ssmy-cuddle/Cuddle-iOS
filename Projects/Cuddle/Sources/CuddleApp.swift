@@ -6,10 +6,8 @@ import DesignSystem
 import AuthenticationFeature
 
 import ComposableArchitecture
-
-//class AppState: ObservableObject {
-//    @Published var isLoggedIn: Bool = false
-//}
+import KakaoSDKAuth
+import KakaoSDKCommon
 
 @main
 struct CuddleApp: App {
@@ -29,8 +27,6 @@ struct CuddleApp: App {
         }
     )
     
-    //    @StateObject var appState = AppState()
-    
     init() {
         self.contentView = ContentView(
             store: StoreOf<Content>(
@@ -41,21 +37,29 @@ struct CuddleApp: App {
         )
         registerCustomFonts()
         configureRefreshControl()
+        registerKakaoSDK()
     }
     
     var body: some Scene {
         WithPerceptionTracking {
             WindowGroup {
-                switch store.visibility {
-                case .authentication:
-                    AuthenticationView(
-                        store: store.scope(state: \.authentication, action: \.authentication)
-                    )
-                case .content:
-                    ContentView(
-                        store: store.scope(state: \.content, action: \.content)
-                    )
+                ZStack {
+                    switch store.visibility {
+                    case .authentication:
+                        AuthenticationView(
+                            store: store.scope(state: \.authentication, action: \.authentication)
+                        )
+                    case .content:
+                        ContentView(
+                            store: store.scope(state: \.content, action: \.content)
+                        )
+                    }
                 }
+                .onOpenURL(perform: { url in
+                    if AuthApi.isKakaoTalkLoginUrl(url) {
+                        let _ = AuthController.handleOpenUrl(url: url)
+                    }
+                })
             }
         }
     }
@@ -66,5 +70,12 @@ struct CuddleApp: App {
     
     private func configureRefreshControl() {
         UIRefreshControl.appearance().tintColor = AppResourceAsset.Color.lubbyBlue.color
+    }
+    
+    private func registerKakaoSDK() {
+        guard let kakaoAppKey = Bundle.main.infoDictionary?["KAKAO_APP_KEY"] as? String else {
+            fatalError("KAKAO_APP_KEY is nil")
+        }
+        KakaoSDK.initSDK(appKey: kakaoAppKey, loggingEnable: true)
     }
 }

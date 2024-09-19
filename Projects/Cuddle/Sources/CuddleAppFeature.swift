@@ -8,6 +8,7 @@
 import Foundation
 import Security
 
+import AuthenticationClient
 import AuthenticationFeature
 
 import ComposableArchitecture
@@ -20,6 +21,8 @@ public enum AppVisibility {
 @Reducer
 public struct CuddleAppFeature {
     
+//    @Dependency(\.authenticationClient) private var authenticationClient
+    
     @ObservableState
     public struct State {
         public var visibility: AppVisibility = .authentication
@@ -27,7 +30,8 @@ public struct CuddleAppFeature {
         public var content: Content.State = .init()
         
         public init() {
-            let visibility: AppVisibility = if let token = CuddleAppFeature.loadToken(forKey: CuddleAppFeature.tokenKey) {
+            @Dependency(\.authenticationClient) var authenticationClient
+            let visibility: AppVisibility = if let token = authenticationClient.authentication()?.token {
                 .content(token: token)
             } else {
                 .authentication
@@ -41,9 +45,7 @@ public struct CuddleAppFeature {
         case content(Content.Action)
     }
     
-    public init() {
-        let _ = Self.deleteToken(forKey: CuddleAppFeature.tokenKey)
-    }
+    public init() {}
     
     public var body: some ReducerOf<Self> {
         Scope(state: \.authentication, action: \.authentication) { AuthenticationFeature() }
@@ -53,45 +55,50 @@ public struct CuddleAppFeature {
             case let .authentication(.inner(.authentication(authentication))):
                 state.visibility = .content(token: authentication.token)
                 return .none
+            case .content(.profile(.path(.element(_, .main(.view(.logoutButtonTapped)))))):
+                print("action: \(action)")
+                state.visibility = .authentication
+                state.content = .init()
+                return .none
             default:
                 return .none
             }
         }
     }
 }
-
-extension CuddleAppFeature {
-    
-    static let tokenKey = "userToken"
-    
-    static func loadToken(forKey key: String) -> String? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
-
-        var result: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-
-        if status == errSecSuccess, let data = result as? Data {
-            return String(data: data, encoding: .utf8)
-        }
-
-        return nil
-    }
-    
-    // MARK: For Debug
-    
-    static func deleteToken(forKey key: String) -> Bool {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key
-        ]
-
-        let status = SecItemDelete(query as CFDictionary)
-
-        return status == errSecSuccess
-    }
-}
+//
+//extension CuddleAppFeature {
+//    
+//    static let tokenKey = "userToken"
+//    
+//    static func loadToken(forKey key: String) -> String? {
+//        let query: [String: Any] = [
+//            kSecClass as String: kSecClassGenericPassword,
+//            kSecAttrAccount as String: key,
+//            kSecReturnData as String: true,
+//            kSecMatchLimit as String: kSecMatchLimitOne
+//        ]
+//
+//        var result: AnyObject?
+//        let status = SecItemCopyMatching(query as CFDictionary, &result)
+//
+//        if status == errSecSuccess, let data = result as? Data {
+//            return String(data: data, encoding: .utf8)
+//        }
+//
+//        return nil
+//    }
+//    
+//    // MARK: For Debug
+//    
+//    static func deleteToken(forKey key: String) -> Bool {
+//        let query: [String: Any] = [
+//            kSecClass as String: kSecClassGenericPassword,
+//            kSecAttrAccount as String: key
+//        ]
+//
+//        let status = SecItemDelete(query as CFDictionary)
+//
+//        return status == errSecSuccess
+//    }
+//}

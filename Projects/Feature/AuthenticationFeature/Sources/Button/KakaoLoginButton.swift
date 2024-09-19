@@ -10,6 +10,10 @@ import SwiftUI
 
 import AppResource
 
+import KakaoSDKCommon
+import KakaoSDKAuth
+import KakaoSDKUser
+
 public struct KakaoLoginButton: View {
     
     private enum Metric {
@@ -24,15 +28,15 @@ public struct KakaoLoginButton: View {
         static let kakaoLogin = "카카오 로그인"
     }
     
-    private let action: () -> Void
+    private let action: (String) -> Void
     
-    public init(action: @escaping (() -> Void)) {
+    public init(action: @escaping ((String) -> Void)) {
         self.action = action
     }
     
     public var body: some View {
         Button(
-            action: action,
+            action: { proceedKakaoLogin() },
             label: {
                 ZStack {
                     Image(asset: AppResourceAsset.Image.loginKakaoLogo)
@@ -54,5 +58,27 @@ public struct KakaoLoginButton: View {
         .background(Color(red: 1, green: 0.9, blue: 0)) // FEE500
         .frame(maxWidth: .infinity, maxHeight: Metric.buttonHeight)
         .clipShape(.rect(cornerRadius: Metric.buttonCornerRadius))
+    }
+    
+    private func proceedKakaoLogin() {
+        if UserApi.isKakaoTalkLoginAvailable() {
+            //카카오톡이 설치되어있다면 카카오톡을 통한 로그인 진행
+            UserApi.shared.loginWithKakaoTalk { oauthToken, error in
+                if let idToken = oauthToken?.idToken  {
+                    action(idToken)
+                } else {
+                    print(error)
+                }
+            }
+        } else {
+            //카카오톡이 설치되어있지 않다면 사파리를 통한 로그인 진행
+            UserApi.shared.loginWithKakaoAccount { oauthToken, error in
+                if let idToken = oauthToken?.idToken  {
+                    action(idToken)
+                } else {
+                    print(error)
+                }
+            }
+        }
     }
 }

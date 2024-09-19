@@ -58,9 +58,9 @@ public struct AuthenticationView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             VStack(spacing: Metric.buttonContainerSpacing) {
-                KakaoLoginButton(action: {
-                    store.send(.view(.appleLoginRequested(identifier: "???????")))
-                })
+                KakaoLoginButton {
+                    store.send(.view(.appleLoginRequested(identifier: $0)))
+                }
                 AppleLoginButton {
                     store.send(.view(.appleLoginRequested(identifier: $0)))
                 }

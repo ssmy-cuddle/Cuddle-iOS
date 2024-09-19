@@ -12,5 +12,6 @@ let project = Project.feature(
         Feature.base.targetDependency,
         Client.authentication.targetDependency,
         External.composableArchitecture.targetDependency,
+        External.kakaoSDK.targetDependency
     ]
 )

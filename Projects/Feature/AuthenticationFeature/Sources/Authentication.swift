@@ -8,7 +8,6 @@
 import Foundation
 
 import AuthenticationClient
-
 import BaseFeature
 
 import ComposableArchitecture
@@ -33,6 +32,7 @@ public struct AuthenticationFeature {
         
         public enum ViewAction: Equatable {
             case appleLoginRequested(identifier: String)
+            case kakaoLoginRequested(identifier: String)
         }
         public enum InnerAction: Equatable {
             case authentication(Authentication)
@@ -63,41 +63,47 @@ extension AuthenticationFeature {
         switch viewAction {
         case let .appleLoginRequested(identifier):
             self.appleLoginRequested(identifier: identifier)
+        case let .kakaoLoginRequested(identifier):
+            self.kakaoLoginRequested(identifier: identifier)
         }
     }
     
     private func appleLoginRequested(identifier: String) -> Effect<Action> {
         .run {
-            let authentication = try await authenticationClient.authentication(
-                provider: "apple",
+            let authentication = try await authenticationClient.requestAuthentication(
+                provider: SocialLoginProvider.apple.value,
                 code: identifier
             )
-            let _ = saveToken(authentication.token, forKey: "userToken")
+//            let _ = saveToken(authentication.token, forKey: "userToken")
             return await $0(.inner(.authentication(authentication)))
         }
     }
     
-//    private func appleLoginRequested(identifier: String) -> Effect<Action> {
-//        .run {
-//            try await Task.sleep(for: .seconds(2))
-//            return await $0(.inner(.authentication(Authentication(token: "????????"))))
-//        }
-//    }
+    private func kakaoLoginRequested(identifier: String) -> Effect<Action> {
+        .run {
+            let authentication = try await authenticationClient.requestAuthentication(
+                provider: SocialLoginProvider.kakao.value,
+                code: identifier
+            )
+//            let _ = saveToken(authentication.token, forKey: "userToken")
+            return await $0(.inner(.authentication(authentication)))
+        }
+    }
     
     private func authentication(_ authentication: Authentication, state: inout State) -> Effect<Action> {
         state.authentication = authentication
         return .none
     }
     
-    private func saveToken(_ token: String, forKey key: String) -> Bool {
-        guard let data = token.data(using: .utf8) else { return false }
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-            kSecValueData as String: data
-        ]
-        SecItemDelete(query as CFDictionary) // 기존 데이터 삭제 (중복 방지)
-        let status = SecItemAdd(query as CFDictionary, nil)
-        return status == errSecSuccess
-    }
+//    private func saveToken(_ token: String, forKey key: String) -> Bool {
+//        guard let data = token.data(using: .utf8) else { return false }
+//        let query: [String: Any] = [
+//            kSecClass as String: kSecClassGenericPassword,
+//            kSecAttrAccount as String: key,
+//            kSecValueData as String: data
+//        ]
+//        SecItemDelete(query as CFDictionary) // 기존 데이터 삭제 (중복 방지)
+//        let status = SecItemAdd(query as CFDictionary, nil)
+//        return status == errSecSuccess
+//    }
 }

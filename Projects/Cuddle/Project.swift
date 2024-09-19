@@ -20,7 +20,19 @@ let project = Project(
                         "UIColorName": "white",
                         "UIImageName": "cuddle-launch",
                     ],
-                    "UIUserInterfaceStyle": "Light"
+                    "UIUserInterfaceStyle": "Light",
+                    "LSApplicationQueriesSchemes": [
+                        "kakaokompassauth"
+                    ],
+                    "CFBundleURLTypes": [
+                        [
+                            "CFBundleURLName": "kakao",
+                            "CFBundleURLSchemes": [
+                                "kakao5696c6073e2f06e25991cae9556fc0bb"
+                            ]
+                        ]
+                    ],
+                    "KAKAO_APP_KEY": "5696c6073e2f06e25991cae9556fc0bb"
                 ]
             ),
             sources: ["Sources/**"],

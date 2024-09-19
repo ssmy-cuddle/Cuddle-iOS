@@ -85,7 +85,9 @@ extension ContentView {
         case .diary: diaryView
         case .comumnity: communityNavigation
         case .donation: donationView
-        case .profile: profileNavigation
+        case .profile: ProfileNavigationView(
+            store: store.scope(state: \.profile, action: \.profile)
+        )
         }
     }
     
