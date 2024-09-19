@@ -25,6 +25,7 @@ let project = Project(
             ),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
+            entitlements: .file(path: .relativeToRoot("Projects/Cuddle/Cuddle.entitlements")),
             dependencies: coreDependencies + featureDependencies + clientDependencies + externalDependencies
         ),
         .target(

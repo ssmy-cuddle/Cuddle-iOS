@@ -10,6 +10,7 @@ import Foundation
 import ProjectDescription
 
 public enum Client: CaseIterable {
+    case authentication
     case base
     case community
     case original
@@ -19,6 +20,11 @@ public enum Client: CaseIterable {
 extension Client: TargetDependencyCovertible {
     public var targetDependency: TargetDependency {
         switch self {
+        case .authentication:
+                .project(
+                    target: "AuthenticationClient",
+                    path: .relativeToRoot("Projects/Client/AuthenticationClient")
+                )
         case .base:
                 .project(
                     target: "BaseClient",

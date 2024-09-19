@@ -25,14 +25,9 @@ public struct AuthenticationNavigationView: View {
                 action: \.path
             )
         ) {
-            AuthenticationView(store: .init(initialState: Authentication.State()) {
-                Authentication()
+            AuthenticationView(store: .init(initialState: AuthenticationFeature.State()) {
+                AuthenticationFeature()
             })
-            //            NavigationLink(state: AuthenticationCoordinator.Path.State.authenticationScreen(.init())) {
-            //                AuthenticationView(store: .init(initialState: Authentication.State()) {
-            //                    Authentication()
-            //                })
-            //            }
         } destination: { store in
             switch store.state {
             case .authenticationScreen:

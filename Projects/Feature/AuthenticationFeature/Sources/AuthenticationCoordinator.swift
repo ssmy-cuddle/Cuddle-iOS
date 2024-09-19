@@ -18,16 +18,16 @@ public struct AuthenticationCoordinator {
     public struct Path {
         @ObservableState
         public enum State: Equatable {
-            case authenticationScreen(Authentication.State = .init())
+            case authenticationScreen(AuthenticationFeature.State = .init())
         }
         
         public enum Action {
-            case authentication(Authentication.Action)
+            case authentication(AuthenticationFeature.Action)
         }
         
         public var body: some ReducerOf<Self> {
             Scope(state: \.authenticationScreen, action: \.authentication) {
-                Authentication()
+                AuthenticationFeature()
             }
         }
     }

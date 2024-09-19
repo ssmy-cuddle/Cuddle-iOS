@@ -11,10 +11,12 @@ import SwiftUI
 import AppResource
 import DesignSystem
 
+import AuthenticationClient
+
 import ComposableArchitecture
 
 public struct AuthenticationView: View {
-    
+        
     private enum Metric {
         static let buttonContainerSpacing = 8.0
         static let buttonContainerPadding = 22.0
@@ -26,9 +28,9 @@ public struct AuthenticationView: View {
         static let cuddleDescription = "발에서 마음까지"
     }
     
-    private let store: StoreOf<Authentication>
+    private let store: StoreOf<AuthenticationFeature>
     
-    public init(store: StoreOf<Authentication>) {
+    public init(store: StoreOf<AuthenticationFeature>) {
         self.store = store
     }
     
@@ -56,8 +58,12 @@ public struct AuthenticationView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             VStack(spacing: Metric.buttonContainerSpacing) {
-                KakaoLoginButton(action: {})
-                AppleLoginButton(action: {})
+                KakaoLoginButton(action: {
+                    store.send(.view(.appleLoginRequested(identifier: "???????")))
+                })
+                AppleLoginButton {
+                    store.send(.view(.appleLoginRequested(identifier: $0)))
+                }
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, Metric.buttonContainerPadding)

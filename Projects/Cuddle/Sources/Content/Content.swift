@@ -11,6 +11,7 @@ import SwiftUI
 import BaseFeature
 import UIComponent
 
+import AuthenticationFeature
 import CommunityFeature
 import HomeFeature
 import ProfileFeature

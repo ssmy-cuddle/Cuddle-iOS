@@ -17,8 +17,8 @@ public struct AuthenticationComponent: AuthenticationBuilder {
     public init() {}
     
     public func build() -> any View {
-        let store: StoreOf<Authentication> = Store(initialState: Authentication.State()) {
-            Authentication()
+        let store: StoreOf<AuthenticationFeature> = Store(initialState: AuthenticationFeature.State()) {
+            AuthenticationFeature()
         }
         return AuthenticationView(store: store)
     }

@@ -44,6 +44,7 @@ public struct Profile {
             case registerButtonTapped
             case editButtonTapped(CuddlerProfileModel)
             case userProfileButtonTapped(UserProfileModel?)
+            case logoutButtonTapped
         }
         
         public enum InnerAction: Equatable {
@@ -90,6 +91,7 @@ extension Profile {
         case .registerButtonTapped: .none
         case .editButtonTapped: .none
         case .userProfileButtonTapped: .none
+        case .logoutButtonTapped: .none
         }
     }
     
