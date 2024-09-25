@@ -11,19 +11,24 @@ import SwiftUI
 import DesignSystem
 import UIComponent
 
+import CommunityClient
+
 import ComposableArchitecture
 import Kingfisher
+import PopupView
 
 public struct CommentView: View {
     
-    let store: StoreOf<Comment>
+    @Bindable private var store: StoreOf<CommentFeature>
     
     @State private var detent: PresentationDetent = .medium
     @State private var scrollPosition: Int?
     
     @FocusState private var isFocused: Bool
     
-    public init(store: StoreOf<Comment>) {
+    @ObservedObject private var keyboardResponder = KeyboardResponder()
+    
+    public init(store: StoreOf<CommentFeature>) {
         self.store = store
     }
     
@@ -68,19 +73,39 @@ public struct CommentView: View {
             .onAppear { store.send(.view(.onAppear)) }
         }
         .presentationDetents([.medium, .large], selection: $detent)
+        .popup(item: $store.deleteComment) { commentID in
+            ConfirmPopupView(
+                title: "이 댓글을 삭제 하시겠어요?",
+                confirmAction: {
+                    store.send(.view(.deleteComment(commentID)))
+                },
+                cancelAction: {}
+            )
+        } customize: {
+            $0.type(.floater(verticalPadding: 20, horizontalPadding: 20, useSafeAreaInset: true))
+                .position(.center)
+                .closeOnTapOutside(false)
+                .isOpaque(true)
+                .appearFrom(.centerScale)
+                .animation(.easeInOut(duration: 0))
+        }
+        .onChange(of: keyboardResponder.isKeyboardVisible) { _, isKeyboardVisible in
+            if isKeyboardVisible { detent = .large }
+        }
     }
 }
 
 extension CommentView {
     
     private func commentListView(
-        _ comments: [CommentModel],
+        _ comments: [Comment],
         proxy: ScrollViewProxy
     ) -> some View {
         LazyVStack(spacing: 4) {
             ForEach(store.comments, id: \.id) { comment in
                 CommentContentView(
                     comment: comment,
+                    userUUID: store.user?.id ?? UUID(),
                     replyButtonTapped: {
                         store.send(.view(.changeCommentType(.reply(id: comment.id, name: comment.name))))
                         isFocused = true
@@ -88,6 +113,9 @@ extension CommentView {
                         withAnimation {
                             proxy.scrollTo(comment.id, anchor: .center)
                         }
+                    },
+                    deleteButtonTapped: {
+                        store.send(.view(.deleteCommentButtonTapped(.comment(comment.id))))
                     }
                 )
                 .id(comment.id)
@@ -98,7 +126,7 @@ extension CommentView {
     
     private func commentTextField(
         comment: Binding<String>,
-        commentType: Binding<Comment.CommentType>,
+        commentType: Binding<CommentFeature.CommentType>,
         onRegister: @escaping () -> Void,
         onCancelFocus: @escaping () -> Void
     ) -> some View {

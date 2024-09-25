@@ -23,7 +23,8 @@ public struct CommunityNavigation {
         public var path = StackState<Path.State>(
             [.main(.init(isRefreshRequired: true))]
         )
-        @Presents var comment: Comment.State?
+        @Presents var comment: CommentFeature.State?
+        @Presents var deleteComment: UUID?
         
         public init() {}
     }
@@ -31,7 +32,7 @@ public struct CommunityNavigation {
     public enum Action {
         case path(StackActionOf<Path>)
         case popToRoot
-        case comment(PresentationAction<Comment.Action>)
+        case comment(PresentationAction<CommentFeature.Action>)
     }
     
     public var body: some ReducerOf<Self> {
@@ -49,7 +50,7 @@ public struct CommunityNavigation {
         }
         .forEach(\.path, action: \.path)
         .ifLet(\.$comment, action: \.comment) {
-            Comment()
+            CommentFeature()
         }
     }
 }
@@ -85,7 +86,7 @@ extension CommunityNavigation {
     }
     
     private func writeCommentButtonTapped(id: UUID, state: inout State) -> Effect<Action> {
-        state.comment = Comment.State(id: id)
+        state.comment = CommentFeature.State(id: id)
         return .none
     }
     

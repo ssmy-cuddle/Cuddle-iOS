@@ -8,18 +8,28 @@
 import Foundation
 import SwiftUI
 
+import CommunityClient
 import DesignSystem
 
 import Kingfisher
 
 public struct CommentContentView: View {
     
-    private let comment: CommentModel
+    private let comment: Comment
+    private let userUUID: UUID
     private let replyButtonTapped: () -> Void
+    private let deleteButtonTapped: (DeleteCommentType) -> Void
     
-    public init(comment: CommentModel, replyButtonTapped: @escaping () -> Void) {
+    public init(
+        comment: Comment,
+        userUUID: UUID,
+        replyButtonTapped: @escaping () -> Void,
+        deleteButtonTapped: @escaping () -> Void
+    ) {
         self.comment = comment
+        self.userUUID = userUUID
         self.replyButtonTapped = replyButtonTapped
+        self.deleteButtonTapped = deleteButtonTapped
     }
     
     public var body: some View {
@@ -39,7 +49,9 @@ public struct CommentContentView: View {
                 
                 HStack(spacing: 8) {
                     replyText { replyButtonTapped() }
-                    deleteText {}
+                    if comment.userUUID == userUUID {
+                        deleteText { deleteButtonTapped(.comment(comment.id)) }
+                    }
                 }
                 .frame(alignment: .leading)
             }
@@ -47,7 +59,10 @@ public struct CommentContentView: View {
             .padding(.leading, 32)
             .padding(.bottom, 8)
             
-            subCommentListView(comment.subComments)
+            subCommentListView(
+                comment.subComments,
+                userUUID: userUUID
+            )
                 .padding(.leading, 30)
         }
         .padding(.horizontal, 18)
@@ -112,12 +127,18 @@ extension CommentContentView {
     }
     
     @ViewBuilder
-    private func subCommentListView(_ subComments: [SubCommentModel]) -> some View {
+    private func subCommentListView(
+        _ subComments: [SubComment],
+        userUUID: UUID
+    ) -> some View {
         LazyVStack(spacing: 4) {
-            ForEach(subComments, id: \.id) {
-                SubCommentContentView(subComment: $0)
+            ForEach(subComments, id: \.id) { subComment in
+                SubCommentContentView(
+                    subComment: subComment,
+                    userUUID: userUUID,
+                    onDeleteButtonTap: { deleteButtonTapped(.subComment($0)) }
+                )
             }
         }
     }
-    
 }

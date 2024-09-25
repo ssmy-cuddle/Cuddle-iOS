@@ -14,7 +14,7 @@ public enum MockDailyContent {
     
     public enum Identifier {
         static let paduck = UUID(uuidString: "e5fa320b-3464-4fd3-9ae4-751c79db9ec9")!
-        static let ggenou = UUID(uuidString: "064d22c8-d6f7-45a9-9957-4df752ec6769")!
+        static let ggenou = UUID(uuidString: "57ffc479-ee06-4550-96ba-182f8c17f0c7")!
         static let ggenou1 = UUID(uuidString: "ca2ab142-74f2-41fe-ade1-d488d9451839")!
         static let ggenou2 = UUID(uuidString: "d46a150b-88c2-4175-ac52-b88db88d4442")!
         static let ggenou3 = UUID(uuidString: "e9f8a0d1-4fc9-4f60-8702-d4207ed6ce79")!
@@ -148,6 +148,7 @@ public enum MockDailyContent {
         createdAt: Date().addingTimeInterval(
             60 * -6
         ),
+        userUUID: UUID(),
         subComments: [
             SubComment(
                 id: UUID(),
@@ -156,7 +157,8 @@ public enum MockDailyContent {
                 profileImageURL: URL(
                     string: "https://fastly.picsum.photos/id/549/20/20.jpg?hmac=J2XsP-Qx3mvC2zswUYG18zPdKBVPG-hl7glg8huGZWc"
                 )!,
-                createdAt: Date().addingTimeInterval(60 * -4)
+                createdAt: Date().addingTimeInterval(60 * -4),
+                userUUID: Identifier.ggenou
             ),
             SubComment(
                 id: UUID(),
@@ -165,7 +167,8 @@ public enum MockDailyContent {
                 profileImageURL: URL(
                     string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8"
                 )!,
-                createdAt: Date().addingTimeInterval(60 * -2)
+                createdAt: Date().addingTimeInterval(60 * -2),
+                userUUID: UUID()
             )
         ]
     )
@@ -180,6 +183,7 @@ public enum MockDailyContent {
         createdAt: Date().addingTimeInterval(
             60 * -4
         ),
+        userUUID: Identifier.ggenou,
         subComments: []
     )
     
@@ -193,6 +197,7 @@ public enum MockDailyContent {
         createdAt: Date().addingTimeInterval(
             60 * -3
         ),
+        userUUID: UUID(),
         subComments: []
     )
     

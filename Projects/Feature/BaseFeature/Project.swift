@@ -8,6 +8,8 @@ let project = Project.feature(
     bundleID: "BaseFeature",
     targets: [.interface, .staticFramework, .testing, .example, .tests],
     dependencies: [
-        Client.base.targetDependency
+        Client.base.targetDependency,
+        External.composableArchitecture.targetDependency,
+        External.popupView.targetDependency
     ]
 )
