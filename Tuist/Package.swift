@@ -13,7 +13,8 @@ import PackageDescription
             "Swinject": .framework,
             "Lottie": .framework,
             "NavigationTransitions": .framework,
-            "KakaoSDK": .framework
+            "KakaoSDK": .framework,
+            "PopupView": .framework
         ]
     )
 #endif
@@ -25,6 +26,7 @@ let package = Package(
         .package(url: "https://github.com/onevcat/Kingfisher", from: "7.12.0"),
         .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.0"),
         .package(url: "https://github.com/davdroman/swiftui-navigation-transitions", from: "0.13.4"),
-        .package(url: "https://github.com/kakao/kakao-ios-sdk", branch: "master")
+        .package(url: "https://github.com/kakao/kakao-ios-sdk", branch: "master"),
+        .package(url: "https://github.com/exyte/PopupView.git", from: "3.1.0")
     ]
 )

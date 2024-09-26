@@ -61,19 +61,19 @@ public struct SubCommentModel {
 
 extension SubCommentModel: Equatable {}
 
-
-extension CommunityClient.Comment {
-    var asModel: CommentModel {
-        CommentModel(
-            id: id,
-            text: text,
-            name: name, 
-            profileImageURL: profileImageURL,
-            createdAt: createdAt,
-            subComments: subComments.map { $0.asModel }
-        )
-    }
-}
+//
+//extension CommunityClient.Comment {
+//    var asModel: CommentModel {
+//        CommentModel(
+//            id: id,
+//            text: text,
+//            name: name, 
+//            profileImageURL: profileImageURL,
+//            createdAt: createdAt,
+//            subComments: subComments.map { $0.asModel }
+//        )
+//    }
+//}
 
 extension SubComment {
     var asModel: SubCommentModel {

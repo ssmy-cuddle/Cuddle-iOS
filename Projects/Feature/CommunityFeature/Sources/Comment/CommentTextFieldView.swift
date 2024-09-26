@@ -13,7 +13,7 @@ import DesignSystem
 public struct CommentTextField: View {
     
     @Binding private var comment: String
-    @Binding private var commentType: Comment.CommentType
+    @Binding private var commentType: CommentFeature.CommentType
     
     private var isFocused: FocusState<Bool>.Binding
     private let register: () -> Void
@@ -21,7 +21,7 @@ public struct CommentTextField: View {
     
     public init(
         comment: Binding<String>,
-        commentType: Binding<Comment.CommentType>,
+        commentType: Binding<CommentFeature.CommentType>,
         isFocused: FocusState<Bool>.Binding,
         register: @escaping () -> Void,
         cancelFocus: @escaping () -> Void
@@ -43,7 +43,7 @@ public struct CommentTextField: View {
 
 extension CommentTextField {
     @ViewBuilder
-    private func replyView(commentType: Comment.CommentType) -> some View {
+    private func replyView(commentType: CommentFeature.CommentType) -> some View {
         if case let .reply(_, name) = commentType {
             HStack {
                 Text("\(name) 님에게 답글 다는 중...")

@@ -61,6 +61,7 @@ public struct MockDailyRepository: DailyRepository {
                 name: "건우", 
                 profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
                 createdAt: Date().addingTimeInterval(-1),
+                userUUID: MockDailyContent.Identifier.ggenou,
                 subComments: []
             )
         ]
@@ -77,7 +78,8 @@ public struct MockDailyRepository: DailyRepository {
                 text: commentText,
                 name: "건우",
                 profileImageURL: URL(string: "https://fastly.picsum.photos/id/626/60/60.jpg?hmac=UqDAZSDUUq8-bJC4kOlIC3TlkbQxb4cFUSBia7JQBk8")!,
-                createdAt: Date()
+                createdAt: Date(),
+                userUUID: MockDailyContent.Identifier.ggenou
             )
             MockDailyContent.comments[index] = Comment(
                 id: MockDailyContent.comments[index].id,
@@ -85,6 +87,7 @@ public struct MockDailyRepository: DailyRepository {
                 name: MockDailyContent.comments[index].name,
                 profileImageURL: MockDailyContent.comments[index].profileImageURL,
                 createdAt: MockDailyContent.comments[index].createdAt,
+                userUUID: MockDailyContent.comments[index].userUUID,
                 subComments: MockDailyContent.comments[index].subComments + [subComment]
             )
             return MockDailyContent.comments[index]

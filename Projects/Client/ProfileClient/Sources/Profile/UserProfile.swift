@@ -40,3 +40,5 @@ public struct UserProfile {
         self.cuddlers = cuddlers
     }
 }
+
+extension UserProfile: Equatable {}

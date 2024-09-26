@@ -48,3 +48,5 @@ public struct CuddlerProfile {
         self.endDate = endDate
     }
 }
+
+extension CuddlerProfile: Equatable {}

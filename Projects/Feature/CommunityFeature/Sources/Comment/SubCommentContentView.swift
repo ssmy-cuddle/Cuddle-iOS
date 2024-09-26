@@ -8,16 +8,21 @@
 import Foundation
 import SwiftUI
 
+import CommunityClient
 import DesignSystem
 
 import Kingfisher
 
 public struct SubCommentContentView: View {
     
-    let subComment: SubCommentModel
+    private let subComment: SubComment
+    private let userUUID: UUID
+    private let onDeleteButtonTap: (UUID) -> Void
     
-    public init(subComment: SubCommentModel) {
+    public init(subComment: SubComment, userUUID: UUID, onDeleteButtonTap: @escaping (UUID) -> Void) {
         self.subComment = subComment
+        self.userUUID = userUUID
+        self.onDeleteButtonTap = onDeleteButtonTap
     }
     
     public var body: some View {
@@ -32,7 +37,10 @@ public struct SubCommentContentView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 commentView(subComment.text)
-                deleteText()
+                if subComment.userUUID == userUUID {
+                    deleteText()
+                        .onTapGesture { onDeleteButtonTap() }
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 32)
