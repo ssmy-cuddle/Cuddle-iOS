@@ -1,13 +1,13 @@
 //
-//  Authentication.swift
+//  AuthenticationResponse.swift
 //  AuthenticationClient
 //
-//  Created by mvldev7 on 9/19/24.
+//  Created by mvldev7 on 9/28/24.
 //
 
 import Foundation
 
-public struct Authentication {
+public struct AuthenticationResponse {
     public let accessToken: String
     public let refreshToken: String
     
@@ -17,4 +17,4 @@ public struct Authentication {
     }
 }
 
-extension Authentication: Equatable {}
+extension AuthenticationResponse: Decodable {}

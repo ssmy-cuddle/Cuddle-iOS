@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 
 import AppResource
@@ -26,6 +27,8 @@ struct CuddleApp: App {
             AuthenticationFeature()
         }
     )
+
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
         self.contentView = ContentView(
@@ -77,5 +80,13 @@ struct CuddleApp: App {
             fatalError("KAKAO_APP_KEY is nil")
         }
         KakaoSDK.initSDK(appKey: kakaoAppKey, loggingEnable: true)
+    }
+    
+    private func observeLogout() {
+        NotificationCenter.default.publisher(for: Notification.Name("AuthorizationFailed"))
+            .sink { [self] _ in
+                self.store.send(.logout)
+            }
+//            .store(in: &cancellables)
     }
 }

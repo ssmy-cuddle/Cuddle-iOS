@@ -9,6 +9,7 @@ import PackageDescription
         // Default is .staticFramework
         // productTypes: ["Alamofire": .framework,] 
         productTypes: [
+            "Alamofire": .framework,
             "ComposableArchitecture": .framework,
             "Swinject": .framework,
             "Lottie": .framework,
@@ -27,6 +28,7 @@ let package = Package(
         .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.0"),
         .package(url: "https://github.com/davdroman/swiftui-navigation-transitions", from: "0.13.4"),
         .package(url: "https://github.com/kakao/kakao-ios-sdk", branch: "master"),
-        .package(url: "https://github.com/exyte/PopupView.git", from: "3.1.0")
+        .package(url: "https://github.com/exyte/PopupView.git", from: "3.1.0"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.9.1")
     ]
 )

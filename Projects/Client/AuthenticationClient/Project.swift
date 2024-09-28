@@ -6,8 +6,9 @@ import DependencyPlugin
 let project = Project.client(
     name: "AuthenticationClient",
     bundleID: "AuthenticationClient",
-    targets: [.staticFramework, .tests],
+    targets: [.staticFramework, .live, .tests],
     dependencies: [
+        Core.networking.targetDependency,
         Client.base.targetDependency,
         External.composableArchitecture.targetDependency
     ]

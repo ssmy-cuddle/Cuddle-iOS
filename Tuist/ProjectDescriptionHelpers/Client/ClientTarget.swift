@@ -9,6 +9,7 @@ import Foundation
 
 public enum ClientTarget: CaseIterable {
     case staticFramework
+    case live
     case tests
 }
 

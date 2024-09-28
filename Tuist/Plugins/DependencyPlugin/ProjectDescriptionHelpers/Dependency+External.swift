@@ -10,6 +10,7 @@ import Foundation
 import ProjectDescription
 
 public enum External {
+    case alamofire
     case composableArchitecture
     case kingfisher
     case lottie
@@ -23,6 +24,7 @@ extension External: CaseIterable {}
 extension External: TargetDependencyCovertible {
     public var targetDependency: TargetDependency {
         switch self {
+        case .alamofire: .external(name: "Alamofire")
         case .composableArchitecture: .external(name: "ComposableArchitecture")
         case .kingfisher: .external(name: "Kingfisher")
         case .lottie: .external(name: "Lottie")

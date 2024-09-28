@@ -47,4 +47,34 @@ extension Client: TargetDependencyCovertible {
                 )
         }
     }
+    
+    public var liveTargetDependency: TargetDependency {
+        switch self {
+        case .authentication:
+                .project(
+                    target: "AuthenticationClientLive",
+                    path: .relativeToRoot("Projects/Client/AuthenticationClient")
+                )
+        case .base:
+                .project(
+                    target: "BaseClient",
+                    path: .relativeToRoot("Projects/Client/BaseClient")
+                )
+        case .community:
+                .project(
+                    target: "CommunityClient",
+                    path: .relativeToRoot("Projects/Client/CommunityClient")
+                )
+        case .original:
+                .project(
+                    target: "OriginalClient",
+                    path: .relativeToRoot("Projects/Client/OriginalClient")
+                )
+        case .profile:
+                .project(
+                    target: "ProfileClient",
+                    path: .relativeToRoot("Projects/Client/ProfileClient")
+                )
+        }
+    }
 }

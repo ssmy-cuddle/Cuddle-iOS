@@ -12,7 +12,7 @@ import DependenciesMacros
 
 @DependencyClient
 public struct AuthenticationClient {
-    public var authentication: () -> Authentication?
+    public var authentication: () throws -> Authentication?
     public var requestAuthentication: (_ provider: String, _ code: String) async throws -> Authentication
     public var removeAuthentication: () async throws -> Void
 }

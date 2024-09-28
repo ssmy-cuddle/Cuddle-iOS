@@ -12,7 +12,7 @@ public extension Project {
     static func client(
         name: String,
         bundleID: String,
-        targets: Set<ClientTarget> = [.staticFramework, .tests],
+        targets: Set<ClientTarget> = [.staticFramework, .live, .tests],
         dependencies: [TargetDependency] = [],
         testsDependencies: [TargetDependency] = [],
         infoPlist: InfoPlist = .default,
@@ -29,6 +29,19 @@ public extension Project {
                     bundleId: bundleID,
                     sources: ["Sources/**"],
                     dependencies: dependencies
+                )
+            )
+        }
+        
+        if targets.contains(.live) {
+            projectTargets.append(
+                .target(
+                    name: "\(name)Live",
+                    destinations: .iOS,
+                    product: .staticFramework,
+                    bundleId: bundleID,
+                    sources: ["Live/Sources/**"],
+                    dependencies: dependencies + [.target(name: name)]
                 )
             )
         }
