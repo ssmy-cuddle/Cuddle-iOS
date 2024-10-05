@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-
 import ComposableArchitecture
 
 struct Event: Identifiable {
@@ -23,7 +22,7 @@ public struct DiaryView: View {
     public init(store: StoreOf<DiaryFeature>) {
         self.store = store
     }
-
+    
     @State private var selectedDate = Date()
     private let calendar = Calendar.current
     
@@ -38,33 +37,51 @@ public struct DiaryView: View {
     private var groupedEvents: [String: [Event]] {
         Dictionary(grouping: events, by: { $0.time })
     }
-
+    
     public var body: some View {
-        VStack(alignment: .center, spacing: 20) {
-            // Month view (calendar)
+        VStack(alignment: .center, spacing: 0) {
             monthView
-        
-            ZStack {
-                dayView
-                blurView
-            }
-            .frame(height: 30)
-            .padding(.horizontal, 20)
             
-            // Timeline
-            timelineView
-                .padding()
+            VStack(spacing: 0) {
+                dayView
+                    .padding(.top, 20)
+                    .background(Color.white)
+                
+                Divider()
+                    .frame(height: 0.85)
+                    .background(Color(red: 250/255, green: 249/255, blue: 249/255, opacity: 1))
+                
+                HStack {
+                    Text("시간")
+                        .font(.system(size: 12))
+                        .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
+                        .padding(.leading, 20)
+                    
+                    Spacer()
+                    
+                    Text("여정")
+                        .font(.system(size: 12))
+                        .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
+                        .padding(.trailing, 20)
+                }
+                .padding(.vertical, 5)
+                
+                timelineView
+                    .padding()
+            }
+            .background(Color.white)
+            .clipShape(RoundedCorner(radius: 32, corners: [.topLeft, .topRight]))
         }
+        .background(Color(red: 250/255, green: 249/255, blue: 249/255))
     }
     
-    // MARK: - 타임라인 표시
+    // MARK: - 타임라인
     private var timelineView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(groupedEvents.keys.sorted(), id: \.self) { time in
                     if let eventsForTime = groupedEvents[time] {
                         ForEach(eventsForTime.indices, id: \.self) { index in
-                            // Show time only for the first card in the group
                             let shouldShowTime = index == 0
                             timelineCardView(event: eventsForTime[index], shouldShowTime: shouldShowTime, time: time)
                         }
@@ -74,14 +91,14 @@ public struct DiaryView: View {
         }
     }
     
-    // MARK: - 타임라인 카드뷰
+    // MARK: - 타임라인 카드
     private func timelineCardView(event: Event, shouldShowTime: Bool, time: String) -> some View {
         HStack(alignment: .top, spacing: 13) {
             VStack {
                 if shouldShowTime {
                     Text(time)
-                        .font(.footnote)
-                        .foregroundColor(.gray)
+                        .font(.system(size: 12))
+                        .foregroundColor(Color(red: 33/255, green: 37/255, blue: 37/255))
                         .frame(width: 60, alignment: .leading)
                 } else {
                     Spacer()
@@ -89,28 +106,23 @@ public struct DiaryView: View {
                 }
             }
             .padding(.vertical, 6)
-
+            
             Rectangle()
                 .frame(width: 2)
-                .foregroundColor(Color.gray)
+                .foregroundColor(Color(red: 250/255, green: 249/255, blue: 249/255))
                 .edgesIgnoringSafeArea(.vertical)
             
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text(event.title)
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
+                        .foregroundColor(Color(red: 33/255, green: 37/255, blue: 37/255))
                     Spacer()
                     Image(systemName: "ellipsis")
                         .foregroundColor(.gray)
                 }
-
+                
                 HStack(alignment: .top, spacing: 12) {
-//                    Image("meerkats")
-//                        .resizable()
-//                        .frame(width: 50, height: 50)
-//                        .cornerRadius(10)
-
                     Text(event.description)
                         .font(.system(size: 10, weight: .medium))
                         .foregroundColor(.gray)
@@ -120,127 +132,104 @@ public struct DiaryView: View {
                 }
             }
             .padding()
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color.blue))
-            .foregroundColor(.white)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
+            .foregroundColor(.black)
             .frame(width: 213)
             .padding(.vertical, 6)
         }
     }
     
-    // MARK: - 월 뷰
+    // MARK: - Month View
     private var monthView: some View {
-        HStack(spacing: 30) {
-            Button(
-                action: {
-                    changeMonth(-1)
-                },
-                label: {
-                    Image(systemName: "chevron.left")
-                        .padding()
-                }
-            )
+        HStack(alignment: .bottom, spacing: 8) {
+            // Display the day (일)
+            Text("\(calendar.component(.day, from: selectedDate))")
+                .font(.system(size: 37))
+                .foregroundColor(Color(red: 33/255, green: 37/255, blue: 37/255))
             
-            Text(monthTitle(from: selectedDate))
-                .font(.title)
-            
-            Button(
-                action: {
-                    changeMonth(1)
-                },
-                label: {
-                    Image(systemName: "chevron.right")
-                        .padding()
-                }
-            )
-        }
-    }
-
-    @ViewBuilder
-    private var dayView: some View {
-        let startDate = calendar.date(from: Calendar.current.dateComponents([.year, .month], from: selectedDate))!
-        
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                let components = (
-                    0..<calendar.range(of: .day, in: .month, for: startDate)!.count)
-                    .map {
-                        calendar.date(byAdding: .day, value: $0, to: startDate)!
-                    }
+            // Display weekday with "요일" and year
+            VStack(alignment: .leading, spacing: 0) {
+                // Weekday with "요일" appended
+                Text(weekday(from: selectedDate))
+                    .font(.system(size: 12))
+                    .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
                 
-                ForEach(components, id: \.self) { date in
-                    VStack {
-                        Text(day(from: date))
-                            .font(.caption)
-                        Text("\(calendar.component(.day, from: date))")
+                // Year (연도) without comma
+                Text("\(calendar.component(.year, from: selectedDate))")
+                    .font(.system(size: 12))
+                    .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
+                    .textCase(.none)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 20)
+    }
+    
+    // MARK: - Day View
+    private var dayView: some View {
+        let startDate = calendar.date(from: DateComponents(year: 2024, month: 10, day: 1))!
+        let firstDayOfWeek = calendar.component(.weekday, from: startDate)
+        let daysInMonth = calendar.range(of: .day, in: .month, for: startDate)!.count
+        
+        let days = Array(repeating: "", count: firstDayOfWeek - 1) + (1...daysInMonth).map { String($0) }
+        
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(days.indices, id: \.self) { index in
+                    let dayString = days[index]
+                    let isBlank = dayString.isEmpty
+                    let dayInt = Int(dayString) ?? 0
+                    
+                    let currentDate = isBlank ? nil : calendar.date(byAdding: .day, value: dayInt - 1, to: startDate)
+                    let isSelected = currentDate != nil && calendar.isDate(currentDate!, inSameDayAs: selectedDate)
+                    
+                    VStack(spacing: 5) {
+                        VStack {
+                            Text(isBlank ? "" : weekday(for: index))
+                                .font(.system(size: 10))
+                                .foregroundColor(isSelected ? Color.white : Color(red: 188/255, green: 193/255, blue: 205/255))
+                            
+                            Text(isBlank ? "" : dayString)
+                                .font(.system(size: 14))
+                                .foregroundColor(isSelected ? Color.white : Color(red: 33/255, green: 37/255, blue: 37/255))
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
+                        .background(isSelected ? Color(red: 252/255, green: 199/255, blue: 25/255) : Color.clear)
+                        .cornerRadius(8.53)
                     }
-                    .frame(width: 30, height: 30)
-                    .padding(5)
-                    .background(calendar.isDate(selectedDate, equalTo: date, toGranularity: .day) ? Color.green : Color.clear)
-                    .cornerRadius(16)
-                    .foregroundColor(calendar.isDate(selectedDate, equalTo: date, toGranularity: .day) ? .white : .black)
                     .onTapGesture {
-                        selectedDate = date
+                        if let currentDate = currentDate {
+                            selectedDate = currentDate
+                        }
                     }
                 }
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 10)
         }
     }
     
-    // MARK: - 블러 뷰
-    private var blurView: some View {
-        HStack {
-            LinearGradient(
-                gradient: Gradient(
-                    colors: [
-                        Color.white.opacity(1),
-                        Color.white.opacity(0)
-                    ]
-                ),
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-            .frame(width: 20)
-            .edgesIgnoringSafeArea(.leading)
-            
-            Spacer()
-            
-            LinearGradient(
-                gradient: Gradient(
-                    colors: [
-                        Color.white.opacity(1),
-                        Color.white.opacity(0)
-                    ]
-                ),
-                startPoint: .trailing,
-                endPoint: .leading
-            )
-            .frame(width: 20)
-            .edgesIgnoringSafeArea(.leading)
-        }
+    // MARK: - 날짜 계산을 위한 함수
+    private func weekday(for index: Int) -> String {
+        let weekdays = ["S", "M", "T", "W", "T", "F", "S"]
+        return weekdays[index % 7]
     }
     
-    // MARK: - Helper functions
-    func monthTitle(from date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.setLocalizedDateFormatFromTemplate("MMMM yyyy")
-        return dateFormatter.string(from: date)
+    private func weekday(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "E"
+        return formatter.string(from: date)
     }
+}
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
     
-    func changeMonth(_ value: Int) {
-        guard let date = calendar.date(
-            byAdding: .month,
-            value: value,
-            to: selectedDate
-        ) else {
-            return
-        }
-        
-        selectedDate = date
-    }
-    
-    func day(from date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.setLocalizedDateFormatFromTemplate("E")
-        return dateFormatter.string(from: date)
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
     }
 }
