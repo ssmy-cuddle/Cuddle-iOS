@@ -15,3 +15,9 @@ public extension DependencyValues {
         set { self[AuthenticationClient.self] = newValue }
     }
 }
+
+extension AuthenticationClient: TestDependencyKey {
+    public static var testValue: AuthenticationClient {
+        AuthenticationClient()
+    }
+}

@@ -5,10 +5,13 @@
 //  Created by mvldev7 on 9/19/24.
 //
 
+import Combine
 import Foundation
 import Security
 
 import AuthenticationClient
+import AuthenticationClientLive
+
 import AuthenticationFeature
 
 import ComposableArchitecture
@@ -21,8 +24,6 @@ public enum AppVisibility {
 @Reducer
 public struct CuddleAppFeature {
     
-//    @Dependency(\.authenticationClient) private var authenticationClient
-    
     @ObservableState
     public struct State {
         public var visibility: AppVisibility = .authentication
@@ -31,7 +32,7 @@ public struct CuddleAppFeature {
         
         public init() {
             @Dependency(\.authenticationClient) var authenticationClient
-            let visibility: AppVisibility = if let token = authenticationClient.authentication()?.token {
+            let visibility: AppVisibility = if let token = try? authenticationClient.authentication()?.accessToken {
                 .content(token: token)
             } else {
                 .authentication
@@ -43,6 +44,7 @@ public struct CuddleAppFeature {
     public enum Action {
         case authentication(AuthenticationFeature.Action)
         case content(Content.Action)
+        case logout
     }
     
     public init() {}
@@ -53,10 +55,14 @@ public struct CuddleAppFeature {
         Reduce { state, action in
             switch action {
             case let .authentication(.inner(.authentication(authentication))):
-                state.visibility = .content(token: authentication.token)
+                state.visibility = .content(token: authentication.accessToken)
                 return .none
             case .content(.profile(.path(.element(_, .main(.view(.logoutButtonTapped)))))):
                 print("action: \(action)")
+                state.visibility = .authentication
+                state.content = .init()
+                return .none
+            case .logout:
                 state.visibility = .authentication
                 state.content = .init()
                 return .none

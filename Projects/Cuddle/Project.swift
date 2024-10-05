@@ -4,6 +4,7 @@ import DependencyPlugin
 let coreDependencies: [TargetDependency] = Core.allCases.map(\.targetDependency)
 let featureDependencies: [TargetDependency] = Feature.allCases.map(\.targetDependency)
 let clientDependencies: [TargetDependency] = Client.allCases.map(\.targetDependency)
+
 let externalDependencies: [TargetDependency] = External.allCases.map(\.targetDependency)
 
 let project = Project(
@@ -38,7 +39,9 @@ let project = Project(
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             entitlements: .file(path: .relativeToRoot("Projects/Cuddle/Cuddle.entitlements")),
-            dependencies: coreDependencies + featureDependencies + clientDependencies + externalDependencies
+            dependencies: coreDependencies + featureDependencies + clientDependencies + externalDependencies + [
+                Client.authentication.liveTargetDependency
+            ]
         ),
         .target(
             name: "CuddleTests",

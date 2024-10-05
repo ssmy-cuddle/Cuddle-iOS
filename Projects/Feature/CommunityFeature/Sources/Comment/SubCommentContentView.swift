@@ -39,7 +39,7 @@ public struct SubCommentContentView: View {
                 commentView(subComment.text)
                 if subComment.userUUID == userUUID {
                     deleteText()
-                        .onTapGesture { onDeleteButtonTap() }
+                        .onTapGesture { onDeleteButtonTap(subComment.id) }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -114,7 +114,7 @@ extension CommentView {
                             proxy.scrollTo(comment.id, anchor: .center)
                         }
                     },
-                    deleteButtonTapped: {
+                    deleteButtonTapped: { _ in
                         store.send(.view(.deleteCommentButtonTapped(.comment(comment.id))))
                     }
                 )

@@ -18,7 +18,7 @@ extension CommunityClient: TestDependencyKey {
     public static var testValue: CommunityClient {
         CommunityClient(
             deleteComment: { try await Self.deleteComment(id: $0) },
-            deleteSubComment: { try await Self.deleteComment(id: $0) }
+            deleteSubComment: { id, _ in try await Self.deleteComment(id: id) }
         )
     }
     
@@ -33,7 +33,7 @@ extension CommunityClient: TestDependencyKey {
         return deleteComment
     }
     
-    private static func deleteComment(id: UUID) async throws -> Comment {
+    private static func deleteSubComment(id: UUID) async throws -> Comment {
         @Dependency(\.dailyRepository) var dailyRepository
         guard let deleteComment = MockDailyContent.comments.first(where: { $0.id == id }) else {
             throw CommunityClientError.unowned

@@ -24,7 +24,7 @@ public struct CommentContentView: View {
         comment: Comment,
         userUUID: UUID,
         replyButtonTapped: @escaping () -> Void,
-        deleteButtonTapped: @escaping () -> Void
+        deleteButtonTapped: @escaping (DeleteCommentType) -> Void
     ) {
         self.comment = comment
         self.userUUID = userUUID
