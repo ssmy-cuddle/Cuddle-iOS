@@ -39,41 +39,70 @@ public struct DiaryView: View {
     }
     
     public var body: some View {
-        VStack(alignment: .center, spacing: 0) {
-            monthView
-                .padding(.bottom, 13)
-            
-            VStack(spacing: 0) {
-                dayView
-                    .padding(.top, 20)
-                    .background(Color.white)
-                
-                Divider()
-                    .frame(height: 0.85)
-                    .background(Color(red: 250/255, green: 249/255, blue: 249/255, opacity: 1))
-                
+        let startDate = calendar.date(from: DateComponents(year: 2024, month: 10, day: 1))!
+        let firstDayOfWeek = calendar.component(.weekday, from: startDate)
+        
+        return ScrollViewReader { scrollProxy in
+            VStack(alignment: .center, spacing: 0) {
                 HStack {
-                    Text("시간")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
-                        .padding(.leading, 20)
+                    monthView
                     
                     Spacer()
                     
-                    Text("여정")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
-                        .padding(.trailing, 20)
+                    if !calendar.isDateInToday(selectedDate) {
+                        Button(action: {
+                            withAnimation {
+                                selectedDate = Date()
+                                
+                                let todayIndex = calendar.component(.day, from: Date()) + firstDayOfWeek - 2
+                                scrollProxy.scrollTo(todayIndex, anchor: .center)
+                            }
+                        }) {
+                            Text("Today")
+                                .font(.system(size: 14))
+                                .foregroundColor(Color(red: 88/255, green: 226/255, blue: 168/255))
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 15)
+                                .background(Color(red: 88/255, green: 174/255, blue: 226/255).opacity(0.1))
+                                .cornerRadius(7)
+                        }
+                    }
                 }
-                .padding(.vertical, 5)
+                .padding(.bottom, 13)
+                .padding(.horizontal, 24)
                 
-                timelineView
-                    .padding()
+                VStack(spacing: 0) {
+                    dayView(startDate: startDate, firstDayOfWeek: firstDayOfWeek, scrollProxy: scrollProxy)
+                        .padding(.top, 14)
+                        .background(Color.white)
+                    
+                    Divider()
+                        .frame(height: 0.85)
+                        .background(Color(red: 250/255, green: 249/255, blue: 249/255, opacity: 1))
+                    
+                    HStack {
+                        Text("시간")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
+                            .padding(.leading, 20)
+                        
+                        Spacer()
+                        
+                        Text("여정")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
+                            .padding(.trailing, 20)
+                    }
+                    .padding(.vertical, 5)
+                    
+                    timelineView
+                        .padding()
+                }
+                .background(Color.white)
+                .clipShape(RoundedCorner(radius: 32, corners: [.topLeft, .topRight]))
             }
-            .background(Color.white)
-            .clipShape(RoundedCorner(radius: 32, corners: [.topLeft, .topRight]))
+            .background(Color(red: 250/255, green: 249/255, blue: 249/255))
         }
-        .background(Color(red: 250/255, green: 249/255, blue: 249/255))
     }
     
     // MARK: - 타임라인
@@ -143,19 +172,15 @@ public struct DiaryView: View {
     // MARK: - Month View
     private var monthView: some View {
         HStack(alignment: .bottom, spacing: 8) {
-            // Display the day (일)
             Text("\(calendar.component(.day, from: selectedDate))")
                 .font(.system(size: 37))
                 .foregroundColor(Color(red: 33/255, green: 37/255, blue: 37/255))
             
-            // Display weekday with "요일" and year
             VStack(alignment: .leading, spacing: 0) {
-                // Weekday with "요일" appended
                 Text(weekday(from: selectedDate))
                     .font(.system(size: 12))
                     .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
                 
-                // Year (연도) without comma
                 Text("\(calendar.component(.year, from: selectedDate))")
                     .font(.system(size: 12))
                     .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
@@ -163,63 +188,57 @@ public struct DiaryView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 20)
     }
     
     // MARK: - Day View
-    private var dayView: some View {
-        let startDate = calendar.date(from: DateComponents(year: 2024, month: 10, day: 1))!
-        let firstDayOfWeek = calendar.component(.weekday, from: startDate)
+    private func dayView(startDate: Date, firstDayOfWeek: Int, scrollProxy: ScrollViewProxy) -> some View {
         let daysInMonth = calendar.range(of: .day, in: .month, for: startDate)!.count
-        
         let days = Array(repeating: "", count: firstDayOfWeek - 1) + (1...daysInMonth).map { String($0) }
         
-        return ScrollViewReader { scrollProxy in
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 0) {
-                    ForEach(days.indices, id: \.self) { index in
-                        let dayString = days[index]
-                        let isBlank = dayString.isEmpty
-                        let dayInt = Int(dayString) ?? 0
-                        
-                        let currentDate = isBlank ? nil : calendar.date(byAdding: .day, value: dayInt - 1, to: startDate)
-                        let isSelected = currentDate != nil && calendar.isDate(currentDate!, inSameDayAs: selectedDate)
-                        
-                        if !isBlank {
-                            VStack(spacing: 5) {
-                                VStack {
-                                    Text(weekday(for: index))
-                                        .font(.system(size: 10))
-                                        .foregroundColor(isSelected ? Color.white : Color(red: 188/255, green: 193/255, blue: 205/255))
-                                    
-                                    Text(dayString)
-                                        .font(.system(size: 14))
-                                        .foregroundColor(isSelected ? Color.white : Color(red: 33/255, green: 37/255, blue: 37/255))
-                                }
-                                .padding(.vertical, 4)
-                                .padding(.horizontal, 8)
-                                .frame(width: UIScreen.main.bounds.width / 7)
-                                .background(isSelected ? Color(red: 252/255, green: 199/255, blue: 25/255) : Color.clear)
-                                .cornerRadius(8.53)
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 0) {
+                ForEach(days.indices, id: \.self) { index in
+                    let dayString = days[index]
+                    let isBlank = dayString.isEmpty
+                    let dayInt = Int(dayString) ?? 0
+                    
+                    let currentDate = isBlank ? nil : calendar.date(byAdding: .day, value: dayInt - 1, to: startDate)
+                    let isSelected = currentDate != nil && calendar.isDate(currentDate!, inSameDayAs: selectedDate)
+                    
+                    if !isBlank {
+                        VStack(spacing: 5) {
+                            VStack {
+                                Text(weekday(for: index))
+                                    .font(.system(size: 10))
+                                    .foregroundColor(isSelected ? Color.white : Color(red: 188/255, green: 193/255, blue: 205/255))
+                                
+                                Text(dayString)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(isSelected ? Color.white : Color(red: 33/255, green: 37/255, blue: 37/255))
                             }
-                            .id(index)
-                            .onTapGesture {
-                                if let currentDate = currentDate {
-                                    selectedDate = currentDate
-                                }
-                            }
-                        } else {
-                            Spacer().frame(width: 0)
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 8)
+                            .frame(width: UIScreen.main.bounds.width / 7)
+                            .background(isSelected ? Color(red: 252/255, green: 199/255, blue: 25/255) : Color.clear)
+                            .cornerRadius(8.53)
                         }
+                        .id(index)
+                        .onTapGesture {
+                            if let currentDate = currentDate {
+                                selectedDate = currentDate
+                            }
+                        }
+                    } else {
+                        Spacer().frame(width: 0)
                     }
                 }
-                .padding(.vertical, 10)
-                .padding(.horizontal, 20)
-                .onAppear {
-                    // 초기에 선택된 날짜로 스크롤 이동
-                    let selectedIndex = firstDayOfWeek + calendar.component(.day, from: selectedDate) - 2
-                    scrollProxy.scrollTo(selectedIndex, anchor: .center)
-                }
+            }
+            .padding(.vertical, 10)
+            .padding(.horizontal, 20)
+            .onAppear {
+                // 초기에 선택된 날짜로 스크롤 이동
+                let selectedIndex = firstDayOfWeek + calendar.component(.day, from: selectedDate) - 2
+                scrollProxy.scrollTo(selectedIndex, anchor: .center)
             }
         }
     }
