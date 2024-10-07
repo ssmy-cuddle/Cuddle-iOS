@@ -41,6 +41,7 @@ public struct DiaryView: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             monthView
+                .padding(.bottom, 13)
             
             VStack(spacing: 0) {
                 dayView
@@ -173,40 +174,53 @@ public struct DiaryView: View {
         
         let days = Array(repeating: "", count: firstDayOfWeek - 1) + (1...daysInMonth).map { String($0) }
         
-        return ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(days.indices, id: \.self) { index in
-                    let dayString = days[index]
-                    let isBlank = dayString.isEmpty
-                    let dayInt = Int(dayString) ?? 0
-                    
-                    let currentDate = isBlank ? nil : calendar.date(byAdding: .day, value: dayInt - 1, to: startDate)
-                    let isSelected = currentDate != nil && calendar.isDate(currentDate!, inSameDayAs: selectedDate)
-                    
-                    VStack(spacing: 5) {
-                        VStack {
-                            Text(isBlank ? "" : weekday(for: index))
-                                .font(.system(size: 10))
-                                .foregroundColor(isSelected ? Color.white : Color(red: 188/255, green: 193/255, blue: 205/255))
-                            
-                            Text(isBlank ? "" : dayString)
-                                .font(.system(size: 14))
-                                .foregroundColor(isSelected ? Color.white : Color(red: 33/255, green: 37/255, blue: 37/255))
-                        }
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 8)
-                        .background(isSelected ? Color(red: 252/255, green: 199/255, blue: 25/255) : Color.clear)
-                        .cornerRadius(8.53)
-                    }
-                    .onTapGesture {
-                        if let currentDate = currentDate {
-                            selectedDate = currentDate
+        return ScrollViewReader { scrollProxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 0) {
+                    ForEach(days.indices, id: \.self) { index in
+                        let dayString = days[index]
+                        let isBlank = dayString.isEmpty
+                        let dayInt = Int(dayString) ?? 0
+                        
+                        let currentDate = isBlank ? nil : calendar.date(byAdding: .day, value: dayInt - 1, to: startDate)
+                        let isSelected = currentDate != nil && calendar.isDate(currentDate!, inSameDayAs: selectedDate)
+                        
+                        if !isBlank {
+                            VStack(spacing: 5) {
+                                VStack {
+                                    Text(weekday(for: index))
+                                        .font(.system(size: 10))
+                                        .foregroundColor(isSelected ? Color.white : Color(red: 188/255, green: 193/255, blue: 205/255))
+                                    
+                                    Text(dayString)
+                                        .font(.system(size: 14))
+                                        .foregroundColor(isSelected ? Color.white : Color(red: 33/255, green: 37/255, blue: 37/255))
+                                }
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 8)
+                                .frame(width: UIScreen.main.bounds.width / 7)
+                                .background(isSelected ? Color(red: 252/255, green: 199/255, blue: 25/255) : Color.clear)
+                                .cornerRadius(8.53)
+                            }
+                            .id(index)
+                            .onTapGesture {
+                                if let currentDate = currentDate {
+                                    selectedDate = currentDate
+                                }
+                            }
+                        } else {
+                            Spacer().frame(width: 0)
                         }
                     }
                 }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 20)
+                .onAppear {
+                    // 초기에 선택된 날짜로 스크롤 이동
+                    let selectedIndex = firstDayOfWeek + calendar.component(.day, from: selectedDate) - 2
+                    scrollProxy.scrollTo(selectedIndex, anchor: .center)
+                }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
         }
     }
     
