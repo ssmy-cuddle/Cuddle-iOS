@@ -18,15 +18,15 @@ struct Event: Identifiable {
 
 public struct DiaryView: View {
     private var store: StoreOf<DiaryFeature>
-
+    
     public init(store: StoreOf<DiaryFeature>) {
         self.store = store
     }
-
+    
     @State private var selectedDate = Date()
     @State private var isReversed = false
     private let calendar = Calendar.current
-
+    
     // Sample events
     @State private var events = [
         Event(title: "일상", description: "Aspen is as close...", time: "11:35"),
@@ -35,25 +35,25 @@ public struct DiaryView: View {
         Event(title: "여행", description: "Aspen is as close...", time: "15:10"),
         Event(title: "간식 구매", description: "초코에 줄 간식 구매...", time: "15:10")
     ]
-
+    
     // 이벤트를 시간 순서대로 정렬하고 isReversed 상태에 따라 역순으로 변경
     private var groupedEvents: [(key: String, value: [Event])] {
         let sortedEvents = events.sorted { isReversed ? $0.time > $1.time : $0.time < $1.time }
         let groupedEvents = Dictionary(grouping: sortedEvents, by: { $0.time })
         return groupedEvents.sorted { isReversed ? $0.key > $1.key : $0.key < $1.key }
     }
-
+    
     public var body: some View {
         let startDate = calendar.date(from: DateComponents(year: 2024, month: 10, day: 1))!
         let firstDayOfWeek = calendar.component(.weekday, from: startDate)
-
+        
         return ScrollViewReader { scrollProxy in
             VStack(alignment: .center, spacing: 0) {
                 HStack {
                     monthView
-
+                    
                     Spacer()
-
+                    
                     if !calendar.isDateInToday(selectedDate) {
                         Button(action: {
                             withAnimation {
@@ -74,30 +74,34 @@ public struct DiaryView: View {
                 }
                 .padding(.bottom, 13)
                 .padding(.horizontal, 24)
-
+                
                 VStack(spacing: 0) {
                     dayView(startDate: startDate, firstDayOfWeek: firstDayOfWeek, scrollProxy: scrollProxy)
                         .padding(.top, 14)
                         .background(Color.white)
-
+                    
                     Divider()
                         .frame(height: 0.85)
                         .background(Color(red: 250/255, green: 249/255, blue: 249/255, opacity: 1))
-
+                        .padding(.bottom, 11)
+                    
                     HStack {
                         Text("시간")
                             .font(.system(size: 12))
                             .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
-                            .padding(.leading, 20)
-
+                            .frame(width: 60, alignment: .leading)
+                            .padding(.leading, 60)
+                        
                         Spacer()
-
+                        
                         Text("여정")
                             .font(.system(size: 12))
                             .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
-
+                            .frame(width: 213, alignment: .leading)
+                            .padding(.leading, 30)
+                        
                         Spacer()
-
+                        
                         Button(action: {
                             withAnimation {
                                 isReversed.toggle()
@@ -111,7 +115,7 @@ public struct DiaryView: View {
                         }
                     }
                     .padding(.vertical, 5)
-
+                    
                     timelineView
                         .padding()
                 }
@@ -121,7 +125,7 @@ public struct DiaryView: View {
             .background(Color(red: 250/255, green: 249/255, blue: 249/255))
         }
     }
-
+    
     // MARK: - 타임라인
     private var timelineView: some View {
         ScrollView {
@@ -135,7 +139,7 @@ public struct DiaryView: View {
             }
         }
     }
-
+    
     // MARK: - 타임라인 카드
     private func timelineCardView(event: Event, shouldShowTime: Bool, time: String) -> some View {
         HStack(alignment: .top, spacing: 13) {
@@ -151,12 +155,12 @@ public struct DiaryView: View {
                 }
             }
             .padding(.vertical, 6)
-
+            
             Rectangle()
                 .frame(width: 2)
                 .foregroundColor(Color(red: 250/255, green: 249/255, blue: 249/255))
                 .edgesIgnoringSafeArea(.vertical)
-
+            
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text(event.title)
@@ -166,7 +170,7 @@ public struct DiaryView: View {
                     Image(systemName: "ellipsis")
                         .foregroundColor(.gray)
                 }
-
+                
                 HStack(alignment: .top, spacing: 12) {
                     Text(event.description)
                         .font(.system(size: 10, weight: .medium))
@@ -183,19 +187,19 @@ public struct DiaryView: View {
             .padding(.vertical, 6)
         }
     }
-
+    
     // MARK: - Month View
     private var monthView: some View {
         HStack(alignment: .bottom, spacing: 8) {
             Text("\(calendar.component(.day, from: selectedDate))")
                 .font(.system(size: 37))
                 .foregroundColor(Color(red: 33/255, green: 37/255, blue: 37/255))
-
+            
             VStack(alignment: .leading, spacing: 0) {
                 Text(weekday(from: selectedDate))
                     .font(.system(size: 12))
                     .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
-
+                
                 Text("\(calendar.component(.year, from: selectedDate))")
                     .font(.system(size: 12))
                     .foregroundColor(Color(red: 188/255, green: 193/255, blue: 205/255))
@@ -204,29 +208,29 @@ public struct DiaryView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-
+    
     // MARK: - Day View
     private func dayView(startDate: Date, firstDayOfWeek: Int, scrollProxy: ScrollViewProxy) -> some View {
         let daysInMonth = calendar.range(of: .day, in: .month, for: startDate)!.count
         let days = Array(repeating: "", count: firstDayOfWeek - 1) + (1...daysInMonth).map { String($0) }
-
+        
         return ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
                 ForEach(days.indices, id: \.self) { index in
                     let dayString = days[index]
                     let isBlank = dayString.isEmpty
                     let dayInt = Int(dayString) ?? 0
-
+                    
                     let currentDate = isBlank ? nil : calendar.date(byAdding: .day, value: dayInt - 1, to: startDate)
                     let isSelected = currentDate != nil && calendar.isDate(currentDate!, inSameDayAs: selectedDate)
-
+                    
                     if !isBlank {
                         VStack(spacing: 5) {
                             VStack {
                                 Text(weekday(for: index))
                                     .font(.system(size: 10))
                                     .foregroundColor(isSelected ? Color.white : Color(red: 188/255, green: 193/255, blue: 205/255))
-
+                                
                                 Text(dayString)
                                     .font(.system(size: 14))
                                     .foregroundColor(isSelected ? Color.white : Color(red: 33/255, green: 37/255, blue: 37/255))
@@ -256,13 +260,13 @@ public struct DiaryView: View {
             }
         }
     }
-
+    
     // MARK: - 날짜 계산을 위한 함수
     private func weekday(for index: Int) -> String {
         let weekdays = ["S", "M", "T", "W", "T", "F", "S"]
         return weekdays[index % 7]
     }
-
+    
     private func weekday(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
@@ -274,7 +278,7 @@ public struct DiaryView: View {
 struct RoundedCorner: Shape {
     var radius: CGFloat = .infinity
     var corners: UIRectCorner = .allCorners
-
+    
     func path(in rect: CGRect) -> Path {
         let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
         return Path(path.cgPath)
